@@ -38,10 +38,10 @@ IOPS = Input/output operations per second
 10. **Auto Scaling Group (ASG)**: Creation of instances based on amount of workload. **High Availability**
 	1. **Manual Scaling:**
 	2. **Dynamic Scaling:**
-		1. **Simple / Step Scaling:** When a **CloudWatch alarm** is triggered(example CPU > 70%), then add 2 units or/and (example CPU < 30%), then remove 1
-		2. **Target Tracking Scaling:** Example: I want the average ASG CPU to stay at around 40%
-		3. **Scheduled Scaling:** Anticipate a scaling based on known usage patterns
-		4. **Predictive Scaling**: machine learning to understand when scaling
+		1. **Simple Scaling:** When a **CloudWatch alarm** is triggered(example CPU > 70%), then add 2 units or/and (example CPU < 30%), then remove 1
+		2. **Step Scaling:** Also scale wehn CloudWatch alarm but more rfficient when cloudWatch allarm is **repetedly trigger**
+		3. **Target Tracking Scaling:** Example: I want the average ASG CPU to stay at around 40%
+		5. **Predictive Scaling**: Triggers scaling by analyzing historical load data to detect daily or weeklu patterns in traffic flows
 
 ## S3 storage and Database
 

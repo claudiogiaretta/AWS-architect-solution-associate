@@ -145,6 +145,119 @@ Informazioni utili:
 - AWS Autocompletion Options: AWS Completer (not used old version), AWS Shell Shell (Not recommended by the people), AWS CLI Auto prompt.
 - AWS CLI Autoprompt 
 
+
+## (IAM) Identity Access Manager
+- Anatomy of IAM policy
+	- ![[Pasted image 20241001113136.png]]
+- Principle of Least Privilege:
+	- Just Enough Access: Permitting only the exact actions  for the identity to perform task
+	- Just In Time: Permitting the smallest length of duration a identity can use permissions
+- Password policy: you can set expires date for user password in rder to rotate them
+- Access Key: you can have a maximum of 2 access key per account
+- MFA: (vedi appunti aws)
+- Temporary Security Credentials: Generated dynamically, every time you use a roles a you a temporary security cred are created automatically
+- IAM Identity federetion: the means of linking a person to eletronic identity and attribute. When you connect using facebook or google you're using identity fed
+- STS: (vedi appunti AWS)
+- Cross Account Role: You can grant users from different AWS account access to resources in your account through a Cross-Account Role. This allows you to not to have to create them a user account within your systems
+	- ![[Pasted image 20241001115206.png]]
+- IAM AssumeRoleWithWebIdentity: Returns a set of temporary security credentials for users who have been authenticated in a mobile or web application with web identity provider
+	- ![[Pasted image 20241001115642.png]]
+	- You always authenticate with the web identity first
+
+# Computing
+## EC2
+- Cloud-Init: is the industry standard multi-distribution method for cross-platform cloud instance initialization. It is supported accross all major public cloud providers, provisioning systems for private cloud infrastructure, and bare metal installations.
+- EC2 User data: script launch on EC2 boot
+- EC2 Meta Data: You can access to Ec2 Metadata from MDS(Meta data service). There are 2 typers Version 1 adn Verison 2.
+	- You can enforce the use of tokens 
+	- you can turn off endpoints all together
+- EC2 Naming convention:
+	![[Pasted image 20241001121648.png]]
+- Instance Family: Are different combination of CPU,Memory,Storage and Networking capacity
+	![[Pasted image 20241001122001.png]]
+	N.B there are not all but only the most important
+- EC2 Processors: 
+	 ![[Pasted image 20241001122628.png]]
+- EC2 Instance Profile: is a reference to an IAM role that will be passed and assumed by the EC2 instance when it starts up. allows you to avoid passing long live AWS credentials.
+- EC2 Lifecycle: 
+	![[Pasted image 20241001123523.png]]
+- EC2 Instance Console Screenshot: will take a screenshot of the current state of the instance
+- Hostname; unique name in your network to identify a machine via DNS.
+	- two types:
+		- IP Name: legacy name based on private access
+		- Resource Name: EC2 instance ID is included in the hostname
+- EC2 Default user name: The default user name for an operating system managed by AWS will vary based on distribution:
+	- When using SSM you will need to change yoour user to default
+	- ```sudo su -ec2-user```
+-  EC2 Bustable Instances: allow workloads to handle bursts of higher CPU utilization fro very short duration
+- EC2 system log: Accessed by the EC2 Management Console, allows you to observe the system log for the EC2 Instance. Troubleshoot on boot to see if anything is wrong
+- EC2 Placement Group: the logical placement of your instances to optimize communication, performance, or durability. Free
+	- Cluster
+	- Partition
+	- Availability Zone
+- EC2 Connect:
+	- SSh Client
+	- EC2 instance connect: short lived ssh keys controlled by IAM policies
+	- Session Manager: Connect to linux windoes via reverse connection
+	- Fleet Manager Remote Desktop: Connect to a Windows Machine using RDP
+	- EC2 Serial console: establishes a serial connection giving you direc access
+- EC2 Amazon Linux: AWS's managed Linux distribution is based off CentOS and Fedora which in turn is based off Red Hat Linux. Reccomended to use Amazon Linux AL2023 e non AL2
+	- Amazon Linux extra: is a feature of AL2 that provides a way for users to install additional software packages.
+## AMI
+- Provides the information required to launch an instance. You can turn your EC2 instances into AMI's so you can create copies of your servers.
+	- Help you keep incremental changes to your OS, application code, and system packages.
+	- AMI Id is different per region. You need to be carefull when you buy one
+	- AMI has two types of boot model:
+		- Unified Extensible Firmware Interface (UEFI): Modern
+		- Legacy BIOS: Legacy da evitare
+	- Elastic Network Adapter supports network speeds of up to 100 GBps for supported instance types.
+	- AMI Settings:
+		- Public:
+		- Explicit: Specific to certain AWS accounts
+		- Implicit: The owner can launch the AMI
+## ASG
+Check "AWS appunti" first
+- Schema:
+	![[Pasted image 20241001144825.png]]
+- Automatic scaling can occur via:
+	- Capacity settings
+	- Health Check Replacements
+	- Scaling Policy: (vedi appunti AWS)
+- Capacity Settings: The size of an Auto Scaling group based on Min Size, Max Size, Desired Capacity
+- Health Check Replacement: when an ASG replaces an instances if is considered unhealty. Two types of health checks ASG can perform
+	- EC2 Health Check: If the EC2 instance fails either of its EC2 Status Check
+	- ELB Health Check: ASG will perform a health check based on the ELB health check. ELB pings an HTTP endpoint at a specific path, port and status code
+- ELB integration: An ELB can be attached to you Auto Scaling Group 
+	- Classic Load Balancers are associeted directly to the ASG
+	- ALB, NLB or GWLB are associeted indirectly via their Target Group
+	 **N.B attached = can use Load Balancer Health check**
+- Dynamic Scaling Policies: how much ASG should change capacity. Policies are triggered based on Cloud Watch Alarms:
+	- Simple, Step and Target Scaling
+	- Based on adjustment types: how capacity should change
+		- ChangeInCapacity
+		- ExactCapacity
+		- PercentChangeInCapacity
+- Simple Scaling: (vedi appunti AWS)
+- Step Scaling: (vedi appunti AWS)
+- Target Scaling: (vedi appunti AWS)
+- Predictive Scaling Policies: (vedi appunti AWS)
+## ELB
+It is a suite of Load balancer from AWS
+
+- Rules of traffic
+	- Struttura:
+		- Listeners: incoming traffic is evaluetad against listeners. check matches with the Port (ex port 443 or port 80)
+		- Rules (only ALB): Listeners will then invoke rules to decide what to do with the traffic. Generally, the next step is to forward traffic to a Target Group
+		- Target Groups(not CLB): Are logical grouping of possible targets such as specific EC2 instances, IP addresses
+		- **only for CLB traffic** is sent to the Listeners. When the port matches, it forwards the traffic to any EC2 instances that are registered to che Classic Load Balancer. CLB does not allow you to apply rules to listeners.
+- Application Load Balancer:
+	![[Pasted image 20241001154721.png]]
+- Network Load Balancer:
+	![[Pasted image 20241001154905.png]]
+	-
+- Classic Load Balancer:
+	![[Pasted image 20241001155036.png]]
+# Network
 ## AWS VPC
 - AWS VPC: Logically isolated network, Region specific. 5 VPC per region. 200 subnet per VPC
 - AWS has default VPC per region 
@@ -156,6 +269,7 @@ Informazioni utili:
 	- different types:
 		- main route tables: created with VPC cannot be deleted
 		- custom route table: toute table that you can create
+- Elastic Network Interfaces (ENIs): are virtual network interfaces that provide networking capabilities to Amazon EC2 instances. An ENI functions as a virtual network card, enabling instances to connect to networks and communicate with other resources within the AWS environment.
 -  Gateway: network service that stands between two different network, es: (load balancer, reverse proxy, firewall ecc...).
 	![[Pasted image 20240930180536.png]]
 - Internet Gateway:
@@ -246,71 +360,60 @@ Informazioni utili:
 	- use star configuration
 	- no-transitive
 - Network Address Usage(NAU): is a metric applied in your VPC to help you plan for and monitor the size of your VPC, in a way that you don't run out of space for your VPC.
-## (IAM) Identity Access Manager
-- Anatomy of IAM policy
-	- ![[Pasted image 20241001113136.png]]
-- Principle of Least Privilege:
-	- Just Enough Access: Permitting only the exact actions  for the identity to perform task
-	- Just In Time: Permitting the smallest length of duration a identity can use permissions
-- Password policy: you can set expires date for user password in rder to rotate them
-- Access Key: you can have a maximum of 2 access key per account
-- MFA: (vedi appunti aws)
-- Temporary Security Credentials: Generated dynamically, every time you use a roles a you a temporary security cred are created automatically
-- IAM Identity federetion: the means of linking a person to eletronic identity and attribute. When you connect using facebook or google you're using identity fed
-- STS: (vedi appunti AWS)
-- Cross Account Role: You can grant users from different AWS account access to resources in your account through a Cross-Account Role. This allows you to not to have to create them a user account within your systems
-	- ![[Pasted image 20241001115206.png]]
-- IAM AssumeRoleWithWebIdentity: Returns a set of temporary security credentials for users who have been authenticated in a mobile or web application with web identity provider
-	- ![[Pasted image 20241001115642.png]]
-	- You always authenticate with the web identity first
+## Route 53
+- Hosted Zones: Container for records sets, scoped to route traffic for a specific domain or subdomains
+	- Public: How you want to route traffic through an Internet
+	- Private: How you want to route traffic through an Amazon VPC
+- Records set: collection of records which determine where to send traffic
+	- Always changed using batch via the API
+	- Record Alias: sppecific DNS record of AWS which extends DNS functionality. It rwill route traffic to specific AWS resources.
+	- ![[Pasted image 20241001160633.png]]
+- Traffic Flow: Visual tool, lets you create soshisticated routing configurations for your resources using routing types (50$ per policy -> very expensive)
+- Routing Policies:
+	![[Pasted image 20241001161413.png]]
+	- Simple Routing Policies: Most basic Routing policies
+		- you have 1 record and provide multiple IP addresses
+		- When multiple values are specified for a record, Route53 will return values back to the user in a random order
+		- ![[Pasted image 20241001163913.png]]
+	- Weighted Routing Polcies: Let you split up traffic based on different weight assigned
+		- This allows you to send a certain percentage of overall traffic to one server and have other traffic to be directed to a completeley different server
+	- Latency Based Routing: allows you to direct traffic based on the lowest network latency possible for your end-user based on region
+	- Failover Routing Policy: allow you to create active passive/setup in situations where you want a primary site in one location and a secondary data recovery. Automatically monitors health checks from your primary site
+	- Geolocation Routing Policies: allow you to direct traffic based on the geographic location of where **the request originated from**
+	- Geoproximity routing policy: allow you to direct traffic based on the geographic location of **your users and your AWS resources**
+- Multi- Value Answe Policies let you configure Route 53 to return multiple values such as IP addresses for your web servers, in response to DNS queries.
+-  Health Checks (not free): 
+	![[Pasted image 20241001165610.png]]
+- Route 53 Resolver: is a DNS server that allows you to resolve DNS queries between your on-premise network and your VPC
+	- ![[Pasted image 20241001165819.png]]
+- DNSSEC: Are a suite of extensions specifications by the Internet Engineering Task Force (IETF) for securing data exchanged in the Domain Name System (DNS) in Internet Protocol (IP) networks.
+	- ![[Pasted image 20241001170421.png]]
+- Zonal Shift: is a capability in Route 53 Application Recovery Controller (Route 53 ARC). Shift a load balancer resource away from an impaired Availability Zone with a single action. Only supported by ALB an NLB
+	- ![[Pasted image 20241001170649.png]]
+- Route 53 Profiles: lets you apply and manage DNS related Route 53 configurations accross many VPCs and in differente AWS accounts
 
-## EC2
-- Cloud-Init: is the industry standard multi-distribution method for cross-platform cloud instance initialization. It is supported accross all major public cloud providers, provisioning systems for private cloud infrastructure, and bare metal installations.
-- EC2 User data: script launch on EC2 boot
-- EC2 Meta Data: You can access to Ec2 Metadata from MDS(Meta data service). There are 2 typers Version 1 adn Verison 2.
-	- You can enforce the use of tokens 
-	- you can turn off endpoints all together
-- EC2 Naming convention:
-	![[Pasted image 20241001121648.png]]
-- Instance Family: Are different combination of CPU,Memory,Storage and Networking capacity
-	![[Pasted image 20241001122001.png]]
-	N.B there are not all but only the most important
-- EC2 Processors: 
-	 ![[Pasted image 20241001122628.png]]
-- EC2 Instance Profile: is a reference to an IAM role that will be passed and assumed by the EC2 instance when it starts up. allows you to avoid passing long live AWS credentials.
-- EC2 Lifecycle: 
-	![[Pasted image 20241001123523.png]]
-- EC2 Instance Console Screenshot: will take a screenshot of the current state of the instance
-- Hostname; unique name in your network to identify a machine via DNS.
-	- two types:
-		- IP Name: legacy name based on private access
-		- Resource Name: EC2 instance ID is included in the hostname
-- EC2 Default user name: The default user name for an operating system managed by AWS will vary based on distribution:
-	- When using SSM you will need to change yoour user to default
-	- ```sudo su -ec2-user```
--  EC2 Bustable Instances: allow workloads to handle bursts of higher CPU utilization fro very short duration
-- EC2 system log: Accessed by the EC2 Management Console, allows you to observe the system log for the EC2 Instance. Troubleshoot on boot to see if anything is wrong
-- EC2 Placement Group: the logical placement of your instances to optimize communication, performance, or durability. Free
-	- Cluster
-	- Partition
-	- Availability Zone
-- EC2 Connect:
-	- SSh Client
-	- EC2 instance connect: short lived ssh keys controlled by IAM policies
-	- Session Manager: Connect to linux windoes via reverse connection
-	- Fleet Manager Remote Desktop: Connect to a Windows Machine using RDP
-	- EC2 Serial console: establishes a serial connection giving you direc access
-- EC2 Amazon Linux: AWS's managed Linux distribution is based off CentOS and Fedora which in turn is based off Red Hat Linux. Reccomended to use Amazon Linux AL2023 e non AL2
-	- Amazon Linux extra: is a feature of AL2 that provides a way for users to install additional software packages.
-## AMI
-- Provides the information required to launch an instance. You can turn your EC2 instances into AMI's so you can create copies of your servers.
-	- Help you keep incremental changes to your OS, application code, and system packages.
-	- AMI Id is different per region. You need to be carefull when you buy one
-	- AMI has two types of boot model:
-		- Unified Extensible Firmware Interface (UEFI): Modern
-		- Legacy BIOS: Legacy da evitare
-	- Elastic Network Adapter supports network speeds of up to 100 GBps for supported instance types.
-	- AMI Settings:
-		- Public:
-		- Explicit: Specific to certain AWS accounts
-		- Implicit: The owner can launch the AMI
+## AWS Global Accelerator
+can find the optimal path from the end user to your web servers. Is  deployed within Edge Locations, so you send user traffic to an Edge location insted of directly to your web application.
+	 ![[Pasted image 20241001171236.png]]
+
+## Cloud Front
+![[Pasted image 20241001172029.png]]
+- Cloud Front is a CDN (negli appunti AWS c'è un altra definizione)
+	- CDN(Content Delivery Network): A CDN is a distributed network of servers that delivrs web pages and content to users based on their geographical location, the origin of the wbpage and a content delivery server 
+
+- Lambda Edge: are lambda functions that override the behaviour of request and responses 
+	![[Pasted image 20241001172905.png]]
+- CloudFront functions:
+	![[Pasted image 20241001173411.png]]
+- CloudFront functions vs Lambda Edge:
+	![[Pasted image 20241001173651.png]]
+	![[Pasted image 20241001173709.png]]
+- CloudFront Origin: is the source where CloudFront will send the requests
+## EBS
+
+![[Pasted image 20241001174016.png]]
+- EBS: (vedi appunti AWS)
+	![[Pasted image 20241001174105.png]]
+	N.B io2 doesn't exist anymore use io2 Block Express
+- Volume type usages:
+	![[Pasted image 20241001174432.png]]
