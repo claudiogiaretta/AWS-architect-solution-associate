@@ -417,3 +417,13 @@ can find the optimal path from the end user to your web servers. Is  deployed wi
 	N.B io2 doesn't exist anymore use io2 Block Express
 - Volume type usages:
 	![[Pasted image 20241001174432.png]]
+	![[Pasted image 20241001174656.png]]
+
+## EFS
+(vedi appunti AWS per la definizione)
+![[Pasted image 20241001175602.png]]
+- EFS Client (amazon-efs-utils package): is an open-source collection of Amazon EFS tools.
+	- enables the ability to use Amazon CloudWatch to monitor an EFS file system's mount status
+	- You need to install the Amazon EFS client on an Amazon EC2 instance prior to mounting an EFS file system
+	- ![[Pasted image 20241001180345.png]]
+- Amazon Fsx
