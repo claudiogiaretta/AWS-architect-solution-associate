@@ -453,6 +453,110 @@ AWS fully managed solution for collecting processing, and analyzing streaming re
 - KCL: Kinese Client Library is a java library that makes it easy for developers to easily consume data for kineses. via the MultiDaemon other programming languages can be used
 
 
+## ElastiCache
+Amazon ElastiCache is a web service that makes it easy to set up, manage, and scale a distributed in-memory data store or cache environment in the cloud
+
+ Can only accessible by resources in the same VPC
+	- this ensure low-latency 
+It can be cross region if enabled
+- Deployment Options:
+	- Serverless or Standard
+		![[Pasted image 20241002154102.png]]
+- Chaching types:
+	- Memcache: is generally preferred for caching HTML fragments. Memcached is a simple key/value store. The trade off to being simple is taht it is very fast 
+	- Redis: Can perform many different kind of operations on your data. It is very good for leaderboards, and keep track of unread notification data. It is very fast, but arguably not as fast as memcached
+- Redis: Open source in-memory database store. Redis acts as caching layer, or a very fast database. is key/value store
+	- Strings: most basic value, max length 512MB
+		- Command:
+	- Sets: unorder collection of strings. String are unique
+		- Command.
+	- Sorted Sets: are a collection of strings that are sorted based on an associated score
+		- Command:
+	- Lists: Order collection of strings, you can have duplicate
+		- Command:
+	- Hashes: represent mapping between string fields and string values
+		- Command:
+- MemCached: is an open-source distributed memory object caching system. It's a caching layer for web-applications. Key/value store
+	- Command
+		- Set
+		- get
+		- delete
+		- incr
+		- decr
+		- add
+		- replace
+		- flush_all
+		- appened
+		- prepend
+		- stats
+## MemoryDB
+Is a Redis-compatible in-memory database for ultra-fast performance
+Suitable to be primary database. Slower writes but better performance in general.
+
+## Cloud Trail
+Is a service that enables governance compliance operational auditing of your AWS account
+
+Very useful to monitor API calls and made Actions made on an AWS account.
+Easily identify which users on an AWS account made the call.
+
+Is Active by default and will collect logs for 90 days via Event History. If you need more than 90 days you need to create a Trail.
+**To analyze a Trail you'd have to use Amazon Athena**
+
+## Amazon Redshift
+ **Serverless,** An Amazon Redshift is an enterprise-class relational database based on postgresql, Is thinked for data warehouse and for OLAP(analytics and data warehousing). Storage is done by **column** and not by row. **Pay as you go based**
+
+Datawerehouse: Built to store large quantities of historical data and enable fast, complex queries across all the data.
+
+**OLAP** applications look at multiple records at the same time. You save memory because you fetch  just the columns of data you need
+ instead of whole rows.
+
+- Different type of configurations
+	![[Pasted image 20241002163927.png]]
+different type of nodes:
+	![[Pasted image 20241002164003.png]]
+- Compression
+	- Redshift uses multiple compression techniques.
+	- Similar data is stored sequentially on disk
+	- Does not require indexes or materialized views, compared to traditional systems
+	- When loading data to an empty table, data is sampled and the most appropriate compression scheme is selected automatically
+- Processign
+	- Uses massively Parallel Processing(MPP)
+	- Automatically distributes data and query loads accross all nodes
+	- Lets you easily add new nodes to your data warehouse while still maintaining fast query performance.
+- Backup
+	- enabled by default 1 day retention,up to 35
+	- always attempt to keep 3 copies of your data
+- Billing
+	- total number hours
+	- 1 unit per node
+	- not charged for leader node hours only compute nodes incur changes
+- Security
+	- Dat in transit: SSL
+	- Data at rest: AES 256
+	- Encryption applied using KMS, CloudHSM
+- Availability
+	- Redshift is Single AZ. In order to reach high availability you need to run multiple redshift cluster in different AZ. Anapshot can be restored o a different AZ 
+
+**CHEETSHET**
+![[Pasted image 20241002165058.png]]
+
+## Athena
+**Serverless** query service to analyze data stored in Amazon S3 that uses standard SQL language to query the files and their content
+
+![[Pasted image 20241002165508.png]]
+- Athena SQL
+	- Component
+		- workgroup: saved queries which you grant permissions to other user to access
+		- Data source: a group database 
+		- Database: a group of tables
+		- Table: data organized as group
+		- dataset: raw data of table
+	- Table
+		- You can create using SQL and AWS Glue Wizard
+	- SerDe: is a serialization and deserialization libraries for parsing data form different format
+		- Can override the DDL configuration that you specify in Athena when you create your table
+
+
 # Computing
 ## EC2
 - Cloud-Init: is the industry standard multi-distribution method for cross-platform cloud instance initialization. It is supported accross all major public cloud providers, provisioning systems for private cloud infrastructure, and bare metal installations.
