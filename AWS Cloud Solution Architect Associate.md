@@ -426,4 +426,56 @@ can find the optimal path from the end user to your web servers. Is  deployed wi
 	- enables the ability to use Amazon CloudWatch to monitor an EFS file system's mount status
 	- You need to install the Amazon EFS client on an Amazon EC2 instance prior to mounting an EFS file system
 	- ![[Pasted image 20241001180345.png]]
-- Amazon Fsx
+
+## Fsx
+Allows you to deploy scale feature-rich, high performance file systems in the cloud. Fsx support a variety of file system protocol.
+
+- types:
+	- Amazon FSX for NetApp ONTAP
+	- Amazon Fsx for OpenZFS
+	- Amazon FSX for Windows File Server (WFS)
+	- Amazon FSX for Lustre
+
+- Amazon FSX for Windows File Server (WFS)
+- File Cache: high speed cache for datasets stored anywhere, accelerate bursting workloads
+
+## AWS BACKUP
+Allows you to centrally manage backup accross AWS Services
+
+- Component:
+	- Backup Plan: A backup policy defines the backup schedule, backup window, backup lifecycle.
+	- Backup Vault: backup are stored in a backup vault
+	- AWS backup Audit Manager is built in reporting and auditing for AWS backup
+
+# Snow Family
+AWS Snow Family are storage and compute devices used to phisically move data in or out the cloud when moving data over the internet or private connection is to slow, difficult or costly.
+
+![[Pasted image 20241002093152.png]]
+- Snowcone: Portable secure devicce for edge computing
+	- types:
+		- Snowcone: 8 TB HDD
+		- Snowcone SSD: 8 TB SSD
+	- Two ways of sending data:
+		- Phisically shipping the device which runs on the device's compute
+		- AWS DataSync which runs on the device's compute
+	- Has an E link shipping label for easy shipping
+- SnowballEdge: Similar to Snowcone but with more local processing, edge computing worloads, and device configuration options.
+	- Config Options:
+		- Storage Optimized (for data transfer): 
+			- 100 TB (80 TB usable)
+		- Storage Optimized
+			- 210 TB usable
+		- Storage Optimized with EC2-Compatible compute
+			- 80 TB usable storage , 40vCPUs and 80 GB of memory
+		- Compute Optimized
+			- Up to 104 vCPUs, 416 GB of memory,and 28 TB of dedicated NVMe SSd
+		- Compute Optimized with GPU
+			- Has addition of GPUs equivalent to the one available in the Instance Type P3
+- AWS Snowmobile: 45-foot ship container truck. Used to handle 100 PB of data
+- Comparison
+	![[Pasted image 20241002094449.png]]
+
+## AWS transfer family
+Offers fully managed support for the tansfer files over SFTP, AS2,FTPS and FTP directly into and out of Amazon S3.
+![[Pasted image 20241002094829.png]]
+![[Pasted image 20241002094906.png]]
