@@ -556,6 +556,87 @@ different type of nodes:
 	- SerDe: is a serialization and deserialization libraries for parsing data form different format
 		- Can override the DDL configuration that you specify in Athena when you create your table
 
+## CodeGuru
+![[Pasted image 20241002171037.png]]
+## Amazon comprehend
+Fully managed and **serverless** service for Natural Language Processing. Uses machine learning to find and analyse insights and relationships in text. use cases: analyze customer interactions (emails) to find what leads to a positive or negative experience.
+
+Analyze Text and extract: Entities, Key phrases, language,PII (personal information), Sentiment (feeling of the sentence), Targeted sentiment (specific word ), syntex, custom models
+
+## Amazon Rekognition:
+Amazon Rekognition is image and video reognition service. Analyze images and videos to detect and labels objects, people, clebrities.
+
+Find objects, people, text, scenes in images and videos using ML • Facial analysis and facial search to do user verification, people counting
+
+![[Pasted image 20241002175456.png]]
+## Amazon Transcribe:
+**Automatically convert speech to text** • Uses a deep learning process called automatic speech recognition (ASR) to convert speech to text quickly and accurately • Automatically remove Personally Identifiable Information (PII) using Redaction • Supports Automatic Language Identification for multi-lingual audio
+
+## Amazon Polly:
+Is a Text-to-speech service • Allowing you to create applications that talk
+Engine Types (from less expensive to most expensive):
+- Standard - 
+- Long Form -
+- Neural -
+Lexicon - for specialized pronuciation
+Speech Marks - metadata that describes speech
+
+Use an xml based language: **Speech Synthesis Markup Language (SSML)**
+
+## Amazon Translate:
+Natural and accurate language translation
+
+## Amazon SageMaker:
+Fully managed service for developers / data scientists to build ML models
+
+## Amazon Forecast:
+Fully managed service that uses ML to deliver highly accurate forecasts • example: predict the future sales of a raincoat
+
+Amazon Forecast Workflow: 
+![[Pasted image 20241002172257.png]]
+
+## Fraud Detection
+Fully managed fraud detection service. Identify potentially illegal online activities such as online payment fraud and the creation of fake accounts
+
+Predefined Model:
+- Online Fraud Detection
+- Transactional Fraud Detection 
+- Account Takeover insight
+You can also **create you custom model detection**
+
+- Components:
+	![[Pasted image 20241002172935.png]]
+- In order to create your model you need to define event, we need defines **Lables, Entities and Variables**
+## Amazon Kendra:
+Fully managed **document search** service powered by Machine Learning. Use keyword based search with semantic contextual understanding capabilites.
+
+Components:
+![[Pasted image 20241002173433.png]]
+Two version: Developer and Enterprise
+![[Pasted image 20241002173605.png]]
+You need to create Index
+
+## Amazon Lex
+is a conversion interface service. With Lex you can build conversational **voice and text chatbots**. 
+
+Components:
+![[Pasted image 20241002174306.png]]
+## Amazon Personalize:
+Fully managed ML-service to build apps with real-time personalized recommendations 
+
+![[Pasted image 20241002174520.png]]
+
+Data:
+	![[Pasted image 20241002174606.png]]
+
+
+## Amazon Textract:
+Automatically extracts text, handwriting, and data from any scanned documents using AI and ML.
+
+![[Pasted image 20241002175758.png]]
+
+## Amazon Connect:
+Amazon Connect is an AI-powered application that provides one seamless experience for your contact center customers and users. It's comprised of a full suite of features across communication channels.
 
 # Computing
 ## EC2
