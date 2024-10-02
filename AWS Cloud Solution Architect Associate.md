@@ -334,6 +334,41 @@ Is a managed message broker service for the opensource Apache ActiveMQ and Rabbi
 - **Users**
 	![[Pasted image 20241002115733.png]]
 
+
+## Cloud Watch
+## AWS Lambda
+No charge when your code is not running.
+
+Example of use:
+![[Pasted image 20241002122149.png]]
+2 ways to be called:
+- Sync invocation
+- Async invocation
+
+Settigns an limits:
+- ![[Pasted image 20241002122429.png]]
+- Function Version: You can use the version to manage the deployment of your AWS Lambda Function
+- 2 ways to reference aLambda
+	- Qualified ARN (specified version)
+	- Unqualified ARN (non specified version take always the last)
+- Aliasis: provide name to reference Lambda function
+- Lambda Layer: Pull in additional code and content in the form of layer. Layer is a zip archive that **contains libraries, a custom runtime, or other dependencies**. You can use libraries in your function without needing to include them in your deployment package. Maximum 5, maximum package: 250 MB
+- Instruction Sets: 
+	![[Pasted image 20241002123047.png]]
+- Runtimes: preconfigure environment to run specific programming languages. It doesn' require you to configure or set OS.
+	- they are published continuesly, so you had to keep it updated and not retain older version
+	- Code is delivered as a zip archive
+- OS Only Runtime:
+	![[Pasted image 20241002123430.png]]
+- Deployment Packages: package which contains the actual code.
+	- 2 types:
+		- ZIP archive:
+			- ZIP archive:larger than 50 MB have to be uploaded to an S3 Bucket first
+			- Rely on Lambda runtimes
+		- Container Image: you need to create a docker file
+		- build and push image to ECR
+- 
+
 # Computing
 ## EC2
 - Cloud-Init: is the industry standard multi-distribution method for cross-platform cloud instance initialization. It is supported accross all major public cloud providers, provisioning systems for private cloud infrastructure, and bare metal installations.
