@@ -290,6 +290,49 @@ Is managed integration service for data transfer between data sources. Easily ex
 ## OpenSearch Service
 Is a managed full-text search service that makes it easy to deploy operate and scale OpenSearch and ElasticSearch, a popular open-source search and analytics engine.
 
+## DeviceFarm
+(vedi appunti aws)
+
+## Quantum Ledger Database
+Used to review history of all the changes made to your **application data** over time, serverless. **Difference with Amazon Managed Blockchain**: no decentralization component
+
+![[Pasted image 20241002105101.png]]
+## Elsatic Transcoder
+Elastic Transcoder is video-transcoding server, used to convert media files stored in S3 into media files in the formats required by consumer playback devices. (Very expensive)
+
+![[Pasted image 20241002105413.png]]
+## SNS
+- Publish Subscribe pattern: 
+	![[Pasted image 20241002105940.png]]
+- SNS: Amazon Simple Notification Service (Amazon SNS) is a managed service that provides message delivery from publishers to subscribers (also known as _producers_ and _consumers_). In this way is possible to send one message to many receivers. Used to decouple microvservices.
+	- Source: Publisher
+	- Destinations: They are the subscribers:
+		- Application to application (A2A)
+		- Application to person (A2P)
+- Topics: allows you to group multiple subscriptions together (check tasheer notes)
+- Messages: (da apporfondire nel video)
+- Subscription: A subscription can only subscribe to one protocol and one topic
+	![[Pasted image 20241002111335.png]]
+
+## SQS
+![[Pasted image 20241002111647.png]]
+ Fo Large Message sending you need Amazon SQS Extended Client Library (larger than 256KB, maximum of 2GB)
+## Amazon MQ 
+Is a managed message broker service for the opensource Apache ActiveMQ and RabbitMQ
+![[Pasted image 20241002114243.png]]
+- AMQP: 
+	
+- **MQTT**:
+	![[Pasted image 20241002115035.png]]
+- **STOMP:**
+	![[Pasted image 20241002115116.png]]
+
+## Service Catalog
+- ![[Pasted image 20241002115439.png]]
+- Anatomy:
+	![[Pasted image 20241002115631.png]]
+- **Users**
+	![[Pasted image 20241002115733.png]]
 
 # Computing
 ## EC2
