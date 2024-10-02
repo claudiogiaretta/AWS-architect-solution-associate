@@ -368,6 +368,90 @@ Settigns an limits:
 		- Container Image: you need to create a docker file
 		- build and push image to ECR
 - 
+## Step functions
+![[Pasted image 20241002124321.png]]
+
+- 2 types State Machines:
+	- Standard: general purpose -> reccomended for Long Workload
+	- Express: for sreaming data -> reccomended Short Workload, (streaming, data ingection, even driven ecc...)
+- Some use cases:
+	- Manage a Batch job , if job fails send message with SNS
+	- Manage a Fargate Container
+	- Transfer Data Records
+	- **Per altri use cases andare a cercare step function use cases nella guida ufficiale di amazon**
+- Step Functions states: Allows us to pass nput and output without any work. Useful when constructing state machines
+	- Structure of state
+		- Parameters
+		- Result
+		- ResulthPath
+	- Task State
+		- ...
+		- Activites: Enables you to have a task in your state machine where the work is performed by a worker that can be hosted on anywhere eg: EC2, ECS, mobile phones
+	- Wait State: delays state machine from coninuing for a specificng time
+	- Succed State: stop an execution succesfully
+	- Fail State: stops eh executiion of a state machine and set failure
+	- Parallel States: can be used to create parallel branches of execution in your state machine The state machine does not move forward until both states complete
+- Step Function Inputs and Outputs: receive JSON event data as input and pass JSON as output
+	- You can manipulate JSON payload 
+		- InputhPath: allows us to select what we plan to pass to current step
+		- Parameters: allows to construct key paris. When you want to use JSONPATH for parameters you  need to add ".$" to the key name
+		- ResultSelector: lets you create a collection of key value pairs, where the values are static or selected from the state's result.
+		- ResultPath: Let's you decide to
+			- Use only the output from a task
+			- Use the input as the output
+			- Use the output and add or have it replace an existing key in the input and have that as the output
+		- OutputPath:
+	- JSONPath is a query languafe for JSON, similar to Xpath for XML
+		
+## AWS Compute Optimizer
+Analyzes the current configuration of your AWS Compute resources, and their utilization metrics from Amazon CloudWatch over a period of the last 14 days. 
+It will reccomend specific configuration changes
+
+## ElasticBeanStalk 
+With Elastic Beanstalk you can quickly deploy and manage applications in the AWS Cloud without having to learn about the infrastructure that runs those applications. 
+
+**Is not reccomended for production level application**
+
+- Supported Languages
+	![[Pasted image 20241002143955.png]]
+- Web vs Worker environment
+	![[Pasted image 20241002144228.png]]
+	- Web environment types:
+		- ![[Pasted image 20241002144443.png]]
+## Amazon Kinesis
+AWS fully managed solution for collecting processing, and analyzing streaming real-time data in the cloud.
+
+- 4 Different types
+	- Kineses Data Streams: is a real time data streaming service. Most flexible option 
+		- 2 capacity mode
+			![[Pasted image 20241002145345.png]]
+		- Producer and consumer
+			![[Pasted image 20241002150103.png]]
+	- Amazon Data FireHose: Serverless, simple version of data streams. allows for simple transformation and delivery of data.
+		- Usage
+			- You choose one consumer from a predefined list
+			- Data immediatly disappears once it's consumed
+		- Sources (Producers): In firehose allows easily to configure a source
+		- Destination(Consumer):
+			![[Pasted image 20241002152246.png]]
+		- Data Transformation: before data is sent to a destination it can be tranformed with AWS Lambda
+		- Dynamic Partitioning: enables you to continuosly streaming data by using keys within data and then deliver the data grouped by these keys into Amazon S3 Prefixes. Makes easier to run anlalytics. Once enabled it cnnot be disabled.
+		- Convert record format: Data firehose can convert JSON data into different file formats before being delivered to S3
+	- Manage Service for Apache Fink: Is a fully managed AWS service, to stream live video from devices to tha AWS cloud, or build applications for real time video processing or batch oriented analytics.
+	- Kinesis video streams: allows you to run queries agains that is flowing through your real time stream so you can create and analysis on emerging data.
+		![[Pasted image 20241002153311.png]]
+- Shards:
+	![[Pasted image 20241002150247.png]]
+- Partition Keys and Sequence Number:
+	![[Pasted image 20241002150355.png]]
+- Retention period: how long data will remain in the stream. It can be increase
+- Data Streams CLI: 
+	- Using the AWS CLI the PutRecord alow us to send data to the stream. Note that data has to be based64 encoded
+	- Using the AWS CLI the getRecords we can retrive data
+- EFO(Enhance Fan Out): allows upto 20 consumers to retrive records from a stream throughput of up to 2 MB of data per second per shard
+- KPL managed library by AWS to let you publish data to a Kineses data stream. Is a Java library
+- KCL: Kinese Client Library is a java library that makes it easy for developers to easily consume data for kineses. via the MultiDaemon other programming languages can be used
+
 
 # Computing
 ## EC2
