@@ -164,6 +164,133 @@ Informazioni utili:
 	- ![[Pasted image 20241001115642.png]]
 	- You always authenticate with the web identity first
 
+
+## EBS
+
+![[Pasted image 20241001174016.png]]
+- EBS: (vedi appunti AWS)
+	![[Pasted image 20241001174105.png]]
+	N.B io2 doesn't exist anymore use io2 Block Express
+- Volume type usages:
+	![[Pasted image 20241001174432.png]]
+	![[Pasted image 20241001174656.png]]
+
+## EFS
+(vedi appunti AWS per la definizione)
+![[Pasted image 20241001175602.png]]
+- EFS Client (amazon-efs-utils package): is an open-source collection of Amazon EFS tools.
+	- enables the ability to use Amazon CloudWatch to monitor an EFS file system's mount status
+	- You need to install the Amazon EFS client on an Amazon EC2 instance prior to mounting an EFS file system
+	- ![[Pasted image 20241001180345.png]]
+
+## Fsx
+Allows you to deploy scale feature-rich, high performance file systems in the cloud. Fsx support a variety of file system protocol.
+
+- types:
+	- Amazon FSX for NetApp ONTAP
+	- Amazon Fsx for OpenZFS
+	- Amazon FSX for Windows File Server (WFS)
+	- Amazon FSX for Lustre
+
+- Amazon FSX for Windows File Server (WFS)
+- File Cache: high speed cache for datasets stored anywhere, accelerate bursting workloads
+
+## AWS BACKUP
+Allows you to centrally manage backup accross AWS Services
+
+- Component:
+	- Backup Plan: A backup policy defines the backup schedule, backup window, backup lifecycle.
+	- Backup Vault: backup are stored in a backup vault
+	- AWS backup Audit Manager is built in reporting and auditing for AWS backup
+
+## Snow Family
+AWS Snow Family are storage and compute devices used to phisically move data in or out the cloud when moving data over the internet or private connection is to slow, difficult or costly.
+
+![[Pasted image 20241002093152.png]]
+- Snowcone: Portable secure devicce for edge computing
+	- types:
+		- Snowcone: 8 TB HDD
+		- Snowcone SSD: 8 TB SSD
+	- Two ways of sending data:
+		- Phisically shipping the device which runs on the device's compute
+		- AWS DataSync which runs on the device's compute
+	- Has an E link shipping label for easy shipping
+- SnowballEdge: Similar to Snowcone but with more local processing, edge computing worloads, and device configuration options.
+	- Config Options:
+		- Storage Optimized (for data transfer): 
+			- 100 TB (80 TB usable)
+		- Storage Optimized
+			- 210 TB usable
+		- Storage Optimized with EC2-Compatible compute
+			- 80 TB usable storage , 40vCPUs and 80 GB of memory
+		- Compute Optimized
+			- Up to 104 vCPUs, 416 GB of memory,and 28 TB of dedicated NVMe SSd
+		- Compute Optimized with GPU
+			- Has addition of GPUs equivalent to the one available in the Instance Type P3
+- AWS Snowmobile: 45-foot ship container truck. Used to handle 100 PB of data
+- Comparison
+	![[Pasted image 20241002094449.png]]
+
+## AWS transfer family
+Offers fully managed support for the tansfer files over SFTP, AS2,FTPS and FTP directly into and out of Amazon S3.
+![[Pasted image 20241002094829.png]]
+![[Pasted image 20241002094906.png]]
+
+## AWS Migration Hub
+Is a single place to discover your existing servers, plan migrations, and track the status of each application migration.
+
+AWS Migration hub can monitor migration using:
+- Application Migration Service (AMS)
+- Database Migration Service (DMS)
+
+Tools to migrate:
+- AWS Discovery Agent: Agent installed on your VM
+- Migration Evaluator Collector : You submit a request to ask helps from AWS team
+Other tools:
+- AWS Migration Hub Refactor: Bridges networking accross AWS Accounts so that legacy and new services can communicate while they maintain the independence of separate accounts
+- AWS Migration Hub Journey: guided templates
+## AWS Data Sync
+Is a data transfer service that simplifies data migration to, from, and between cloud storage services
+## Data Migration Service (DMS)
+AWS Database Migration Service (AWS DMS) is a managed migration and replication service that helps move your database and analytics workloads to AWS quickly, securely, and with minimal downtime and zero data loss.
+![[Pasted image 20241002101336.png]]
+**AWS Schema Conversion** is udes in many cases to automatically convert a source database schema to a target database schema
+For data warehouse you can use the desktop app **AWS schema conversion tool** 
+
+- Migration Methods:
+	![[Pasted image 20241002101956.png]]
+
+
+## Auto Scaling (different from ASG)
+AWS auto scaling is a service that can discover scaling resources whithin your aws account, and quickly add scaling plans to your scaling resources
+
+![[Pasted image 20241002102340.png]]
+
+## AWS Amplify
+A set of tools and services that helps you develop and deploy scalable full stack web and mobile applications
+
+Components:
+![[Pasted image 20241002102613.png]]
+
+Support a set of famous framework (Angular, React, Flutter ecc...)
+## Amazon AppFlow
+Is managed integration service for data transfer between data sources. Easily exchange data with over 80+ cloud services. By specifing a source destination. (Easy way to connect services)
+
+![[Pasted image 20241002103209.png]]
+
+## GraphSQL and AppSync
+
+- GraphQL: is an open-source agnostic query adaptor that allows you to query data from different data sources. GraphQL is used to build APIs where clients will send a query for nested data. GraphQL mitigates the issue of versioned or rapidly changing APIs compared to REST API because you can request the data you want
+- AppSync: Store and sync data across mobile and web apps in real-time. Makes use of GraphQL.
+	![[Pasted image 20241002104051.png]]
+## AWS Batch
+ AWS Batch helps you to run batch computing workloads on the AWS Cloud. Batch computing is a common way for developers, scientists, and engineers to access large amounts of compute resources. Rispetto alle Lambda: **No time limit** • • Batch jobs are defined as Docker images and run on ECS • **Rely on EBS and EC2 / instance store for disk space**.
+
+
+## OpenSearch Service
+Is a managed full-text search service that makes it easy to deploy operate and scale OpenSearch and ElasticSearch, a popular open-source search and analytics engine.
+
+
 # Computing
 ## EC2
 - Cloud-Init: is the industry standard multi-distribution method for cross-platform cloud instance initialization. It is supported accross all major public cloud providers, provisioning systems for private cloud infrastructure, and bare metal installations.
@@ -409,73 +536,3 @@ can find the optimal path from the end user to your web servers. Is  deployed wi
 	![[Pasted image 20241001173651.png]]
 	![[Pasted image 20241001173709.png]]
 - CloudFront Origin: is the source where CloudFront will send the requests
-## EBS
-
-![[Pasted image 20241001174016.png]]
-- EBS: (vedi appunti AWS)
-	![[Pasted image 20241001174105.png]]
-	N.B io2 doesn't exist anymore use io2 Block Express
-- Volume type usages:
-	![[Pasted image 20241001174432.png]]
-	![[Pasted image 20241001174656.png]]
-
-## EFS
-(vedi appunti AWS per la definizione)
-![[Pasted image 20241001175602.png]]
-- EFS Client (amazon-efs-utils package): is an open-source collection of Amazon EFS tools.
-	- enables the ability to use Amazon CloudWatch to monitor an EFS file system's mount status
-	- You need to install the Amazon EFS client on an Amazon EC2 instance prior to mounting an EFS file system
-	- ![[Pasted image 20241001180345.png]]
-
-## Fsx
-Allows you to deploy scale feature-rich, high performance file systems in the cloud. Fsx support a variety of file system protocol.
-
-- types:
-	- Amazon FSX for NetApp ONTAP
-	- Amazon Fsx for OpenZFS
-	- Amazon FSX for Windows File Server (WFS)
-	- Amazon FSX for Lustre
-
-- Amazon FSX for Windows File Server (WFS)
-- File Cache: high speed cache for datasets stored anywhere, accelerate bursting workloads
-
-## AWS BACKUP
-Allows you to centrally manage backup accross AWS Services
-
-- Component:
-	- Backup Plan: A backup policy defines the backup schedule, backup window, backup lifecycle.
-	- Backup Vault: backup are stored in a backup vault
-	- AWS backup Audit Manager is built in reporting and auditing for AWS backup
-
-# Snow Family
-AWS Snow Family are storage and compute devices used to phisically move data in or out the cloud when moving data over the internet or private connection is to slow, difficult or costly.
-
-![[Pasted image 20241002093152.png]]
-- Snowcone: Portable secure devicce for edge computing
-	- types:
-		- Snowcone: 8 TB HDD
-		- Snowcone SSD: 8 TB SSD
-	- Two ways of sending data:
-		- Phisically shipping the device which runs on the device's compute
-		- AWS DataSync which runs on the device's compute
-	- Has an E link shipping label for easy shipping
-- SnowballEdge: Similar to Snowcone but with more local processing, edge computing worloads, and device configuration options.
-	- Config Options:
-		- Storage Optimized (for data transfer): 
-			- 100 TB (80 TB usable)
-		- Storage Optimized
-			- 210 TB usable
-		- Storage Optimized with EC2-Compatible compute
-			- 80 TB usable storage , 40vCPUs and 80 GB of memory
-		- Compute Optimized
-			- Up to 104 vCPUs, 416 GB of memory,and 28 TB of dedicated NVMe SSd
-		- Compute Optimized with GPU
-			- Has addition of GPUs equivalent to the one available in the Instance Type P3
-- AWS Snowmobile: 45-foot ship container truck. Used to handle 100 PB of data
-- Comparison
-	![[Pasted image 20241002094449.png]]
-
-## AWS transfer family
-Offers fully managed support for the tansfer files over SFTP, AS2,FTPS and FTP directly into and out of Amazon S3.
-![[Pasted image 20241002094829.png]]
-![[Pasted image 20241002094906.png]]
