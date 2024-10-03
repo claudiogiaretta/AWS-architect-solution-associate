@@ -720,100 +720,62 @@ Amazon Elastic Kubernetis Service is a managed service that eliminates the need 
 - Amazon Managed Service for Graphana: is fully managed and secure data visualization service that you can use to instanly query, correlate, and visualize operational metrics , logs, and traces from multiple sources.
 
 ## KMS
+![[Pasted image 20241003154434.png]]
+- Multi tenant: means there are multiple customers that are using the same piece of hardware. In this way is it possible to reduce the cost of the service. Each part is isolated per user.
+	- **CloudHSM:** is single tenant
+- type of key
+	- **Customer Managed Key:**
+		- Create, manage and used by the customer, can enable or disable
+		- Possibility of rotation policy (new key generated every year, old key preserved)
+		- Possibility to bring-your-own-key 
+	- **AWS Managed Key:**
+		- Created, managed and used on the customer’s behalf by AWS
+		- Used by AWS services (aws/s3, aws/ebs, aws/redshift)
+	- **AWS Owned Key:**
+		- Collection of CMKs that an AWS service owns and manages to use in multiple accounts
+		- AWS can use those to protect resources in your account (but you can’t view the keys)
+	- **CloudHSM Keys (custom keystore):** 
+		- Keys generated from your own CloudHSM hardware device
+		- Cryptographic operations are performed within the CloudHSM cluster
+- CMK(Customer Master Key): are the primary resources in AWS KMS. Is a logical representation of a master key . Support both Symmethric(one key) and Assymethric CMKs(2 keys).
+## Audit Manager
+Continually audit your AWS usage to simplify risk and compliance assessment. 
+AWS Audit Manager contains: Framework Library, Control Library.
+You can create assesments to review the evidence collected and generate an assesment report.
 
-# Computing
-## EC2
-- Cloud-Init: is the industry standard multi-distribution method for cross-platform cloud instance initialization. It is supported accross all major public cloud providers, provisioning systems for private cloud infrastructure, and bare metal installations.
-- EC2 User data: script launch on EC2 boot
-- EC2 Meta Data: You can access to Ec2 Metadata from MDS(Meta data service). There are 2 typers Version 1 adn Verison 2.
-	- You can enforce the use of tokens 
-	- you can turn off endpoints all together
-- EC2 Naming convention:
-	![[Pasted image 20241001121648.png]]
-- Instance Family: Are different combination of CPU,Memory,Storage and Networking capacity
-	![[Pasted image 20241001122001.png]]
-	N.B there are not all but only the most important
-- EC2 Processors: 
-	 ![[Pasted image 20241001122628.png]]
-- EC2 Instance Profile: is a reference to an IAM role that will be passed and assumed by the EC2 instance when it starts up. allows you to avoid passing long live AWS credentials.
-- EC2 Lifecycle: 
-	![[Pasted image 20241001123523.png]]
-- EC2 Instance Console Screenshot: will take a screenshot of the current state of the instance
-- Hostname; unique name in your network to identify a machine via DNS.
-	- two types:
-		- IP Name: legacy name based on private access
-		- Resource Name: EC2 instance ID is included in the hostname
-- EC2 Default user name: The default user name for an operating system managed by AWS will vary based on distribution:
-	- When using SSM you will need to change yoour user to default
-	- ```sudo su -ec2-user```
--  EC2 Bustable Instances: allow workloads to handle bursts of higher CPU utilization fro very short duration
-- EC2 system log: Accessed by the EC2 Management Console, allows you to observe the system log for the EC2 Instance. Troubleshoot on boot to see if anything is wrong
-- EC2 Placement Group: the logical placement of your instances to optimize communication, performance, or durability. Free
-	- Cluster
-	- Partition
-	- Availability Zone
-- EC2 Connect:
-	- SSh Client
-	- EC2 instance connect: short lived ssh keys controlled by IAM policies
-	- Session Manager: Connect to linux windoes via reverse connection
-	- Fleet Manager Remote Desktop: Connect to a Windows Machine using RDP
-	- EC2 Serial console: establishes a serial connection giving you direc access
-- EC2 Amazon Linux: AWS's managed Linux distribution is based off CentOS and Fedora which in turn is based off Red Hat Linux. Reccomended to use Amazon Linux AL2023 e non AL2
-	- Amazon Linux extra: is a feature of AL2 that provides a way for users to install additional software packages.
-## AMI
-- Provides the information required to launch an instance. You can turn your EC2 instances into AMI's so you can create copies of your servers.
-	- Help you keep incremental changes to your OS, application code, and system packages.
-	- AMI Id is different per region. You need to be carefull when you buy one
-	- AMI has two types of boot model:
-		- Unified Extensible Firmware Interface (UEFI): Modern
-		- Legacy BIOS: Legacy da evitare
-	- Elastic Network Adapter supports network speeds of up to 100 GBps for supported instance types.
-	- AMI Settings:
-		- Public:
-		- Explicit: Specific to certain AWS accounts
-		- Implicit: The owner can launch the AMI
-## ASG
-Check "AWS appunti" first
-- Schema:
-	![[Pasted image 20241001144825.png]]
-- Automatic scaling can occur via:
-	- Capacity settings
-	- Health Check Replacements
-	- Scaling Policy: (vedi appunti AWS)
-- Capacity Settings: The size of an Auto Scaling group based on Min Size, Max Size, Desired Capacity
-- Health Check Replacement: when an ASG replaces an instances if is considered unhealty. Two types of health checks ASG can perform
-	- EC2 Health Check: If the EC2 instance fails either of its EC2 Status Check
-	- ELB Health Check: ASG will perform a health check based on the ELB health check. ELB pings an HTTP endpoint at a specific path, port and status code
-- ELB integration: An ELB can be attached to you Auto Scaling Group 
-	- Classic Load Balancers are associeted directly to the ASG
-	- ALB, NLB or GWLB are associeted indirectly via their Target Group
-	 **N.B attached = can use Load Balancer Health check**
-- Dynamic Scaling Policies: how much ASG should change capacity. Policies are triggered based on Cloud Watch Alarms:
-	- Simple, Step and Target Scaling
-	- Based on adjustment types: how capacity should change
-		- ChangeInCapacity
-		- ExactCapacity
-		- PercentChangeInCapacity
-- Simple Scaling: (vedi appunti AWS)
-- Step Scaling: (vedi appunti AWS)
-- Target Scaling: (vedi appunti AWS)
-- Predictive Scaling Policies: (vedi appunti AWS)
-## ELB
-It is a suite of Load balancer from AWS
+## AWS Certificate Manager
+ Let’s you easily provision, manage, and deploy SSL/TLS Certificates. 2 types of certificate **Public, Private**. ACM can be attached to the following AWS resources: **Elastic Load Balancer,CloudFront, API Gateway, Elastic Beanstalk.**
+ 
+ - **Terminating SSL at the Load Balancer.** All traffic in-transit beryond the ALB is unencrypted. You can add as many as EC2 instances that you want
+ ![[Pasted image 20241003163140.png]]
+ - **Terminating SSL End-to-End**: Traffic is encrypted in-transit all the way to the application
+ ![[Pasted image 20241003163241.png]]
+## AWS Cognito
+Is a Customer identity and access management system. It provides authentication, authorization and user management for your web and mobile apps. It also provides authentication to AWS Services 
+![[Pasted image 20241003163859.png]]
+## Amazon Detective
+Amazon Detective analyzes, investigates, and quickly identifies the root cause of security issues or suspicious activities (using ML and graphs). More powerful than **GuardDuty, Macie, and Security Hub.**
+![[Pasted image 20241003164356.png]]
 
-- Rules of traffic
-	- Struttura:
-		- Listeners: incoming traffic is evaluetad against listeners. check matches with the Port (ex port 443 or port 80)
-		- Rules (only ALB): Listeners will then invoke rules to decide what to do with the traffic. Generally, the next step is to forward traffic to a Target Group
-		- Target Groups(not CLB): Are logical grouping of possible targets such as specific EC2 instances, IP addresses
-		- **only for CLB traffic** is sent to the Listeners. When the port matches, it forwards the traffic to any EC2 instances that are registered to che Classic Load Balancer. CLB does not allow you to apply rules to listeners.
-- Application Load Balancer:
-	![[Pasted image 20241001154721.png]]
-- Network Load Balancer:
-	![[Pasted image 20241001154905.png]]
-	-
-- Classic Load Balancer:
-	![[Pasted image 20241001155036.png]]
+## Directory Service
+A directory service  that maps the names of network resources to their network addresses.
+A directory service is shared information infrastructure for locating, managing, administering and organizing resources.
+
+Well known services:
+- Domain Name Service (DNS), Microsoft Active Directory, Apache Directory Server, Oracle Internet Directory, Open LDAP, CLoud Identity, JumpCloud
+AWS Directory service: provides multiple ways to use Microsoft Active Directory. 
+- Simple AD: Not available for all the regions.  powered by Sambda.
+- AD Connector: a proxy service to connect your existing on-premise AD Directory
+- AWS Managed Microsoft AD: A full feature managed version of MS active directory
+- Amazon Cognito
+
+## AWS Firewall Manager
+ AWS Firewall Manager allows  you to centrally configure and manage firewall rules accross accounts and applications. 
+ ![[Pasted image 20241003170926.png]]
+## AWS Inspector
+Amazon Inspector is an **automated** security assessment service that helps improve the security and compliance of applications deployed **on your Amazon EC2 instances**. Amazon Inspector automatically assesses applications for exposure.
+## Amazon Macie
+![[Pasted image 20241003171751.png]]
 # Network
 ## AWS VPC
 - AWS VPC: Logically isolated network, Region specific. 5 VPC per region. 200 subnet per VPC
