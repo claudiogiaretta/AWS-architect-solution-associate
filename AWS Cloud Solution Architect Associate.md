@@ -776,6 +776,122 @@ AWS Directory service: provides multiple ways to use Microsoft Active Directory.
 Amazon Inspector is an **automated** security assessment service that helps improve the security and compliance of applications deployed **on your Amazon EC2 instances**. Amazon Inspector automatically assesses applications for exposure.
 ## Amazon Macie
 ![[Pasted image 20241003171751.png]]
+## AWS Security Hub
+Central security tool to manage security across several AWS accounts and automate security checks. Allow you to generate a security score to determine your security posture. Allows you to enable standards(collection of security control)
+## Secret Manager
+Store and rotate automatically database credentials. Enforce encryption at rest by using KMS. It as a cost. For credential access monitor you can use Cloud Trail.
+
+You can setup automatic rotation, is not enabled by default. 
+(Under the hood it uses lambda)
+## Amazon Dev Tools
+- Amazon Q is an AI chatboat using multiple LLm models via Bedrock Ask Amazon Q a question similar to chatGPT or other generative AI. 
+
+![[Pasted image 20241003174240.png]]
+- **Amazon CodeWhisper**: is a realt-time AI coding companion. Genaretes suggested code while you're writing code.
+![[Pasted image 20241003174535.png]]
+## Amazon MSK
+## AWS Shield
+## WAF
+## Cloud HSM
+## Amazon GuardDuty
+## Health Dashboard
+## AWS Artifact
+## Storage Gateway
+## EC2 Pricing Models
+
+# Computing
+## EC2
+- Cloud-Init: is the industry standard multi-distribution method for cross-platform cloud instance initialization. It is supported accross all major public cloud providers, provisioning systems for private cloud infrastructure, and bare metal installations.
+- EC2 User data: script launch on EC2 boot
+- EC2 Meta Data: You can access to Ec2 Metadata from MDS(Meta data service). There are 2 typers Version 1 adn Verison 2.
+	- You can enforce the use of tokens 
+	- you can turn off endpoints all together
+- EC2 Naming convention:
+	![[Pasted image 20241001121648.png]]
+- Instance Family: Are different combination of CPU,Memory,Storage and Networking capacity
+	![[Pasted image 20241001122001.png]]
+	N.B there are not all but only the most important
+- EC2 Processors: 
+	 ![[Pasted image 20241001122628.png]]
+- EC2 Instance Profile: is a reference to an IAM role that will be passed and assumed by the EC2 instance when it starts up. allows you to avoid passing long live AWS credentials.
+- EC2 Lifecycle: 
+	![[Pasted image 20241001123523.png]]
+- EC2 Instance Console Screenshot: will take a screenshot of the current state of the instance
+- Hostname; unique name in your network to identify a machine via DNS.
+	- two types:
+		- IP Name: legacy name based on private access
+		- Resource Name: EC2 instance ID is included in the hostname
+- EC2 Default user name: The default user name for an operating system managed by AWS will vary based on distribution:
+	- When using SSM you will need to change yoour user to default
+	- ```sudo su -ec2-user```
+-  EC2 Bustable Instances: allow workloads to handle bursts of higher CPU utilization fro very short duration
+- EC2 system log: Accessed by the EC2 Management Console, allows you to observe the system log for the EC2 Instance. Troubleshoot on boot to see if anything is wrong
+- EC2 Placement Group: the logical placement of your instances to optimize communication, performance, or durability. Free
+	- Cluster
+	- Partition
+	- Availability Zone
+- EC2 Connect:
+	- SSh Client
+	- EC2 instance connect: short lived ssh keys controlled by IAM policies
+	- Session Manager: Connect to linux windoes via reverse connection
+	- Fleet Manager Remote Desktop: Connect to a Windows Machine using RDP
+	- EC2 Serial console: establishes a serial connection giving you direc access
+- EC2 Amazon Linux: AWS's managed Linux distribution is based off CentOS and Fedora which in turn is based off Red Hat Linux. Reccomended to use Amazon Linux AL2023 e non AL2
+	- Amazon Linux extra: is a feature of AL2 that provides a way for users to install additional software packages.
+## AMI
+- Provides the information required to launch an instance. You can turn your EC2 instances into AMI's so you can create copies of your servers.
+	- Help you keep incremental changes to your OS, application code, and system packages.
+	- AMI Id is different per region. You need to be carefull when you buy one
+	- AMI has two types of boot model:
+		- Unified Extensible Firmware Interface (UEFI): Modern
+		- Legacy BIOS: Legacy da evitare
+	- Elastic Network Adapter supports network speeds of up to 100 GBps for supported instance types.
+	- AMI Settings:
+		- Public:
+		- Explicit: Specific to certain AWS accounts
+		- Implicit: The owner can launch the AMI
+## ASG
+Check "AWS appunti" first
+- Schema:
+	![[Pasted image 20241001144825.png]]
+- Automatic scaling can occur via:
+	- Capacity settings
+	- Health Check Replacements
+	- Scaling Policy: (vedi appunti AWS)
+- Capacity Settings: The size of an Auto Scaling group based on Min Size, Max Size, Desired Capacity
+- Health Check Replacement: when an ASG replaces an instances if is considered unhealty. Two types of health checks ASG can perform
+	- EC2 Health Check: If the EC2 instance fails either of its EC2 Status Check
+	- ELB Health Check: ASG will perform a health check based on the ELB health check. ELB pings an HTTP endpoint at a specific path, port and status code
+- ELB integration: An ELB can be attached to you Auto Scaling Group 
+	- Classic Load Balancers are associeted directly to the ASG
+	- ALB, NLB or GWLB are associeted indirectly via their Target Group
+	 **N.B attached = can use Load Balancer Health check**
+- Dynamic Scaling Policies: how much ASG should change capacity. Policies are triggered based on Cloud Watch Alarms:
+	- Simple, Step and Target Scaling
+	- Based on adjustment types: how capacity should change
+		- ChangeInCapacity
+		- ExactCapacity
+		- PercentChangeInCapacity
+- Simple Scaling: (vedi appunti AWS)
+- Step Scaling: (vedi appunti AWS)
+- Target Scaling: (vedi appunti AWS)
+- Predictive Scaling Policies: (vedi appunti AWS)
+## ELB
+It is a suite of Load balancer from AWS
+
+- Rules of traffic
+	- Struttura:
+		- Listeners: incoming traffic is evaluetad against listeners. check matches with the Port (ex port 443 or port 80)
+		- Rules (only ALB): Listeners will then invoke rules to decide what to do with the traffic. Generally, the next step is to forward traffic to a Target Group
+		- Target Groups(not CLB): Are logical grouping of possible targets such as specific EC2 instances, IP addresses
+		- **only for CLB traffic** is sent to the Listeners. When the port matches, it forwards the traffic to any EC2 instances that are registered to che Classic Load Balancer. CLB does not allow you to apply rules to listeners.
+- Application Load Balancer:
+	![[Pasted image 20241001154721.png]]
+- Network Load Balancer:
+	![[Pasted image 20241001154905.png]]
+	-
+- Classic Load Balancer:
+	![[Pasted image 20241001155036.png]]
 # Network
 ## AWS VPC
 - AWS VPC: Logically isolated network, Region specific. 5 VPC per region. 200 subnet per VPC
