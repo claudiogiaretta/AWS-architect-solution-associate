@@ -626,6 +626,8 @@ Diffeerence between REST and HTTP API Gateway:
 
 **HTTP API Components:**
 ![[Pasted image 20241003101213.png]]
+## Amazon Keyspace
+
 # Computing
 ## EC2
 - Cloud-Init: is the industry standard multi-distribution method for cross-platform cloud instance initialization. It is supported accross all major public cloud providers, provisioning systems for private cloud infrastructure, and bare metal installations.
@@ -957,3 +959,127 @@ Automatically extracts text, handwriting, and data from any scanned documents us
 Amazon Connect is an AI-powered application that provides one seamless experience for your contact center customers and users. It's comprised of a full suite of features across communication channels.
 
 
+# Database
+## RDS
+It’s a managed DB service for DB use SQL as a query language. It allows you to create databases in the cloud that are managed by AWS. (puoi decidere di usa un db relazionale anche senza rds sulle ec2 ma te lo devi gestire tu). 
+![[Pasted image 20241003101453.png]]
+
+**Encryption:**
+- Encryption in transit: enabled by default
+- Encryption at rest: can be enabled 
+- Encrypt also automated backups, snapshot and read replica
+- Can be enabled only during creation
+
+**RDS Backup:**
+- Types
+	- Automated backup: choose retention period between 0 and 35 days
+		- enabled by default
+		- stored in s3
+		- no ccharge for additional data in automated backups
+	- Manual Snapshot
+		- taken manually
+		- additional storage charge 
+- Restoring a backup: creates a new RDS instance and restores data in that instance 
+		- Restoring a manual snapshot
+		- Restoring Point in time (PITR): similar but provide restore time
+- Take long time to restore database: is not immidiate.
+
+**DB Subnet Group**: collection of subnet that you create in a VPC and that you then designate for your DB instances.
+- Each DB subnet group should have subnets in at least two Availability Zones in a given AWS Region.
+- RDS will choose a subnet from your subnet group to deploy your RDS Instance
+- Subnets in a DB subnet group are either public or private
+- For a DB instance to be publicly accessible, all of the subnets in its DB subnet group must be public
+![[Pasted image 20241003103052.png]]
+**Scelte architetturali:**
+- **Read Replicas:** 
+	- **disaster recovery** solution if the primary DB instance fails  
+	- Improve **read contention** which means improve performance latency. 
+		- Read contention: when multiple proccesses or instances competing for access to the same index or data block at the same time.
+	- You must have automatic backups enabled. 
+	- type of replicaion: asyncronous replication
+	- Maximum of 5 replicas of a database
+	- Replica techniques:
+		![[Pasted image 20241003104330.png]]
+	
+- **Multi AZ vs Read Replicas**
+	![[Pasted image 20241003104808.png]]
+- **DB instances:** is an isolated database environment running in the clous
+	- DB instance can contain one or multiple user created database
+	- Each database has user defined database identifier which forms part of the DNS hostname
+	- DB instance Class: just like ec2 instance class determine available compute memory or a db instance
+	- DB instance use Elastic Block Storage (EBS) volumes for database and log storage
+	- Maximum storage of 64TB
+- **RDS Performance Insights:** helps you easily identify bottlenecks and performance issues. Is default by default and provides  1 week of performing data. For additional cost you can change the retention period to 2 years.
+- **RDS Custom:** automates database administration tasks and operatio. Allows customers to directlu manage aspects of RDS aspects of RDS instead of AWS, for company that needs third party applications for their dataabse.
+	![[Pasted image 20241003105648.png]]
+- **RDS Proxy:** create a connection pooler so that short lived AWS Lambda functions connecting to RDS does not quick exahaust all connection. Reuse existing connection to do this.
+	![[Pasted image 20241003110329.png]]
+- **Optimized Reads and Writes:** allow database operations to maximize perfrmance efficency and throughtput. Use NVMe based SSD block storage instead
+	- Query use temporary tables
+- **IAM Authentication:** allows you to authenticate with an IAM authentication token to an RDS instance's database insteas of using a password.
+	 ![[Pasted image 20241003110737.png]]
+	- You have to create a policy and attach to user
+	- You have to create db user 
+	- You need to generate auth token to be used for password authentication
+- **Kerberos Authentication:** Is a network auth protocol which is also directly integreted into Microsoft Active Directoruy.
+- **RDS Secrets Manager Integration:** can manage an RDS instance's master user password, allowing it to be rotated. default rotate pass every 7 days.
+- **Master User Account:** is the initial databse account that's created when you provision a new Db instance. Has full privilages. Pass and username set at creation time.
+- **Database Activity Streams:** allows you to control administrator access to data streams to secure both external and internal security threats. It can be turned on from CLI.
+	- Work with kinesis pushing data from rds to kinesis in real time.
+- **Parameter Groups:** act as a container for engine configuration values that are applied to one or more DB instances. Let you change database parameters specify how the database is configured.
+- **Public Accessibility:** is an option that changes if the DNS Endpoint reslve to the private IP address from traffic from outside the VPC
+- **Establishing Public Connections:** few options:
+	- Use a DB management/ DB IDE 
+	- AWS CloudShell and use database client or database driver
+	- Programmatcially connect with database driver from your language of choice
+	- Connection url string: A single string containing all the parameters to connect to a database drivers and database command line clients.
+- **Establishing Private Connections:** 
+	- ![[Pasted image 20241003113624.png]]
+	- How
+		- Using Cloud9
+		- Through Bation or Jumpbox
+		- Launch EC2 instances and connect via SSH or session manager
+		- Use AWS Client VPN to connect 
+		- For On-premise using AWS Direct Connect
+		- AWS CLoudShell can't be used because is not in the same VPC
+- **RDS Security Groups:** In order to establish connection for both public and private you need to open the port
+- **RDS Blue Green Deployments:** copies a production database environment in a separate, synchronized staging environment
+- **RDS Extended Support:** allows you to run your database on a major engine version past the RDS end of standard support date for an additional cost.
+
+## Aurora
+***Serverless***,• Automated database instantiation and auto -scaling based on actual usage • PostgreSQL and MySQL are both supported as Aurora Serverless DB. **Aurora costs more than RDS (20% more).
+
+- **Aurora Scaling:** 
+	![[Pasted image 20241003114728.png]]
+- **Aurora Serverless Provisioned:** default compute configuration for Aurora. primary db that perform read and writes and up to 15 Replica. primary DB instance is not created by default
+- **Reader vs Writer Instances:** 
+	![[Pasted image 20241003115330.png]]
+- **Aurora Serverless V2:** fully manages the autoscaling configuration for Amazon Aurora
+	- Capacity is adjusted automatically based on application demand
+	- charge only for resources used
+	- use case: Highly variable workloads
+	- Does not scale to zeero, must mainaine at least 0.5 ACU
+	![[Pasted image 20241003115938.png]]
+- **Aurora Serverless V2 vs Provisioned:**
+	![[Pasted image 20241003120332.png]]
+- **Aurora Global Database:** is a database spanning multiple regions for global low latency  and high availabilty. Primary cluster is in a separate region
+- **RDS Data API:** allows you to use HTTP to securely query an Aurora database. Unlimited max request per seconds. Unlimited max request per seconds. Must be enabled 
+## DocumentDB
+ - **MongoDB:** use BSON(Binary JSON). has a shell(mongosh).
+ - **DocumentDB**: is a NOSQL document database that is "MongoDB compatible" MongoDB is very popular NoSQL among developers. 
+	![[Pasted image 20241003122328.png]]
+## DynamoDB
+Amazon DynamoDB is a ***serverless***, NoSQL (key/value), fully managed database with single-digit millisecond performance at any scale. **• Fully Managed Highly available with replication across 3 AZ.
+
+![[Pasted image 20241003122625.png]]
+- **Read Consistency:** When data needs to be updated in all of its copy and keep data consistent.
+	- there are different types of read consistency:
+		![[Pasted image 20241003123002.png]]
+- **Partitions:** is an allocation of storage for a able, and automatically replicated accross multiple AZs. DyanmoDB creates partitions for you as your data grow. starts off with single partition
+	- creates a partition evry 10 GB or when you exceed ...
+- **Primary Keys:** cannot be changed.
+- **Simple Primary Key:** a primary key with ony a Partition key to choose which partition
+- **Composite Primary Key:** a primary key with both a Partition and a sort key to choose partition
+- **Query:** 
+	![[Pasted image 20241003124503.png]]
+- **Scan:** scan throush all items return one or more items. (much less efficient then query - not said by amazon)
