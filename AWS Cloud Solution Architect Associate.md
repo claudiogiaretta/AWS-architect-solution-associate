@@ -627,6 +627,99 @@ Diffeerence between REST and HTTP API Gateway:
 **HTTP API Components:**
 ![[Pasted image 20241003101213.png]]
 ## Amazon Keyspace
+![[Pasted image 20241003125003.png]]
+
+
+## Neptune
+Amazon Neptune is a fast, reliable, fully managed graph database service that makes it easy to build and run applications that work with highly connected datasets.
+
+![[Pasted image 20241003130018.png]]
+- Netpune Database: 2 types
+	- Provisioned: you choose an instance type
+	- Serverless: set a min and max Nepune Capacity units
+- Neptun Anlyses:  provide capabilites to run large-scale graph analytics algorithms efficiently
+- Gremlin: is the graphic traversal language for Apache TinkerPop
+	- designed to the WORA (Write once, run anywhere)
+	- real time database query (OLTP)
+	- batch analytics query (OLAP)
+- OpenCypher: opensource implementation of cypher 
+	- more developer friendly to write query insetad of Gremlin
+- SparQL is an RDF(Resource Description Framework) query language. Allows users to write queries against what can loosely be called key-value data.
+
+
+## ECR
+Private Docker Registry on AWS, similar to docker hub. Makes it easier for developers to store, manage, and deploy Docker container images.
+Lets you to store Docker and Open Container Initiative (OCI) Images.
+
+You can 
+- controll acces via Register Policy:
+	- ReplicateImage
+	- BatchImportUpstreamImage
+- Controll access via Repo Policy:
+	- DescribeImages
+	- DescribeReposiory
+
+You must  remotely lognt using docker in you environmetn
+
+Image tag mutability feature prevent images tags from being overwritten
+ECR Lifecyle policy: can be used to expire old images based on specific criteria
+
+## ECS
+ Amazon Elastic Container Service (Amazon ECS) is a fully managed container orchestration service that helps you easily deploy, manage, and scale containerized applications. Compare to fargate you need to build the infrastructure on your own (EC2 instances).
+ - **Cluster**
+ - **Task definition**
+ - **Task**
+ - **Service**
+ - **Conatiner Agent**
+ - **ECS Controller / Scheduler**
+
+**ECS Fargate**
+AWS Fargate is a technology that you can use with Amazon ECS to run [containers](https://aws.amazon.com/what-are-containers) without having to manage servers or clusters of Amazon EC2 instances. With AWS Fargate, you no longer have to provision, configure, or scale clusters of virtual machines to run containers. 
+![[Pasted image 20241003143010.png]]
+
+You can apply a security group to a task
+You can apply an IAM role to the Task
+
+- **Execution role**: used to prepare or manage the contianer
+- **Task role:** is the role that is used by the running compute of the container (when the container is running)
+- **ECS capacity providers** manage the scaling of the infracture for tasks in your clusters.
+
+- **ECS Task Lifecycle:**
+	![[Pasted image 20241003143946.png]]
+- **Task Definition:**
+	- Family, Execution role, Task role, Network Mode, CPU and Memory, Requires compatibilities, Container definition
+	- Container Definition
+		- Name, Dockerhub, Essential, Health Chekcs, port mapping, log configuration, environment, secrets
+- Port Mappings
+	![[Pasted image 20241003144650.png]]
+- ECS Exec: allows you to direct interact with containers without needing to first interact with the host conatiner operating system, open inbound ports, or manage SSH Keys. cannot be used with AWS console.
+- Log configuration: You can set log driver that tells where the container should log. There are other third-party log driver. AWS log is blocked by default you need to configure it to enable it.
+- ECS Service Connect: makes it easy to setup a service mesh for service-to-service communication. Evolution of AppMesh.
+	- Service Connect will deploy a sidecar proxy container. You can use the service discovery name to easily talk to other service
+- ECS Optimized AMIs are preconfigured with the requirements and reccomnadations to run your containerA
+	![[Pasted image 20241003150216.png]]
+- ECS ANywhere: allows you to register external VMS residing from you ron-premises network to your cluster
+	![[Pasted image 20241003151049.png]]
+## EKS
+Amazon Elastic Kubernetis Service is a managed service that eliminates the need to install, operate, and maintain your own kubernetes control panel
+![[Pasted image 20241003151405.png]]
+ EKS can use for its compute nodes: ...
+ EKS Connector: if you want to connect your own kubernetis cluster
+ EKS CTL: is CLI tool for waily setting up kubernetis clusters on AWS.
+ - EKS Distro: is a Kubernetis distribution based on and used by EKS to create reliable and secure kubernetis clusters.
+	 ![[Pasted image 20241003152350.png]]
+- **EKS anywhere**: is a deployment option for Amazon EKS to easily create and operate kubernetis clusters on premises with your own Vms or bare metal hosts.
+- Traces and Spans: 
+	- Trace is a data/execution path through the system, and can be thought of as a directed acyclic graph (DAG) of spans
+	- Span: represents a logical unit of work in Jaeger that has an operation name, the start time of the operation, and the duration. Spans may be nested and ordered to model causal relationships
+- AWS Distro for Open Telemetry is a secure, production ready, AWS supported distribution of the Open Telemetry project 
+- Prometheus: Open soruce monitoring and alerting toolkit originally built at SounCLoud. Is a timeseries database (Collect and stores itrs metrics as time series data). 
+- Amazon Managed Service for Prometheus (AMP) is a Prometheus compatible monitoring service for container infraswtructure and application metrics
+	![[Pasted image 20241003153857.png]]
+- Graphana: is an open source analytics web application. is used with timeseries database like Prometheus
+- Amazon Managed Service for Graphana: is fully managed and secure data visualization service that you can use to instanly query, correlate, and visualize operational metrics , logs, and traces from multiple sources.
+
+## KMS
 
 # Computing
 ## EC2
