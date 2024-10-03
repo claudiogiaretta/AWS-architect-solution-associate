@@ -556,88 +556,76 @@ different type of nodes:
 	- SerDe: is a serialization and deserialization libraries for parsing data form different format
 		- Can override the DDL configuration that you specify in Athena when you create your table
 
-## CodeGuru
-![[Pasted image 20241002171037.png]]
-## Amazon comprehend
-Fully managed and **serverless** service for Natural Language Processing. Uses machine learning to find and analyse insights and relationships in text. use cases: analyze customer interactions (emails) to find what leads to a positive or negative experience.
-
-Analyze Text and extract: Entities, Key phrases, language,PII (personal information), Sentiment (feeling of the sentence), Targeted sentiment (specific word ), syntex, custom models
-
-## Amazon Rekognition:
-Amazon Rekognition is image and video reognition service. Analyze images and videos to detect and labels objects, people, clebrities.
-
-Find objects, people, text, scenes in images and videos using ML • Facial analysis and facial search to do user verification, people counting
-
-![[Pasted image 20241002175456.png]]
-## Amazon Transcribe:
-**Automatically convert speech to text** • Uses a deep learning process called automatic speech recognition (ASR) to convert speech to text quickly and accurately • Automatically remove Personally Identifiable Information (PII) using Redaction • Supports Automatic Language Identification for multi-lingual audio
-
-## Amazon Polly:
-Is a Text-to-speech service • Allowing you to create applications that talk
-Engine Types (from less expensive to most expensive):
-- Standard - 
-- Long Form -
-- Neural -
-Lexicon - for specialized pronuciation
-Speech Marks - metadata that describes speech
-
-Use an xml based language: **Speech Synthesis Markup Language (SSML)**
-
-## Amazon Translate:
-Natural and accurate language translation
-
-## Amazon SageMaker:
-Fully managed service for developers / data scientists to build ML models
-
-## Amazon Forecast:
-Fully managed service that uses ML to deliver highly accurate forecasts • example: predict the future sales of a raincoat
-
-Amazon Forecast Workflow: 
-![[Pasted image 20241002172257.png]]
-
-## Fraud Detection
-Fully managed fraud detection service. Identify potentially illegal online activities such as online payment fraud and the creation of fake accounts
-
-Predefined Model:
-- Online Fraud Detection
-- Transactional Fraud Detection 
-- Account Takeover insight
-You can also **create you custom model detection**
-
-- Components:
-	![[Pasted image 20241002172935.png]]
-- In order to create your model you need to define event, we need defines **Lables, Entities and Variables**
-## Amazon Kendra:
-Fully managed **document search** service powered by Machine Learning. Use keyword based search with semantic contextual understanding capabilites.
-
-Components:
-![[Pasted image 20241002173433.png]]
-Two version: Developer and Enterprise
-![[Pasted image 20241002173605.png]]
-You need to create Index
-
-## Amazon Lex
-is a conversion interface service. With Lex you can build conversational **voice and text chatbots**. 
-
-Components:
-![[Pasted image 20241002174306.png]]
-## Amazon Personalize:
-Fully managed ML-service to build apps with real-time personalized recommendations 
-
-![[Pasted image 20241002174520.png]]
-
-Data:
-	![[Pasted image 20241002174606.png]]
 
 
-## Amazon Textract:
-Automatically extracts text, handwriting, and data from any scanned documents using AI and ML.
 
-![[Pasted image 20241002175758.png]]
 
-## Amazon Connect:
-Amazon Connect is an AI-powered application that provides one seamless experience for your contact center customers and users. It's comprised of a full suite of features across communication channels.
 
+## AWS Data Exchange
+Is a catalogue of third-party datasets. You can download for free subscribe or purchase datasets.
+
+You can download dataset and upload your own dataset. Data grants is the tool that allow you to control access to your datasets.
+
+## AWS Glue
+AWS Glue is serverless data integration that makes it easy for analytics users to discover, prepare, move and integrate data from multiple sources.
+
+![[Pasted image 20241003092304.png]]
+- 3 Engines for AWS Glue Jobs
+	- Python Shell Engine
+	- Ray Job
+	- Spark
+AWS Glue ETL jobs are charged based on the number of data processing units DPUs
+- AWS GLue allocates 10DPUs to each hspark job
+- 2 DPU to each Spark Streaming job
+- AWS Glue allocates 6 M-DPUs to each Ray job
+A combination of Work type and Number of worker will determine DPUs
+
+- AWS Glue Studio allows to visually build ETL pipelines
+	- Pipeline:
+		- Composed by nodes
+			- Sources
+			- Transform
+			- Targets
+		- You can use version control
+- AWS Glue  Data Catalog: is a fully manage Apache Hive Metastore-compatible catalog service that makesit easy for customer to store, anntoate and share metadata about their data
+	- Components:
+		- Glue Database: is a container for multiple AWS Glue tables
+		- Table
+			- Glue Table: metadata definition that represent your data, including schema.
+			- Apache Iceberg table
+		- Glue Crawler:Is a tool that is used to analyze a targeted data source to determine its schema and generate AWS Glue Data Tables
+			- Data Sources: S3, JDBC, DynamoDb, MongoDB, Delta lake, Apache Iceberg, Hudi
+			- Can be run on demand or on schedule
+## Lake Formation 
+**Data Lakes**: A data lake is a centralized data repositoru for unstructured and semi structured data. contain vast amount of data. Data lakes generally use object(blob) or file as its storage type.
+![[Pasted image 20241003093952.png]]
+**AWS Lake Formation:** is a data lake to centrally govern secure and globally share data for analytics and machine learning.
+![[Pasted image 20241003094159.png]]
+## Amazon API Gateway
+
+**Open API**: is a specification, defines a standard, language agnostic interface to RESTFUL api. Represented as either JSON or YAML.
+
+**API Gateway:** is a program that sits between a single-entry point and multiple backends.
+**Amazon API Gateway:** is a soultion for creating secure APIs in your cloud environment at any scale.
+Create APIs that act as a front door for applications to access data, business logic or functionality from a back-end service.
+![[Pasted image 20241003095122.png]]
+- 3 types:
+	- Rest API (API Gateway V1)
+		- Higher cost
+		- Both private and public options
+	- HTTP API(API Gateway V2)
+		- Simple feature
+		- Only public APIs
+	- Web Socket API: persistent connections for real time use cases such as chat application or dashboard
+
+Diffeerence between REST and HTTP API Gateway:
+![[Pasted image 20241003100632.png]]
+![[Pasted image 20241003100745.png]]
+**REST API Components:**
+![[Pasted image 20241003101019.png]]
+
+**HTTP API Components:**
+![[Pasted image 20241003101213.png]]
 # Computing
 ## EC2
 - Cloud-Init: is the industry standard multi-distribution method for cross-platform cloud instance initialization. It is supported accross all major public cloud providers, provisioning systems for private cloud infrastructure, and bare metal installations.
@@ -883,3 +871,89 @@ can find the optimal path from the end user to your web servers. Is  deployed wi
 	![[Pasted image 20241001173651.png]]
 	![[Pasted image 20241001173709.png]]
 - CloudFront Origin: is the source where CloudFront will send the requests
+
+
+# Machine Learning 
+## CodeGuru
+![[Pasted image 20241002171037.png]]
+## Comprehend
+Fully managed and **serverless** service for Natural Language Processing. Uses machine learning to find and analyse insights and relationships in text. use cases: analyze customer interactions (emails) to find what leads to a positive or negative experience.
+
+Analyze Text and extract: Entities, Key phrases, language,PII (personal information), Sentiment (feeling of the sentence), Targeted sentiment (specific word ), syntex, custom models
+
+## Rekognition:
+Amazon Rekognition is image and video reognition service. Analyze images and videos to detect and labels objects, people, clebrities.
+
+Find objects, people, text, scenes in images and videos using ML • Facial analysis and facial search to do user verification, people counting
+
+![[Pasted image 20241002175456.png]]
+## Transcribe:
+**Automatically convert speech to text** • Uses a deep learning process called automatic speech recognition (ASR) to convert speech to text quickly and accurately • Automatically remove Personally Identifiable Information (PII) using Redaction • Supports Automatic Language Identification for multi-lingual audio
+
+## Polly:
+Is a Text-to-speech service • Allowing you to create applications that talk
+Engine Types (from less expensive to most expensive):
+- Standard - 
+- Long Form -
+- Neural -
+Lexicon - for specialized pronuciation
+Speech Marks - metadata that describes speech
+
+Use an xml based language: **Speech Synthesis Markup Language (SSML)**
+
+## Translate:
+Natural and accurate language translation
+
+## SageMaker:
+Fully managed service for developers / data scientists to build ML models
+
+## Forecast:
+Fully managed service that uses ML to deliver highly accurate forecasts • example: predict the future sales of a raincoat
+
+Amazon Forecast Workflow: 
+![[Pasted image 20241002172257.png]]
+
+## Fraud Detection
+Fully managed fraud detection service. Identify potentially illegal online activities such as online payment fraud and the creation of fake accounts
+
+Predefined Model:
+- Online Fraud Detection
+- Transactional Fraud Detection 
+- Account Takeover insight
+You can also **create you custom model detection**
+
+- Components:
+	![[Pasted image 20241002172935.png]]
+- In order to create your model you need to define event, we need defines **Lables, Entities and Variables**
+## Kendra:
+Fully managed **document search** service powered by Machine Learning. Use keyword based search with semantic contextual understanding capabilites.
+
+Components:
+![[Pasted image 20241002173433.png]]
+Two version: Developer and Enterprise
+![[Pasted image 20241002173605.png]]
+You need to create Index
+
+## Lex
+is a conversion interface service. With Lex you can build conversational **voice and text chatbots**. 
+
+Components:
+![[Pasted image 20241002174306.png]]
+## Personalize:
+Fully managed ML-service to build apps with real-time personalized recommendations 
+
+![[Pasted image 20241002174520.png]]
+
+Data:
+	![[Pasted image 20241002174606.png]]
+
+
+## Textract:
+Automatically extracts text, handwriting, and data from any scanned documents using AI and ML.
+
+![[Pasted image 20241002175758.png]]
+
+## Connect:
+Amazon Connect is an AI-powered application that provides one seamless experience for your contact center customers and users. It's comprised of a full suite of features across communication channels.
+
+
