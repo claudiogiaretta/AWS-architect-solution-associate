@@ -8,129 +8,256 @@ Informazioni utili:
 
 
 
-
 # Storage and Migration
 
-## S3
-**S3**: (**not global and SERVERLESS**) Amazon Simple Storage Service (Amazon S3) is an object storage service offering industry-leading scalability, data availability, security, and performance. Buckets are defined at the **region level**. Object are encrypted at server-side level.
+## Simple Storage Service (S3)
+### Intro
 
-- Folder in S3 are object, no metadata e no permissions, don't contain anything
-- ETAG represent an hash of the object, is not part of metdata use MD5, are used to check if it was a change in the object
-- Checksum is used to check the integrity of a file, determine if this somehting wrong with the file
-- Prefix: are part of the name of the object, are used to group and filter togheter objects
-- Metadata; provides information about data but not the contents. 
-- There are 2 types,
-	- System defined. 
-	- User defined: 
-		- Access and Security
-		- Media File
-		- Custom Application
-		- Project Specific
-		- Document versioning
-		- Content related
-		- Compliance and Legal
-- WORM (Write once and Read Many):  
-- S3 object lock: to prevent that object are deleted, you can only anable it by AWS CLI
-- S3 Bucket URI: Is a way to reference address of s3 bucket and object
-- AWS S3 CLI: 
-	- aws s3: high level
-	- aws s3api: low level
-	- aws s3control: Managing s3 access points, s3 outpost ecc..
-	- aws s3outposts: Specific for outpost management
-- S3 Request Styles: 
-	- VIrutal hosted
-	- Path style
-- S3 Glacier Flexible Retrival (you should save big file in zip insted of larger number of small files):
-	- Expedited Tier
-	- Standard Tier
-	- Buck Tier
-- s3 Glacier deep archive:
-	- standard tier
-	- Bulk tier: for petabytes of data
-- s3 intelligent-tier: Ha accesso a tutti i servizi tranne, Archive e Deep archive che sono opzionali
-- Security:
-	- Bucket Policies: Define permissions for an entire S3 bucket using JSON-based access policy language.
-	- Access Control Lists (ACLs): Provide a legacy method to manage access permissions on individual objects and buckets.
-	- AWS PrivateLink for Amazon S3: Enables private network access to S3, bypassing the public internet for enhanced security.
-	- Cross-Origin Resource Sharing (CORS): Allows restricted resources on a web page from another domain to be requested.
-	- Amazon S3 Block Public Access: Offers settings to easily block public access to all your S3 resources.
-	- IAM Access Analyzer for S3: Analyzes resource policies to help identify and mitigate potential access risks.
-	- Internetwork Traffic Privacy: Ensures data privacy by encrypting data moving between AWS services and the Internet.
-	- Object Ownership: Manages data ownership between AWS accounts when objects are uploaded to S3 buckets.
-	- Access Points: Simplifies managing data access at scale for shared datasets in S3.
-	- Access Grants: Providing access to S3 data via a directory services e.g. Active Directory
-	- Versioning: Preserves, retrieves, and restores every version of every object stored in an S3 bucket.
-	- MFA Delete: Adds an additional layer of security by requiring MFA for the deletion of S3 objects.
-	- Object Tags: Provides a way to categorize storage by assigning key-value pairs to S3 objects.
-	- In-Transit Encryption: Protects data by encrypting it as it travels to and from S3 over the internet.
-	- Server-Side Encryption: Automatically encrypts data when writing it to S3 and decrypts it when downloading.
-	- Client-Side Encryption: Encrypts data client-side before uploading to S3 and decrypts it after downloading.
-	- Compliance Validation for Amazon S3: Ensures S3 services meet compliance requirements like HIPAA, GDPR, etc.
-	- Infrastructure Security: Protects the underlying infrastructure of the S3 service, ensuring data integrity and availability.
-- ACL It ha been used to allow other aws account to upload objects to bucket
-- Bucket Polices: resource based policy that grant access to s3 object from other sevices or accounts
-- IAM vs Bucket Policies
-	![[Pasted image 20240930140617.png]]
-- Amazon Access Grants: map identities in a direcory service
-- IAM Access Analyzer: will alert you when s3 buckets are exposed to the internet or other AWS account
-- Internetwork traffic privacy: is a concept not a service, i about keeping data private as it travel across different network
-	Servizi legati:
-	- AWS PrivateLink: Allows you to connect an Elastic Network Interface (ENI) directly to other AWS Services 
-	- VPC Gateway Endpoint: Same as private link but specific to s3 and less fine grain permission
-- CORS: is an HTTP-header based mechanism that allows a server to indicate any other origins than its own from  which a browser should permit
-	- Request Headers
-		- Origin
-		- Access-Control-Request-Method
-		- Access-Control-Request-Headers
-	- Response Headers
-		- Access-Control-Allow-Origin
-		- Access-Control-Allow-Credentials
-		- Access-Control-Expose-Headers
-		- Access-Control-Max-Age
-		- Access-Control-Allow-Methods
-		- Access-Control-Allow-Headers
-	Amazon allow you to set corse using JSON or XML files
-- Encryption in transit: Data is secured when moving between locations (uses TLS and SSL)
-- Server side Encryption, is always active for s3 objects
-	- SSE-S3: Amazon S3 manage the keys, encrypts using AES-GCM (256-bit) algoritm
-	- SSE-KMS: is when  you use a KMS key managed by AWS
-		![[Pasted image 20240930144537.png]]
-	
-	- SSE-C: 
-		![[Pasted image 20240930144906.png]]
-	- DDSE-KMS: Dual layer, both client and server side encryption
-	 ![[Pasted image 20240930145407.png]]
-- S3 Bucket key, let's you generate a KEY every time a request to s3 is made
-- Client-Side Encryption: is when you encrypt you rfile before uploading
-- Data Consistency: 
-	![[Pasted image 20240930150935.png]]
-- Object Replication: 
-- Versioning: recover easily from accident deletion or overwrite, once enabled it it can't be disabled
-- Transfer acceleration: service that are used to transfer s3 files over long distances
-- presigned URL: temporary access to upload or download object frmo s3
-	- example:
-		![[Pasted image 20240930151923.png]]
-- Access Points:  Simplify bucket policy, are named network endpoint attached to the bucket that you can use to perform S3 object
-- Multi region Endpoint: global endpoint to route request to the buckets with the lowest latency.
-- Object Lambda Access Point, allows you to transform the output request of s3 object
-- Mountpoint for amazon s3: allows you to mount s3 buckets to linux local file system
-	![[Pasted image 20240930154353.png]]
-- Archived object: Rarely access object that cannot be access in real-time in exchange of reduced cost.
-- Requester Pay: it is a bucket option that allow the bucket owner to offset specific s3 cost to the requester
-	- Request Pay Header:
-- AWS Marketplace S3: alternatives to AWS services that works with s3
-- Aws Batch operations: 
-		![[Pasted image 20240930155842.png]]
-- Amazon S3 Inventory: give reports of all s3 buckets changes history. 
-- Event notification: allows your buckets to notify other AWS services about s3 event data.
-	![[Pasted image 20240930160204.png]]
-- Storage Class Analysis allows you to analyze storag access patterns of objects within a bucket to reccomend objects to move between standard to standard_IA. Observe infrequent access pattern
-- Amazon S3 Storage Lens is a storage analysis tool for s3 buckets acrross your entire AWS organization. Display data in interactive dashboard
-- S3 Static Website Hosting , allow you to host and serve a static (no server side interactivity) website from an s3 bucket,  no HTTPS unless you use AWS cloudfront alongside.
-- Amazon s3 Multipart Upload: support multipart upload so you can upload a single object in a set of parts. It breaks your file in multiple part and upload each part sepratly.
-- Byte range fetching: Amazon s3 allow to fetch a range of bytes of data from s3 objecs using the range header during s3 getObject API request
-- Interoperability: the capability of the cloud services to exchange and utilize information seamlessly with each other.
+- Global Service
+- Object store (key-value pairs)
+- Buckets must have a globally unique name
+- **Buckets are defined at the regional level**
+- Objects have a key (full path to the object): `s3://my_bucket/my_folder/another_folder/my_file.txt`
+- The key is composed of bucket + _prefix_ + **object name** s3://my_bucket _/my_folder/another_folder/_ **my_file.txt**
+- There’s no concept of directories within buckets (just keys with very long names that contain slashes)
+- **Max Object Size: 5TB**
+- Durability: 99.999999999% (total 11 9's)
+- **SYNC** command can be used to **copy data between buckets**, possibly in **different regions**
 
+> - S3 delivers **strong read-after-write consistency** (if an object is overwritten and immediately read, S3 always returns the latest version of the object)
+> - S3 is strongly consistent for all GET, PUT and LIST operations
+
+### Bucket Versioning
+
+- Enabled at the bucket level
+- Protects against unintended deletes
+- Ability to restore to a previous version
+- Any file that is not versioned prior to enabling versioning will have version “null”
+- Suspending versioning does not delete the previous versions, just disables it for the future
+- To restore a deleted object, delete it's "delete marker"
+
+> - Versioning can only be suspended once it has been enabled.
+> - Once you version-enable a bucket, it can never return to an unversioned state.
+
+### Encryption
+
+- Can be enabled at the bucket level or at the object level
+- **Server Side Encryption (SSE)**
+    - **SSE-S3**
+        - Keys managed by S3
+        - AES-256 encryption
+        - HTTP or HTTPS can be used
+        - Must set header: `"x-amz-server-side-encryption": "AES256"`
+    - **SSE-KMS**
+        - Keys managed by KMS
+        - HTTP or HTTPS can be used
+        - KMS provides control over who has access to what keys as well as audit trails
+        - Must set header: `"x-amz-server-side-encryption": "aws:kms"`
+    - **SSE-C**
+        - Keys managed by the client
+        - Client sends the key in HTTPS headers for encryption/decryption (S3 discards the key after the operation)
+        - **HTTPS must be used** as key (secret) is being transferred
+- **Client Side Encryption**
+    - Keys managed by the client
+    - Client encrypts the object before sending it to S3 and decrypts it after retrieving it from S3
+
+Enforcing Encryption
+
+### Access Management
+
+- **User based security**
+    - IAM policies define which API calls should be allowed for a specific user
+    - Preferred over bucket policy for **fine-grained access control**
+- **Resource based security (Bucket Policy)**
+    - Grant public access to the bucket
+    - Force objects to be encrypted at upload
+    - Cross-account access
+    - Object Access Control List (ACL) - applies to the objects while uploading
+    - Bucket Access Control List (ACL) - access policy that applies to the bucket
+
+> An IAM principal can access an S3 object if the IAM permission allows it or the bucket policy allows it and there is no explicit deny.
+> 
+> By default, an S3 object is owned by the account that uploaded it even if the bucket is owned by another account. To get full access to the object, the object owner must explicitly grant the bucket owner access. As a bucket owner, you can create a bucket policy to require external users to grant `bucket-owner-full-control` when uploading objects so the bucket owner can have full access to the objects.
+
+### S3 Static Websites
+
+- Host static websites (may contain **client-side scripts**) and have them accessible on the public internet over **HTTP only** (for HTTPS, use [CloudFront](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudFront) with S3 bucket as the origin)
+- The website URL will be either of the following:
+    - `<bucket-name>.s3-website-<region>.amazonaws.com`
+    - `<bucket-name>.s3-website.<region>.amazonaws.com`
+- If you get a `403 (Forbidden)` error, make sure the bucket policy allows public reads
+- For cross-origin access to the S3 bucket, we need to enable [CORS](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Concepts#cross-origin-resource-sharing-cors) on the bucket
+    - ![attachments/Pasted image 20220507175558.jpg](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/attachments/Pasted%20image%2020220507175558.jpg)
+- To host an S3 static website on a custom domain using Route 53, the bucket name should be the same as your domain or subdomain Ex. for subdomain `portal.tutorialsdojo.com`, the name of the bucket must be `portal.tutorialsdojo.com`
+
+### MFA Delete
+- MFA required to
+    - permanently delete an object version
+    - suspend versioning on the bucket
+- **Bucket Versioning must be enabled**
+- Can only be enabled or disabled by the root user
+
+### Server Access Logging
+- Most detailed way of logging access to S3 buckets (better than [CloudTrail](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudTrail))
+- Does not support **Data Events** & **Log File Validation** (use [CloudTrail](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudTrail) for that)
+- Store S3 access logs into another bucket
+- Logging bucket should not be the same as monitored bucket (logging loop)
+
+### Replication
+
+- **Asynchronous replication**
+- Objects are replicated with the **same version ID**
+- Supports **cross-region** and **cross-account** replication
+- **Versioning must be enabled for source and destination buckets**
+- For DELETE operations:
+    - Replicate delete markers from source to target (optional)
+    - Permanent deletes are not replicated
+- There is **no chaining of replication**. So, if bucket 1 has replication into bucket 2, which has replication into bucket 3. Then objects created in bucket 1 are not replicated to bucket 3.
+
+### Pre-signed URL
+
+- Pre-signed URLs for S3 have temporary access token as query string parameters which allow anyone with the URL to temporarily access the resource before the URL expires (default 1h)
+- Pre-signed URLs inherit the permission of the user who generated it
+- Uses:
+    - Allow only logged-in users to download a premium video
+    - Allow users to upload files to a precise location in the bucket
+
+### Storage Classes
+
+- Data can be transitioned between storage classes manually or automatically using lifecycle rules
+- Data can be put directly into any storage class
+- **Standard**
+    - **99.99% availability**
+    - Most expensive
+    - Instant retrieval
+    - No cost on retrieval (only storage cost)
+    - For frequently accessed data
+- **Infrequent Access**
+    - For data that is infrequently accessed, but requires rapid access when needed
+    - Lower storage cost than Standard but **cost on retrieval**
+    - Can **move data into IA from Standard only after 30 days**
+    - Two types:
+        - **Standard IA**
+            - **99.9% Availability**
+        - **One-Zone IA**
+            - **99.5% Availability**
+            - Data is lost if AZ fails
+            - Storage for infrequently accessed data that can be easily recreated
+- **Glacier**
+    - For data archival
+    - Cost for storage and retrieval
+    - **Can move data into Glacier from Standard anytime**
+    - Objects cannot be directly accessed, they first need to be restored which could take some time (depending on the tier) to fetch the object.
+    - **Default encryption for data at rest and in-transit**
+    - Three types:
+        - **Glacier Instant Retrieval**
+            - **99.9% availability**
+            - Millisecond retrieval
+            - Minimum storage duration of **90 days**
+            - Great for data accessed once a quarter
+        - **Glacier Flexible Retrieval**
+            - **99.99% availability**
+            - 3 retrieval flexibility (decreasing order of cost):
+                - Expedited (1 to 5 minutes)
+                    - Can **provision retrieval capacity** for reliability
+                    - Without provisioned capacity expedited retrievals might be rejected in situations of high demand
+                - Standard (3 to 5 hours)
+                - Bulk (5 to 12 hours)
+            - Minimum storage duration of **90 days**
+        - **Glacier Deep Archive**
+            - **99.99% availability**
+            - 2 flexible retrieval:
+                - Standard (12 hours)
+                - Bulk (48 hours)
+            - Minimum storage duration of **180 days**
+            - Lowest cost
+- **Intelligent Tiering**
+    - **99.9% availability**
+    - Moves objects automatically between Access Tiers based on usage
+    - Small monthly monitoring and auto-tiering fee
+    - **No retrieval charges**
+- #### Moving between Storage Classes[¶](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/simple%20storage%20service%20(s3)/#moving-between-storage-classes "Permanent link")
+    
+    - In the diagram below, transition can only happen in the downward direction
+    - ![attachments/Pasted image 20220514201314.jpg](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/attachments/Pasted%20image%2020220514201314.jpg)
+
+### Lifecycle Rules
+
+- Used to automate transition or expiration actions on S3 objects
+- **Transition Action** (transitioned to another storage class)
+- **Expiration Action** (delete objects after some time)
+    - delete a version of an object
+    - delete incomplete multi-part uploads
+- Lifecycle Rules can be created for a prefix (ex `s3://mybucket/mp3/*`) or objects tags (ex Department: Finance)
+
+> - When you apply a retention period to an object version explicitly, you specify a `Retain Until Date` for the object version
+> - When you use bucket default settings, you don't specify a `Retain Until Date`. Instead, you specify a duration, for which every object version placed in the bucket should be protected.
+> - Different versions of a single object can have different retention modes and periods
+
+### S3 Analytics
+- Provides analytics to determine when to transition data into different storage classes
+- **Does not work for ONEZONE_IA & GLACIER**
+
+### Performance
+
+- 3,500 PUT/COPY/POST/DELETE and 5,500 GET/HEAD requests per second per prefix
+- Recommended to spread data across prefixes for maximum performance
+- SSE-KMS may create bottleneck in S3 performance
+- Performance Optimizations
+    - **Multi-part Upload**
+        - parallelizes upload
+        - **recommended for files > 100MB**
+        - **must use for files > 5GB**
+    - **Byte-range fetches**
+        - Parallelize download requests by fetching specific byte ranges in each request
+        - Better resilience in case of failures since we only need to refetch the failed byte range and not the whole file
+    - **S3 Transfer Acceleration**
+        - Speed up **upload and download** for **large objects (>1GB)** for **global users**
+        - Data is ingested at the nearest edge location and is transferred over AWS private network (uses [CloudFront](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudFront) internally)
+
+### S3 Select
+
+- Select a subset of data from S3 using **SQL queries** (**server-side filtering**)
+- Less network cost
+- Less CPU cost on the client-side
+
+### Data Transfer Costs
+- Uploads to S3 are free
+- Downloads from S3 are paid
+- Using S3 Transfer Acceleration, you pay only for transfers that are accelerated
+- Since buckets are defined within a region, **data transfer within a region is free**
+
+### S3 Notification Events
+- Optional
+- Generates events for operations performed on the bucket or objects
+- Object name filtering using prefix and suffix matching
+- **For the same combination of prefix and event type, we can only have one event rule.** Example: we can send S3 notification for object created at `/files` to only one destination (single rule).
+- Targets
+    - SNS topics
+    - **SQS Standard** queues (not FIFO queues)
+    - Lambda functions
+
+### Requester Pays Buckets
+
+- Requester pays the cost of the request and the data downloaded from the bucket. The bucket owner only pays for the storage.
+- Used to share large datasets with other AWS accounts
+- The requester must be authenticated in AWS (cannot be anonymous)
+
+### Object Lock
+
+- WORM (Write Once Read Many) model
+- Block an object version modification or deletion for a specified amount of time
+- Modes:
+    - **Governance mode**
+        - Only users with special permissions can overwrite or delete the object version or alter its lock settings
+    - **Compliance mode**
+        - A protected object version cannot be overwritten or deleted by any user, including the root user
+        - The object's retention mode can’t be changed, and the retention period can’t be shortened
+
+#### Glacier Vault Lock
+
+- WORM (Write Once Read Many) model for Glacier
+- For compliance and data retention
 
 ## EBS
 
@@ -734,6 +861,8 @@ Store and rotate automatically database credentials. Enforce encryption at rest 
 You can setup automatic rotation, is not enabled by default. 
 (Under the hood it uses lambda)
 # Other
+## QuickSight
+***Serverless*** machine learning-powered business intelligence service to create interactive dashboards
 ## Elastic Map Reduce (EMR)
 
 - Used to create **Big Data clusters** to **analyze and process** vast amounts of data
@@ -1132,6 +1261,20 @@ Amazon Elastic Kubernetis Service is a managed service that eliminates the need 
 ![[Pasted image 20241003174240.png]]
 - **Amazon CodeWhisper**: is a realt-time AI coding companion. Genaretes suggested code while you're writing code.
 ![[Pasted image 20241003174535.png]]
+## AWS CodeDeploy
+ CodeDeploy is a deployment service that automates application deployments to Amazon EC2 instances, works with On-Premises Servers • Hybrid service
+## AWS CodeCommit
+ is a version control service hosted by Amazon Web Services that you can use to privately store and manage assets. Non più supportato
+## AWS CodeBuild
+ AWS CodeBuild is a fully managed build service in the cloud. CodeBuild compiles your source code, runs unit tests, and produces artifacts that are ready to deploy. Pay-as-you-go
+## AWS CodePipeline
+ Orchestrate the different steps to have the code automatically pushed to production, Code => Build => Test => Provision => Deploy, Basis for CICD (Continuous Integration & Continuous Delivery)
+## AWS CodeArtifact
+ AWS CodeArtifact is a secure, highly scalable, managed artifact repository service that helps organizations to store and share software packages for application development. Dependencies management
+## AWS CodeStar
+ (non più supportato). Unified UI to easily manage software development activities in one place
+## AWS Cloud9
+ AWS Cloud9 is an integrated development environment, or _IDE_.
 # Database
 ## RDS
 It’s a managed DB service for DB use SQL as a query language. It allows you to create databases in the cloud that are managed by AWS. (puoi decidere di usa un db relazionale anche senza rds sulle ec2 ma te lo devi gestire tu). 
@@ -1639,5 +1782,3 @@ Automatically extracts text, handwriting, and data from any scanned documents us
 
 ## Connect:
 Amazon Connect is an AI-powered application that provides one seamless experience for your contact center customers and users. It's comprised of a full suite of features across communication channels.
-
-
