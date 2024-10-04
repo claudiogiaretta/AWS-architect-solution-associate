@@ -335,7 +335,29 @@ Is a managed message broker service for the opensource Apache ActiveMQ and Rabbi
 	![[Pasted image 20241002115733.png]]
 
 
-## Cloud Watch
+## CloudWatch
+- **Amazon CloudWatch**: **High Availability**, Amazon CloudWatch monitors your Amazon Web Services (AWS) resources and the applications you run on AWS in real time. **Amazon CloudWatch is basically a metrics and logs repository. An AWS service puts metrics into the repository, and you retrieve statistics based on those metrics
+	- **Amazon CloudWatch Alarms:(like budget but less powerful)** Alarms are used to trigger notifications for any metric • **Auto Scaling**: increase or decrease EC2 instances “desired” count • **EC2 Actions**: stop, terminate, reboot or recover an EC2 instance • **SNS notifications**: send a notification into an SNS topic 
+		- You can create a billing alarm • **Billing data metric is stored in CloudWatch us-east-1** Billing data are for overall worldwide AWS costs • It’s for actual cost, not for projected costs
+	- **Amazon CloudWatch Logs:** Is used to store, manage and access your log files. Is a centralized log management server
+		 - CloudWatch Logs can collect log from:
+			 - **EC2 machines or on-premises servers** • Elastic **Beanstalk**: collection of logs from application • **ECS:** collection from containers • **AWS Lambda**: collection from function logs • **CloudTrail** based on filter • **Route53**: Log DNS queries
+		- **CloudWatch log groups**: a collection of log streams ex: /exampro/prod/app
+		- **CloudWatch streams**: represent a sequence of events from an application or instance being monitored. Is created automatically but you can create your own.
+		- **CloudWatch log events**: Represent a single event in a log files:
+			![[Pasted image 20241004114212.png]]
+		- **CloudWatch Insights:** enables you to interactively search and analyze your CloudWatch log data
+			- CloudWatch discover fields, when reads a logs 
+		- **CloudWatch Metrics:** time order set of data points, its a variable that monitored over time. You can provide you customize Metrics using CLI/SDK
+		- **CloudWatch Agent**: Some metrics need to install CloudWatch agent to been tracked
+			- ![[Pasted image 20241004115502.png]]
+## Amazon EventBridge
+**Event Bus**: An event bus receives events from a source and routates events to a target based on rules. 
+**EventBridge** is a serverless event bus service that is used for application integration by streaming real-time data to your applications.
+
+
+
+
 ## AWS Lambda
 No charge when your code is not running.
 
@@ -407,6 +429,33 @@ Settigns an limits:
 Analyzes the current configuration of your AWS Compute resources, and their utilization metrics from Amazon CloudWatch over a period of the last 14 days. 
 It will reccomend specific configuration changes
 
+![[Pasted image 20241004120413.png]]
+
+**Schedule Expression**
+You can create EventBridge Rules that trigger on a schedule. You can think of it as Serverless Cron Jobs. Use UTC time zone. **support cron and rate expression**:
+- Cron expression: Very fine Grain control
+- Rate expression: Easy to set, not as fine grained
+
+**CloudTrail Event**:
+Event Pattern: are used to filter what events should be used to pass along to a target. You can filter events by providing the same fields and values
+
+**EventBridge Event Pattern**: Prefix Matching, Anything-but matching, Numeric matching, IP address matching, exists matching, empty value matching.
+
+**EventBridge Rules:** Up to 5 target, you may have additional fields to select target, you can specify what gets passed along with Configure Input.
+
+**EventBridge Partner:** A list of third pary service providers can be integrated
+
+**Schema registry:** allows you to create, discover and manage OpenAPI Schema for events on EventBridge. You can set schema in order to see if the sctructure of the events have changed over time
+
+**Amazon CloudWatch Alarms:** Alarms are used to trigger notifications for any metric 
+- Use example:
+	- **Auto Scaling**: increase or decrease EC2 instances “desired” count 
+	- **EC2 Actions**: stop, terminate, reboot or recover an EC2 instance 
+	- **SNS notifications**: send a notification into an SNS topic 
+		- You can create a billing alarm • **Billing data metric is stored in CloudWatch us-east-1** Billing data are for overall worldwide AWS costs • It’s for actual cost, not for projected costs
+- **Conditions:**
+	![[Pasted image 20241004123829.png]]
+- CloudWatch are alarms that watch other alarms. Using composite alarms can help you reduce alarm noise.
 ## ElasticBeanStalk 
 With Elastic Beanstalk you can quickly deploy and manage applications in the AWS Cloud without having to learn about the infrastructure that runs those applications. 
 
@@ -790,14 +839,99 @@ You can setup automatic rotation, is not enabled by default.
 - **Amazon CodeWhisper**: is a realt-time AI coding companion. Genaretes suggested code while you're writing code.
 ![[Pasted image 20241003174535.png]]
 ## Amazon MSK
+Amazon Managed Streaming for Apache Kafka is a fully managed service that enables you to build and run application that use Apache Kafka to process streaming data. 
+Amzon utilizes Zookeper servers.
+
+Amazon MSK:
+- Provisioned: you managed the broker instances 
+- Serverless: you pay for what you use, and you don't have to manage instances
+
+**Bootstrap brokers** refers to list of brokers endpoints that an Apache Kafka client use as a starting point to connect to the cluster.
+
+Zookeper connection string URL is used with Kafka to specify the host and port of the ZooKeeper ensemble that Kafka should connect to for managing cluster metadata coordinator.
+
+**Amazon MSK Connect:** is a feature of Amazon MSK that makes it easy for developers to stream data to and from their apache kafka clusters.
+
+- Apache kafka: Open source streaming platform to create high performance data pipelines, streaming analytics, data integration, and mission critical applications. (Developed by Linkedin). based on Consumer/Producer architecture.
+
 ## AWS Shield
+ - **AWS Shield:** • Provides protection from attacks of layer **3,4 and 7**
+	- **AWS Shield Standard:** • Free service that is activated for every AWS customer • Provides protection from attacks such as SYN/UDP Floods, Reflection attacks and other layer 3/layer 4 attacks 
+	- **AWS Shield Advanced:** • Optional DDoS mitigation service ($3,000 per month per organization) 
+		- **Protect against more sophisticated attack on:**
+			- Amazon EC2
+			- Elastic Load Balancing (ELB), 
+			- Amazon CloudFront
+			- AWS Global Accelerator
+			- Route 53
+		- 24/7 access to AWS DDoS response team (DRP) • Protect against higher fees during usage spikes due to DDoS
+
 ## WAF
+Protects your web applications from common web exploits **Layer 7**.
+
+![[Pasted image 20241004094345.png]]
 ## Cloud HSM
+**HSM:**
+Hardware Security Module it is a piece of hardware designed to store encryption keys. HSM hold keys in memory and never write them to disk.
+It follows FIPS (Federal Information Processing Standards): US and CANAdian governmant standard for cryptographic modules.
+
+2 types:
+- Multi-tenant (FIPS 140-2 Level 2 Compliant): 
+- Single-Tenant (FIPS 140-2 Level 3 Compliant):
+
+**Cloud HSM:** 
+Is single tenant HSM as a service that automates hardware provisioning. Enables you to generate and use your encryption keys on a FIPS 140-2 Level 3 validated hardware.
+
+It is easy to migrate aws key between cloudHSM.
 ## Amazon GuardDuty
+Intrusion Detection System and Intrusion Protection System.(IDS)
+
+Intelligent **Threat discovery** to protect your AWS Account. Uses Machine Learning algorithms, **anomaly detection**, 3rd party data. **Uses EventBridge and lambda funtion to make action**. Check for (CloudTrail logs, VPC flow logs, DNS logs)
 ## Health Dashboard
+- **Service Health Dashboard:** Show General status of the service in various region.
+- **Personal Health Dashboard:** AWS Personal Health Dashboard provides alerts and guidance for AWS events that might affect your environment.
 ## AWS Artifact
+Portal that provides customers with on-demand access to AWS compliance documentation and AWS agreements.
 ## Storage Gateway
+- **AWS Storage Gateway**: is a hybrid storage service that allows your on-premises applications to seamlessly use AWS cloud storage (Bridge between on-premise data and cloud data in s3). Use example: backups to the cloud, using on-premises file shares backed by cloud storage, and providing low-latency access to data in AWS for on-premises applications.
+![[Pasted image 20241004101100.png]]
+- **Amazon S3 File Gateway**: allows your files to be stored as objects inside your s3 buckets. Access your files through a Network File System (NFS) or SMB mount point.
+- **Amazon FsX File Gateway**: allows your files to be stored in Amazon FSx Windows FIle Storage (WFS). Allow your Windoes developers to easily store data in the cloud using the tools they already know
+- **Volume Gateway**: presents your applications with disk volumes using the Internet Small Computer Systems Interface(iSCI) block protocol.
+	- Compress storage to save space
+	- Can be asynchronously backed up as point-in-time snapshots of the volume.
+	- types
+		- **Store Volumes:** store primary data locally and asynchronously that data to AWS:
+			- Provide your on-premises applications with low-latency access to their entire datasets while still providing durable off-site backups.
+			- Create storage volumes and mount them as iSCSI devices from your on-premises servers.
+			- Any data written to stored volumes are stored on your on-premises storage hardware.
+			- Amazon Elastic Block Store (EBS) snapshots are backed up to AWS S3.
+			- Stored Volumes can be between 1GB - 16TB in size
+		- **Cache volumes:** 
+			- Minimizes the need to scale your on-premises storage infrastructure while still providing your applications with low-latency data access.
+			- Create storage volumes up to 32TB in size and attach them as iSCSI devices from your on-premises servers.
+			- Your gateway stores data that you write to these volumes in S3 and retains recently read data in your on-premises storage gateway cache, and upload buffer storage.
+			- Cached volumes can be between 1GB - 32GB in size
+- **Tape Gateway**: **durable**, cost effective solution to archive your data in thw AWS CLoud. Use VTL interface, that helps you leverage existing tape-based backups.Store data on virtual tape that you create on you tape gateway. Tape storage has proven redability for 30 years
+	- VTL media changer is a a robot that moves tapes around:
+	![[Pasted image 20241004104332.png]]
+
 ## EC2 Pricing Models
+ Type of purchasing option:
+- **On-Demand Instances** : Has **high cost but no upfront payment** is a **pay-as-you-go** model. Thi is the default option when create EC2. Recommended for **short-term and un-interrupted** workloads commitment
+- **Reserved Instance(1 & 3 years)**: up to 72% save, long workloads/ long workloads with flexible instances. 
+	- 2 types: **Standard:** 72% save, **Convertible:** 54% save, you can change RI based on RI Attributes. If greater or equal in value.
+		![[Pasted image 20241004110849.png]]
+	- Type of payments: **All upfront, Partial upfront, No upfront**
+	- **RI Attributes**: can affect cost (Instance type, Region, Tenancy, Platform)
+	- **Limits**: Per month -> 20 Regional RI per region, 20, Zonal RI per zone
+	- **RI Marketplace**: allows you to sell your unused Standard RI to recup your RI spend for RI you do not intend or cannot use.
+- **Savings Plans (1 & 3 years)** :commitment to an amount of usage, long workload, up to 72%
+- **Spot Instances** : short workloads, cheap, can lose instances (less reliable), up to 90%
+- **Dedicated Hosts** and Dedicated Instance:
+	 ![[Pasted image 20241004112027.png]]
+
+**Capacity Reservations** : Is a service of EC2 that allows you to request a reserve of EC2 instance type for a specific Region and AZ
 
 # Computing
 ## EC2
