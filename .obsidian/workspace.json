@@ -146,21 +146,57 @@
       "command-palette:Open command palette": false
     }
   },
+  "floating": {
+    "id": "3438c98b7695fd7c",
+    "type": "floating",
+    "children": [
+      {
+        "id": "d1aac8c5013a9122",
+        "type": "window",
+        "children": [
+          {
+            "id": "7517d44573583d39",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "a417c085ffd4a5be",
+                "type": "leaf",
+                "state": {
+                  "type": "markdown",
+                  "state": {
+                    "file": "Appunti_aws.md",
+                    "mode": "source",
+                    "source": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "vertical",
+        "x": 448,
+        "y": 116,
+        "width": 1024,
+        "height": 800,
+        "maximize": true,
+        "zoom": 0
+      }
+    ]
+  },
   "active": "2c60e7f907ac029c",
   "lastOpenFiles": [
-    "Pasted image 20241004123829.png",
-    "Pasted image 20241004123754.png",
     "Appunti_aws.md",
     "AWS Cloud Solution Architect Associate.md",
+    "Pasted image 20241004163711.png",
+    "Pasted image 20241004155752.png",
+    "Pasted image 20241004155317.png",
+    "Pasted image 20241004155004.png",
+    "Pasted image 20241004152801.png",
+    "Pasted image 20241004123829.png",
+    "Pasted image 20241004123754.png",
     "Pasted image 20241004120413.png",
     "Pasted image 20241004120355.png",
     "Pasted image 20241004115502.png",
-    "Pasted image 20241004114212.png",
-    "Pasted image 20241004112027.png",
-    "Pasted image 20241004110849.png",
-    "Pasted image 20240930160204.png",
-    "Pasted image 20241004104332.png",
-    "Pasted image 20241004104304.png",
     "Progetti.md",
     "slide.pdf",
     "Welcome.md"
