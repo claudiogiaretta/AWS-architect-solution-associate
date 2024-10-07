@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "c45a927f5cd39ab0",
+        "id": "e6ff9552c729f795",
         "type": "tabs",
         "children": [
           {
-            "id": "2c60e7f907ac029c",
+            "id": "d4ad88daa11096ea",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -58,7 +58,7 @@
             }
           },
           {
-            "id": "e20a329101721557",
+            "id": "63a248d45a7839e5",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -69,7 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 287.5
   },
   "right": {
     "id": "d0535d271d38e0c2",
@@ -146,60 +146,22 @@
       "command-palette:Open command palette": false
     }
   },
-  "floating": {
-    "id": "3438c98b7695fd7c",
-    "type": "floating",
-    "children": [
-      {
-        "id": "d1aac8c5013a9122",
-        "type": "window",
-        "children": [
-          {
-            "id": "7517d44573583d39",
-            "type": "tabs",
-            "children": [
-              {
-                "id": "a417c085ffd4a5be",
-                "type": "leaf",
-                "state": {
-                  "type": "markdown",
-                  "state": {
-                    "file": "Appunti_aws.md",
-                    "mode": "source",
-                    "source": false
-                  }
-                }
-              }
-            ]
-          }
-        ],
-        "direction": "vertical",
-        "x": 448,
-        "y": 116,
-        "width": 1024,
-        "height": 800,
-        "maximize": false,
-        "zoom": 0
-      }
-    ]
-  },
-  "active": "2c60e7f907ac029c",
+  "active": "d4ad88daa11096ea",
   "lastOpenFiles": [
-    "images/Pasted image 20241004101030.png",
-    "images/Pasted image 20241004094345.png",
-    "images/Pasted image 20241003174535.png",
-    "images/Pasted image 20241003174240.png",
-    "images/Pasted image 20241003171751.png",
-    "images/Pasted image 20241003170926.png",
-    "images/Pasted image 20241003165205.png",
-    "images/Pasted image 20241003165144.png",
-    "images/Pasted image 20241003164356.png",
-    "images/Pasted image 20241003163859.png",
-    "images/Pasted image 20241003163241.png",
-    "images",
-    "Nuova cartella",
     "Appunti_aws.md",
     "AWS Cloud Solution Architect Associate.md",
+    "images/Pasted image 20241001104307.png",
+    "Pasted image 20241007172433.png",
+    "images/Pasted image 20241001095236.png",
+    "Pasted image 20241007170821.png",
+    "images/Pasted image 20241002122429.png",
+    "images/Pasted image 20241001154905.png",
+    "images/Pasted image 20241001154721.png",
+    "Pasted image 20241007144844.png",
+    "images/Pasted image 20241002103209.png",
+    "Pasted image 20241007142942.png",
+    "images",
+    "Nuova cartella",
     "Progetti.md",
     "slide.pdf",
     "Welcome.md"

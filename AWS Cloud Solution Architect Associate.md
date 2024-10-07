@@ -6,8 +6,6 @@ Informazioni utili:
 - Non concentrarsi molto su kubernetis 
 - La parte global infrastructure molto simile a quella del cloud practitioner
 
-
-
 # Storage and Migration
 
 ## Simple Storage Service (S3)
@@ -363,19 +361,24 @@ For data warehouse you can use the desktop app **AWS schema conversion tool**
 
 
 ## Auto Scaling (different from ASG)
-AWS auto scaling is a service that can discover scaling resources whithin your aws account, and quickly add scaling plans to your scaling resources
+**AWS auto scaling** is a service that can discover scaling resources whithin your aws account, and quickly add scaling plans to your scaling resources
 
 ![[Pasted image 20241002102340.png]]
 
 ## Storage Gateway
-- **AWS Storage Gateway**: is a hybrid storage service that allows your on-premises applications to seamlessly use AWS cloud storage (Bridge between on-premise data and cloud data in s3). Use example: backups to the cloud, using on-premises file shares backed by cloud storage, and providing low-latency access to data in AWS for on-premises applications.
-![[Pasted image 20241004101100.png]]
-- **Amazon S3 File Gateway**: allows your files to be stored as objects inside your s3 buckets. Access your files through a Network File System (NFS) or SMB mount point.
-- **Amazon FsX File Gateway**: allows your files to be stored in Amazon FSx Windows FIle Storage (WFS). Allow your Windoes developers to easily store data in the cloud using the tools they already know
-- **Volume Gateway**: presents your applications with disk volumes using the Internet Small Computer Systems Interface(iSCI) block protocol.
-	- Compress storage to save space
-	- Can be asynchronously backed up as point-in-time snapshots of the volume.
-	- types
+**AWS Storage Gateway**: is a hybrid storage service that allows your on-premises applications to seamlessly use AWS cloud storage (Bridge between on-premise data and cloud data in s3). Use example: backups to the cloud, using on-premises file shares backed by cloud storage, and providing low-latency access to data in AWS for on-premises applications.
+
+### Types of Storage
+
+#### S3 File Gateway
+Allows you run gateway within your on-premises environment so you can interact through a SMB or NFS File system
+- **Data is cached at the file gateway** for low latency access
+-  Integrated with **Active Directory (AD)** for user authentication
+- 
+![[Pasted image 20241007125534.png]]
+#### Volume Gateway
+Allows you to mount s3 as local drive using the iSCSI protocol
+- 2 types: 
 		- **Store Volumes:** store primary data locally and asynchronously that data to AWS:
 			- Provide your on-premises applications with low-latency access to their entire datasets while still providing durable off-site backups.
 			- Create storage volumes and mount them as iSCSI devices from your on-premises servers.
@@ -387,13 +390,20 @@ AWS auto scaling is a service that can discover scaling resources whithin your a
 			- Create storage volumes up to 32TB in size and attach them as iSCSI devices from your on-premises servers.
 			- Your gateway stores data that you write to these volumes in S3 and retains recently read data in your on-premises storage gateway cache, and upload buffer storage.
 			- Cached volumes can be between 1GB - 32GB in size
+
+Think of it as a remote drive
+
+![[Pasted image 20241007125555.png]]
+#### Tape Gateway
+Stores files onto Vrual Library Tapes for backing up you files on very cost effective long term
 - **Tape Gateway**: **durable**, cost effective solution to archive your data in thw AWS CLoud. Use VTL interface, that helps you leverage existing tape-based backups.Store data on virtual tape that you create on you tape gateway. Tape storage has proven redability for 30 years
 	- VTL media changer is a a robot that moves tapes around:
 	![[Pasted image 20241004104332.png]]
-
-
+#### Amazon FsX File Gateway
+Allows your files to be stored in Amazon FSx Windows FIle Storage (WFS). Allow your Windoes developers to easily store data in the cloud using the tools they already know
 
 ## Instance Store
+- Used as cache
 - **Hardware storage directly attached to EC2 instance** (cannot be detached and attached to another instance)
 - **Highest IOPS** of any available storage (millions of IOPS)
 - **Ephemeral storage** (loses data when the instance is stopped, **hibernated** or terminated)
@@ -414,103 +424,163 @@ AWS auto scaling is a service that can discover scaling resources whithin your a
 ## Amazon AppFlow
 Is managed integration service for data transfer between data sources. Easily exchange data with over 80+ cloud services. By specifing a source destination. (Easy way to connect services)
 
-![[Pasted image 20241002103209.png]]
+![[Pasted image 20241007142942.png]]
+- **Run on Demand** - User manually run the flow as needed
+- **Run on event** - AppFlow runs the flow in response to an event from an SaaS application
+- **Run on Schedule** - AppFlow runs te flow on a recurring schedule
+
+**Feature:**
+- Create dataflows between application whithin minutes
+- Aggregate data from multiple sources
+- Data can be encrypted at rest and in transit
+- Use partition and aggregation settings to optimize query performance 
+- Develop custom connectors via the Amazon AppFlow Custom Connector SDKs
+- You can create private flow via AWS Private Link
+- You can catalog data transfered to s3 via AWS Glue Data Catalog
+
 
 # Computing
 ## EC2
-- Cloud-Init: is the industry standard multi-distribution method for cross-platform cloud instance initialization. It is supported accross all major public cloud providers, provisioning systems for private cloud infrastructure, and bare metal installations.
-- EC2 User data: script launch on EC2 boot
-- EC2 Meta Data: You can access to Ec2 Metadata from MDS(Meta data service). There are 2 typers Version 1 adn Verison 2.
+- **Cloud-Init**: is the industry standard multi-distribution method for cross-platform cloud instance initialization. It is supported accross all major public cloud providers, provisioning systems for private cloud infrastructure, and bare metal installations.
+- **EC2 User data**: Used to automate **dynamic** boot tasks (that cannot be done using AMIs). **Runs with root privileges**
+- - **EC2 Placement Group:** the logical placement of your instances to optimize communication, performance, or durability. Free
+	- Cluster
+	- Partition
+	- Availability Zone
+- **EC2 Meta Data**: You can access to Ec2 Metadata from MDS(Meta data service). There are 2 typers Version 1 adn Verison 2.
 	- You can enforce the use of tokens 
-	- you can turn off endpoints all together
-- EC2 Naming convention:
+	- You can turn off endpoints all together
+- **EC2 Naming convention:**
 	![[Pasted image 20241001121648.png]]
-- Instance Family: Are different combination of CPU,Memory,Storage and Networking capacity
+- **Instance Family:** Are different combination of CPU,Memory,Storage and Networking capacity
 	![[Pasted image 20241001122001.png]]
-	N.B there are not all but only the most important
-- EC2 Processors: 
-	 ![[Pasted image 20241001122628.png]]
-- EC2 Instance Profile: is a reference to an IAM role that will be passed and assumed by the EC2 instance when it starts up. allows you to avoid passing long live AWS credentials.
-- EC2 Lifecycle: 
+	N.B these are not all but only the most important
+	
+- **EC2 Instance Profile**: is a reference to an IAM role that will be passed and assumed by the EC2 instance when it starts up. allows you to avoid passing long live AWS credentials.
+- **EC2 Lifecycle:** 
 	![[Pasted image 20241001123523.png]]
-- EC2 Instance Console Screenshot: will take a screenshot of the current state of the instance
+- **EC2 Instance Console Screenshot**: will take a screenshot of the current state of the instance
 - Hostname; unique name in your network to identify a machine via DNS.
 	- two types:
 		- IP Name: legacy name based on private access
 		- Resource Name: EC2 instance ID is included in the hostname
-- EC2 Default user name: The default user name for an operating system managed by AWS will vary based on distribution:
+- **EC2 Default user name:** The default user name for an operating system managed by AWS will vary based on distribution:
 	- When using SSM you will need to change yoour user to default
 	- ```sudo su -ec2-user```
--  EC2 Bustable Instances: allow workloads to handle bursts of higher CPU utilization fro very short duration
-- EC2 system log: Accessed by the EC2 Management Console, allows you to observe the system log for the EC2 Instance. Troubleshoot on boot to see if anything is wrong
-- EC2 Placement Group: the logical placement of your instances to optimize communication, performance, or durability. Free
-	- Cluster
-	- Partition
-	- Availability Zone
-- EC2 Connect:
+-  **EC2 Bustable Instances:** allow workloads to handle bursts of higher CPU utilization fro very short duration
+- **EC2 system log:** Accessed by the EC2 Management Console, allows you to observe the system log for the EC2 Instance. Troubleshoot on boot to see if anything is wrong
+- **EC2 Connect:**
 	- SSh Client
 	- EC2 instance connect: short lived ssh keys controlled by IAM policies
 	- Session Manager: Connect to linux windoes via reverse connection
 	- Fleet Manager Remote Desktop: Connect to a Windows Machine using RDP
 	- EC2 Serial console: establishes a serial connection giving you direc access
-- EC2 Amazon Linux: AWS's managed Linux distribution is based off CentOS and Fedora which in turn is based off Red Hat Linux. Reccomended to use Amazon Linux AL2023 e non AL2
+- **EC2 Amazon Linux:** AWS's managed Linux distribution is based off CentOS and Fedora which in turn is based off Red Hat Linux. Reccomended to use Amazon Linux AL2023 e non AL2
 	- Amazon Linux extra: is a feature of AL2 that provides a way for users to install additional software packages.
-## AMI
-- Provides the information required to launch an instance. You can turn your EC2 instances into AMI's so you can create copies of your servers.
+- **Elastic Network Interfaces (ENIs):** are virtual network interfaces that provide networking capabilities to Amazon EC2 instances. An ENI functions as a virtual network card, enabling instances to connect to networks and communicate with other resources within the AWS environment.
+### Type of instances
+
+- **Compute Optimized:** Great for compute-intensive tasks that require high performance
+- **Memory Optimized:** Great for compute-intensive tasks that require high performance (Use case: cache, database)
+- **Storage Optimized:** Storage optimized instances are designed for workloads that require high, sequential read and write access to very large data sets on local storage. They are optimized to deliver tens of thousands of low-latency, random I/O operations per second (IOPS) to applications.
+### Intsance Classes
+ Type of purchasing option:
+- **On-Demand Instances** : Has **high cost but no upfront payment** is a **pay-as-you-go** model. Thi is the default option when create EC2. Recommended for **short-term and un-interrupted** workloads commitment
+- **Reserved Instance(1 & 3 years)**: up to 72% save, long workloads/ long workloads with flexible instances. 
+	- 2 types: **Standard:** 72% save, **Convertible:** 54% save, you can change RI based on RI Attributes. If greater or equal in value.
+		![[Pasted image 20241004110849.png]]
+	- Type of payments: **All upfront, Partial upfront, No upfront**
+	- **RI Attributes**: can affect cost (Instance type, Region, Tenancy, Platform)
+	- **Limits**: Per month -> 20 Regional RI per region, 20, Zonal RI per zone
+	- **RI Marketplace**: allows you to sell your unused Standard RI to recup your RI spend for RI you do not intend or cannot use.
+- **Savings Plans (1 & 3 years)** :commitment to an amount of usage, long workload, up to 72%
+- **Spot Instances** : short workloads, cheap, can lose instances (less reliable), up to 90%
+- **Dedicated Hosts** and Dedicated Instance:
+	 ![[Pasted image 20241004112027.png]]
+
+**Capacity Reservations** : Is a service of EC2 that allows you to request a reserve of EC2 instance type for a specific Region and AZ
+
+### AMI
+- Provides the information required to launch an instance. You can turn your EC2 instances into AMI's so **you can create copies of your servers**.
 	- Help you keep incremental changes to your OS, application code, and system packages.
 	- AMI Id is different per region. You need to be carefull when you buy one
 	- AMI has two types of boot model:
 		- Unified Extensible Firmware Interface (UEFI): Modern
-		- Legacy BIOS: Legacy da evitare
-	- Elastic Network Adapter supports network speeds of up to 100 GBps for supported instance types.
+		- BIOS: Legacy (to avoid)
+	- **Elastic Network Adapter** supports network speeds of up to 100 GBps for supported instance types.
 	- AMI Settings:
 		- Public:
 		- Explicit: Specific to certain AWS accounts
 		- Implicit: The owner can launch the AMI
-## ASG
-Check "AWS appunti" first
-- Schema:
-	![[Pasted image 20241001144825.png]]
+## ASG(Auto Scaling Group)
+Creation of instances based on amount of workload. **High Availability
+![[Pasted image 20241007144844.png]]
 - Automatic scaling can occur via:
-	- Capacity settings
-	- Health Check Replacements
-	- Scaling Policy: (vedi appunti AWS)
-- Capacity Settings: The size of an Auto Scaling group based on Min Size, Max Size, Desired Capacity
-- Health Check Replacement: when an ASG replaces an instances if is considered unhealty. Two types of health checks ASG can perform
-	- EC2 Health Check: If the EC2 instance fails either of its EC2 Status Check
-	- ELB Health Check: ASG will perform a health check based on the ELB health check. ELB pings an HTTP endpoint at a specific path, port and status code
-- ELB integration: An ELB can be attached to you Auto Scaling Group 
-	- Classic Load Balancers are associeted directly to the ASG
-	- ALB, NLB or GWLB are associeted indirectly via their Target Group
-	 **N.B attached = can use Load Balancer Health check**
-- Dynamic Scaling Policies: how much ASG should change capacity. Policies are triggered based on Cloud Watch Alarms:
-	- Simple, Step and Target Scaling
-	- Based on adjustment types: how capacity should change
+- **Capacity Settings:** The size of an Auto Scaling group based on Min Size, Max Size, Desired Capacity
+- **Health Check Replacement:** when an ASG replaces an instances if is considered unhealty. Two types of health checks ASG can perform
+	- **EC2 Health Check**: If the EC2 instance fails either of its EC2 Status Check
+	- **ELB Health Check**: ASG will perform a health check based on the ELB health check. ELB pings an HTTP endpoint at a specific path, port and status code
+- **Dynamic Scaling Policies**: how much ASG should change capacity. Policies are triggered based on Cloud Watch Alarms:
+	- **Adjustment types**: how capacity should change
 		- ChangeInCapacity
 		- ExactCapacity
 		- PercentChangeInCapacity
-- Simple Scaling: (vedi appunti AWS)
-- Step Scaling: (vedi appunti AWS)
-- Target Scaling: (vedi appunti AWS)
-- Predictive Scaling Policies: (vedi appunti AWS)
+	- **Scaling Policies:**
+		- **Simple Scaling**: When a **CloudWatch alarm** is triggered(example CPU > 70%), then add 2 units or/and (example CPU < 30%), then remove 1
+		- **Step Scaling:** Also scale wehn CloudWatch alarm but more rfficient when cloudWatch allarm is **repetedly trigger**
+		- **Target Tracking Scaling:** Example: I want the average ASG CPU to stay at around 40%
+		- **Predictive Scaling**: Triggers scaling by analyzing historical load data to detect daily or weeklu patterns in traffic flows
+
+***Extra:*** 
+ELB integration: An ELB can be attached to you Auto Scaling Group 
+	- Classic Load Balancers are associeted directly to the ASG
+	- ALB, NLB or GWLB are associeted indirectly via their Target Group
+	 **N.B attached = can use Load Balancer Health check**
 ## ELB
-It is a suite of Load balancer from AWS
+It is a suite of Load balancer from AWS. A **Load balancer** is a tool to distribute traffic through different servers.
 
 - Rules of traffic
-	- Struttura:
+	- Structure:
 		- Listeners: incoming traffic is evaluetad against listeners. check matches with the Port (ex port 443 or port 80)
 		- Rules (only ALB): Listeners will then invoke rules to decide what to do with the traffic. Generally, the next step is to forward traffic to a Target Group
 		- Target Groups(not CLB): Are logical grouping of possible targets such as specific EC2 instances, IP addresses
 		- **only for CLB traffic** is sent to the Listeners. When the port matches, it forwards the traffic to any EC2 instances that are registered to che Classic Load Balancer. CLB does not allow you to apply rules to listeners.
-- Application Load Balancer:
-	![[Pasted image 20241001154721.png]]
-- Network Load Balancer:
-	![[Pasted image 20241001154905.png]]
-	-
-- Classic Load Balancer:
-	![[Pasted image 20241001155036.png]]
+### Application Load Balancer:
+- ALB is designed to balance HTTP and HTTPS traffic.
+- It operate at **Layer 7 (OSI Model)**
+- It allows you to add routing rules to your listeners based on the HTTP Protocol
+- Supports WebSockets and HTTP for real time, bi-directional communications
+- **Security Groups can be attached to ALBs** to filters requests
+- **ACM** can be attached to listeners to server custom domains over SSL/TLS for HTTPS
+- **Use Cases:**
+	- Microservices and Containerized Applications
+	- E-commerce and Retail Websites
+	- Corporate Websites and Web Applications
+	- SaaS Applications
+### Network Load Balancer:
+- NLB is designed to balance TCP/UDP.
+- It operate at **Layer 4** (OSI Model)
+- It can handle millions of requests per second while still maintaining extremely
+- low latency.
+- **Global Accelerator** can be placed in front of ALB to improve **global** availability
+- Preserves the client source IP
+- When a static IP address is needed for a load balancer
+- **Use cases:**
+	- High-Performance Computing and Big Data Applications
+	- Real-Time and Multiplayer Gaming Platforms
+	- Financial Trading Platforms
+	- IoT and Smart Device Ecosystems
+	- Telecommunications Networks
+
+### Classic Load Balancer:
+- CLB is AWS's first load balancer (legacy)
+- Can balance HTTP, HTTPS or TCP traffic (not at the same time)
+
+**Note**: Is not reccomended anymore
 ## AWS Lambda
-No charge when your code is not running.
+**Serverless** service that let you run your code on a high-availability compute infrastructure and performs all of the administration of the compute resources.
+
+**Pay per execution time and number. No charge when your code is not running.**
 
 Example of use:
 ![[Pasted image 20241002122149.png]]
@@ -518,31 +588,32 @@ Example of use:
 - Sync invocation
 - Async invocation
 
-Settigns an limits:
-- ![[Pasted image 20241002122429.png]]
-- Function Version: You can use the version to manage the deployment of your AWS Lambda Function
-- 2 ways to reference aLambda
+### Limit:
+#### Time settings:
+- Default: 3 seconds
+- Min: 1 second
+- Max 15 minutes
+#### Storage settings:
+- Default: 512 MB
+- Min: 512 MB
+- Max 10,240 MB (~10 GB)
+#### Memory settings: (Increments of 1 MB)
+- Default: 128 MB
+- Min: 128 B
+- Max 10,240 MB (~10 GB)
+
+- **Function Version**: You can use the version to manage the deployment of your AWS Lambda Function
+- 2 ways to reference a Lambda
 	- Qualified ARN (specified version)
 	- Unqualified ARN (non specified version take always the last)
-- Aliasis: provide name to reference Lambda function
-- Lambda Layer: Pull in additional code and content in the form of layer. Layer is a zip archive that **contains libraries, a custom runtime, or other dependencies**. You can use libraries in your function without needing to include them in your deployment package. Maximum 5, maximum package: 250 MB
-- Instruction Sets: 
-	![[Pasted image 20241002123047.png]]
-- Runtimes: preconfigure environment to run specific programming languages. It doesn' require you to configure or set OS.
+- **Aliasis**: provide name to reference Lambda function
+- **Lambda Layer**: Pull in additional code and content in the form of layer. Layer is a zip archive that **contains libraries, a custom runtime, or other dependencies**. You can use libraries in your function without needing to include them in your deployment package. 
+- **Runtimes**: preconfigure environment to run specific programming languages. It doesn' require you to configure or set OS.
 	- they are published continuesly, so you had to keep it updated and not retain older version
 	- Code is delivered as a zip archive
-- OS Only Runtime:
-	![[Pasted image 20241002123430.png]]
-- Deployment Packages: package which contains the actual code.
-	- 2 types:
-		- ZIP archive:
-			- ZIP archive:larger than 50 MB have to be uploaded to an S3 Bucket first
-			- Rely on Lambda runtimes
-		- Container Image: you need to create a docker file
-		- build and push image to ECR
-- 
 ## Step functions
-![[Pasted image 20241002124321.png]]
+With AWS Step Functions, you can create workflows, also called [State machines](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-statemachines.html), to build distributed applications, automate processes, orchestrate microservices, and create data and machine learning pipelines.
+State machines (think of it asflow chart)
 
 - 2 types State Machines:
 	- Standard: general purpose -> reccomended for Long Workload
@@ -552,7 +623,7 @@ Settigns an limits:
 	- Manage a Fargate Container
 	- Transfer Data Records
 	- **Per altri use cases andare a cercare step function use cases nella guida ufficiale di amazon**
-- Step Functions states: Allows us to pass nput and output without any work. Useful when constructing state machines
+- Step Functions states: Allows us to pass input and output without any work. Useful when constructing state machines
 	- Structure of state
 		- Parameters
 		- Result
@@ -613,85 +684,93 @@ Event Pattern: are used to filter what events should be used to pass along to a 
 
 # Network & Security
 ## AWS VPC
-- AWS VPC: Logically isolated network, Region specific. 5 VPC per region. 200 subnet per VPC
+- Logically isolated network, Region specific. 5 VPC per region. 200 subnet per VPC
 - AWS has default VPC per region 
-- Shared VPC :  you can share a VPC trough the sam eaccount using AWS Resources Acess Manager
-- NACL: (vedi l'altro foglio di appunti). Rispetto a security group puoi bloccare anche un singolo ip.
-- Security groups: (vedi l'altro foglio di appunti). Limiti: 10000 security groups per region, 60 in/outbound rules per secGroup, 16 secGroups per Elastic Network Interface
-- Stateless vs Stateful: Stateles Firewalls like AWS NACL are not aware of the state of the request. block all the request both way.
-- Route tables: where network traffic are directed.
+- You can share a VPC trough the same account using **AWS Resources Acess Manager**
+- **NACL**: (vedi l'altro foglio di appunti). Rispetto a security group puoi bloccare anche un singolo ip.
+- **Security groups:** Rules that controls traffic to and from an **EC2 Instance** • Can have only **ALLOW** rules. Limiti: 10000 security groups per region, 60 in/outbound rules per secGroup, 16 secGroups per Elastic Network Interface
+- **NACL vs Security group:**
+	- ![[Pasted image 20240902145817.png]]
+- **Route tables:** where network traffic are directed.
 	- different types:
 		- main route tables: created with VPC cannot be deleted
 		- custom route table: toute table that you can create
-- Elastic Network Interfaces (ENIs): are virtual network interfaces that provide networking capabilities to Amazon EC2 instances. An ENI functions as a virtual network card, enabling instances to connect to networks and communicate with other resources within the AWS environment.
--  Gateway: network service that stands between two different network, es: (load balancer, reverse proxy, firewall ecc...).
-	![[Pasted image 20240930180536.png]]
-- Internet Gateway:
-	- Work both with IPV4 and IPV6, and perform network translation for instances that have been assigned public IPV4 addresses.
+### Internet Gateway
+- Work both with IPV4 and IPV6, and perform network translation for instances that have been assigned public IPV4 addresses.
 	![[Pasted image 20241001091723.png]]
-- Egress-only (EO-IGW): specifically for IPV6 when you want to allow outbound traffic to the internet but prevent inbound from the internet:
+### Egress-only (EO-IGW)
+Specifically for IPV6 when you want to allow outbound traffic to the internet but prevent inbound from the internet:
 	![[Pasted image 20241001092144.png]]
-- Elastic IP: Addresses in AWS that always stay the same (different from that of the EC2 instances)
+### Elastic IP
+Addresses in AWS that always stay the same **(different from that of the EC2 instances)**
 	- IPV6 are already unique so they don't need it
 	- are charge 1$ for each allocated
 	- You can associate, allocate, disassociate, deallocate, reassociate, recover, customize (with your IPV6 ip)
-- AWS ipv6 support: provide a solution for the eventual exhaustion of all IPV4 address
-- Migrating from IPV4 to IPV6
-	![[Pasted image 20241001093351.png]]
-- AWS Direct Connect: 
-	- ![[Pasted image 20241001093756.png]]
-	- 2 types
-		- Lower Bandwith 50Mbps -500Mbps
-		- Higher Bandwith 1Gbps, 10Gbps, 100Gbps
-	- Your network is co-located with an existing AWS Direct Connect location
-	- You work with a AWS Partner Network member
-	- Support IPV4 and IPv6 
-	- Pricing
-		- Capacity
-		- Port hours:
-			- Dedicated: Billed per hour
-			- Hosted Billed subject to the AWS direct connect Delivery partner
-		- DTO (Data Transfer Out)
-			- Charged based on outbound traffic sent through Direct Connect to destinations outside of AWS
-			- Data transfer in the same region is free
-- VPC Endpoints: (vedi appunti AWS):
-	- 3 types: Interface Endpoint, Gateway Endpoint, Gateway Load Balancer Endpoint
-	- Do not require public IPV4 and doesn't leave the AWS network
-	- Eliminates the need for Internet Gateway, NAT Device, VPN connection, AWS Direct Connect
-	![[Pasted image 20241001095236.png]]
-- PrivateLink: (vedi appunti AWS):
-	- ![[Pasted image 20241001095444.png]]
-	- Need an Interface endpoint and Service endpoint in order to work
-- Interface endpoint: it is a Elastic Network Interfaces (ENI) with a private IP addess. they serve as an entry point for traffic going to a supported service.
-- Gateway Load Balancer: Powered by PrivateLink allows you to distribute traffic  to a fleet ofnetwork virtual appliances
-	- ![[Pasted image 20241001100306.png]]
-- Gateway Endpoint
-	- ![[Pasted image 20241001100941.png]]
-	- Use only by s3 and DynamoDB
-- VPC Endpoints Comparison
+- **AWS ipv6 support**: provide a solution for the eventual exhaustion of all IPV4 address
+- Is it possible to migrate from ipv4 and ipv6 following some rules. (It isn't always possible).
+
+### VPC Peering
+Connect two VPC, privately using AWS’ network • Make them behave as if they were in the same network • VPC Peering connection **is not transitive** (2 way)
+### VPC Endpoints: (vedi appunti AWS):
+Endpoints allow you to connect to AWS Services using a private network instead of the public www network • This gives you enhanced security and lower latency to access AWS services.
+
+- Do not require public IPV4 and doesn't leave the AWS network
+- Eliminates the need for Internet Gateway, NAT Device, VPN connection, AWS Direct Connect
+![[Pasted image 20241007170821.png]]
+#### Types of endpoint
+- **Interface endpoint:** it is a Elastic Network Interfaces (ENI) with a private IP addess. they serve as an entry point for traffic going to a supported service. **(Does not include S3 and DynamoDB)**
+- **Gateway Endpoint**: Like interface endpoint used by S3 and DynamoDB 
+- **VPC Endpoints Comparison**
 	 ![[Pasted image 20241001101531.png]]
-- VPC flow logs: (vedi appunti AWS)
-- AWS VPN: 
-	- AWS site-to-site: (vedi appunti AWS)
-	- AWS Client VPN: (vedi appunti AWS)
-	- IPSec: Internet Protocol Security (IPSec) is a secure network protocol suite that authenticates and encryptes the packets of data between two computers over Internet Protocol Network.
-- AWS Site-to-site VPN:
-	- ![[Pasted image 20241001102606.png]]
-	- ![[Pasted image 20241001102856.png]]
-	- ![[Pasted image 20241001103123.png]]
-- Virtual Private Gateway: VPN endpoint on the Amazon side of your Site-to-site VPN connection that can be attached to a single VPC
-	- You need to assign an Amazon ASN or custom ASN (a unique identifier that is globally allocated to each autonomous system)
-- Customer Gateway: 
-	- ![[Pasted image 20241001103628.png]]
-- Transit Gateway: (vedi appunti AWS)
-	- ![[Pasted image 20241001103854.png]]
-- AWS Client VPN: (vedi appunti AWS) (ecample of use: you travel around the world and need connection to services)
-	- ![[Pasted image 20241001104054.png]]
-	- ![[Pasted image 20241001104307.png]]
-- NAT (Network Address Translation):
+***Extra***: 
+**Gateway Load Balancer**: Powered by PrivateLink allows you to distribute traffic  to a fleet ofnetwork virtual appliances
+### AWS Direct Connect
+	![[Pasted image 20241001093756.png]]
+- 2 types:
+	- **Lower Bandwith** 50Mbps -500Mbps
+	- **Higher Bandwith** 1Gbps, 10Gbps, 100Gbps
+- Your network is co-located with an existing AWS Direct Connect location
+- You work with a AWS Partner Network member
+- Support IPV4 and IPv6 
+#### Pricing
+- **Capacity**
+- **Port hours:**
+	- Dedicated: Billed per hour
+	- Hosted Billed subject to the AWS direct connect Delivery partner
+- **DTO (Data Transfer Out)**
+	- Charged based on outbound traffic sent through Direct Connect to destinations outside of AWS
+	- Data transfer in the same region is free
+### PrivateLink
+AWS PrivateLink establishes private connectivity between virtual private clouds (VPC) and supported AWS services, services hosted by other AWS accounts, and supported AWS Marketplace services. Need **network load balancer** for other VPC and **Elastic Network Interface** for yours
+
+![[Pasted image 20241001095444.png]]
+**N.B:** Need an Interface endpoint and Service endpoint in order to work
+### AWS Site-to-site VPN:
+![[Pasted image 20241001102606.png]]
+- ![[Pasted image 20241001102856.png]]
+- ![[Pasted image 20241001103123.png]]
+#### Virtual Private Gateway
+VPN endpoint on the Amazon side of your Site-to-site VPN connection that can be attached to a single VPC
+	 You need to assign an Amazon ASN or custom ASN (a unique identifier that is globally allocated to each autonomous system)
+#### Customer Gateway: 
+Is a resource that you create in AWS that represents customer gateway device in your on premises network. 
+### AWS Client VPN: 
+Connect from **your computer** using OpenVPN to your VPC in AWS and on-premises system.
+**Use case**: You travel around the world and need connection to services.
+![[Pasted image 20241007172433.png]]
+- Certificate based authentication (Mutual authentication)
+- Active Directory authentication (AWS Directory Service)
+- Federation authentication (Single-Sign-On SAML)
+- Uses a single tunnel
+- Use Security Groups for granular control
+- Use AD Groups for granular control
+- Self-service portal to download AWS VPN Desktop Client
+
+### NAT Gateway: 
+NAT (Network Address Translation):
 	- ![[Pasted image 20241001104604.png]]
-- NAT Gateway: (Vedi appunti AWS)
-	- ![[Pasted image 20241001104657.png]]
+ (Vedi appunti AWS)
+	![[Pasted image 20241001104657.png]]
 	- 1 Nat gateway per subnet
 	- Pricing
 		- Per hour 0.045
@@ -701,19 +780,20 @@ Event Pattern: are used to filter what events should be used to pass along to a 
 - Jumpbox/Bastion: security hardenend virtual machines that provide secure access to private subnets
 	- ![[Pasted image 20241001105435.png]]
 	- Nat should not be used as Bastion
-- VPC Lattice: is a fully managed application networking service that you use to connect, secure, and monitor the services for your application -> Turn your AWS resources into services for a micro services architecture
+### VPC Lattice 
+Is a fully managed application networking service that you use to connect, secure, and monitor the services for your application -> Turn your AWS resources into services for a micro services architecture
 	- ![[Pasted image 20241001110138.png]]
-- Transit Gateway: (vedi appunti AWS) 
-	- ![[Pasted image 20241001110353.png]]
-	- ![[Pasted image 20241001110427.png]]
+
 - Traffic Mirroring: sends a copy network traffic from a source ENI to target ENI, or UDP-enabled NLB or GWLB
 - Route 53 Resolver DNS Firewall: Firewall that protect against DNS exfiltration of your data
 	![[Pasted image 20241001111708.png]] ![[Pasted image 20241001111926.png]]
 - AWS Network firewall: is a stateful, managed, network firewall and IDS/IPS for VPCs (use open source Suricata )
-- VPC Peering: (vedi appunti aws): behave like they are on the same network
-	- use star configuration
-	- no-transitive
-- Network Address Usage(NAU): is a metric applied in your VPC to help you plan for and monitor the size of your VPC, in a way that you don't run out of space for your VPC.
+### Transit Gateway: 
+Transit Gateway: (vedi appunti AWS) 
+	- ![[Pasted image 20241001110353.png]]
+	- ![[Pasted image 20241001110427.png]]
+### Network Address Usage(NAU)
+Is a metric applied in your VPC to help you plan for and monitor the size of your VPC, in a way that you don't run out of space for your VPC.
 ## Route 53
 - Hosted Zones: Container for records sets, scoped to route traffic for a specific domain or subdomains
 	- Public: How you want to route traffic through an Internet
@@ -747,12 +827,20 @@ Event Pattern: are used to filter what events should be used to pass along to a 
 - Route 53 Profiles: lets you apply and manage DNS related Route 53 configurations accross many VPCs and in differente AWS accounts
 
 ## AWS Global Accelerator
-can find the optimal path from the end user to your web servers. Is  deployed within Edge Locations, so you send user traffic to an Edge location insted of directly to your web application.
-	 ![[Pasted image 20241001171236.png]]
+Improve global application **availability** and performance using the AWS global network (Can find the optimal path from the end user to your web servers) 
+- Leverage the AWS internal network to optimize the route to your application 
+-  2 Static Anycast IP are created for your application and traffic is sent through **Edge Locations
+- 2 types: 
+	- Standard: automatically route to the nearest healthy endpoint
+	- Custom Routing: Route specifies EC2 Instances
+- Components: 
+	- **Listeners**: Listens for traffic on a specific port and sends traffic to a endpoint group
+	- **Endpoint Groups**: collection of endpoint
+	- **Endpoints**: represent a resource to send traffic to
 
 ## Cloud Front
 ![[Pasted image 20241001172029.png]]
-- Cloud Front is a CDN (negli appunti AWS c'è un altra definizione)
+- Cloud Front is a CDN 
 	- CDN(Content Delivery Network): A CDN is a distributed network of servers that delivrs web pages and content to users based on their geographical location, the origin of the wbpage and a content delivery server 
 
 - Lambda Edge: are lambda functions that override the behaviour of request and responses 
@@ -782,19 +870,31 @@ can find the optimal path from the end user to your web servers. Is  deployed wi
 
 ## WAF
 Protects your web applications from common web exploits **Layer 7**.
+ALLOW and DENY rules based on the contents of HTTP request. Can only be deployed 
 
-![[Pasted image 20241004094345.png]]
+- Can only be deployed on
+    - [Application Load Balancer](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Elastic%20Load%20Balancer%20(ELB)#application-load-balancer-alb)
+    - [API Gateway](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/API%20Gateway)
+    - [CloudFront](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudFront)
+- WAF contains **Web ACL (Access Control List)** containing rules to **filter requests** based on:
+    - **IP addresses**
+    - HTTP headers
+    - HTTP body
+    - URI strings
+    - Size constraints (ex. max 5kb)
+    - **Geo-match** (block countries)
+    - **Rate-based rules** (to count occurrences of events per IP) for **DDoS protection**
 ## Cloud HSM
 **HSM:**
 Hardware Security Module it is a piece of hardware designed to store encryption keys. HSM hold keys in memory and never write them to disk.
 It follows FIPS (Federal Information Processing Standards): US and CANAdian governmant standard for cryptographic modules.
 
-2 types:
+**2 types:**
 - Multi-tenant (FIPS 140-2 Level 2 Compliant): 
 - Single-Tenant (FIPS 140-2 Level 3 Compliant):
 
 **Cloud HSM:** 
-Is single tenant HSM as a service that automates hardware provisioning. Enables you to generate and use your encryption keys on a FIPS 140-2 Level 3 validated hardware.
+Is **single tenant** HSM as a service that automates hardware provisioning. Enables you to generate and use your encryption keys on a FIPS 140-2 Level 3 validated hardware.
 
 It is easy to migrate aws key between cloudHSM.
 
@@ -805,7 +905,9 @@ Intelligent **Threat discovery** to protect your AWS Account. Uses Machine Learn
 
 ## AWS Firewall Manager
  AWS Firewall Manager allows  you to centrally configure and manage firewall rules accross accounts and applications. 
- ![[Pasted image 20241003170926.png]]
+ - Must be a member of AWS organizzation
+ - Must be AWS Firewall Manager administrator
+ - Must have AWS Config enabled for your accounts and region
 ## AWS Inspector
 Amazon Inspector is an **automated** security assessment service that helps improve the security and compliance of applications deployed **on your Amazon EC2 instances**. Amazon Inspector automatically assesses applications for exposure.
 ## Amazon Macie
@@ -814,10 +916,10 @@ Amazon Inspector is an **automated** security assessment service that helps impr
 Central security tool to manage security across several AWS accounts and automate security checks. Allow you to generate a security score to determine your security posture. Allows you to enable standards(collection of security control)ù
 
 ## KMS
-![[Pasted image 20241003154434.png]]
-- Multi tenant: means there are multiple customers that are using the same piece of hardware. In this way is it possible to reduce the cost of the service. Each part is isolated per user.
-	- **CloudHSM:** is single tenant
-- type of key
+KMS makes iteasy for you to create, control and rotate encryption keys in AWS.
+- Is **multi-tenant**: There are multiple customers that are using the same piece of hardware. In this way is it possible to reduce the cost of the service. Each part is isolated per user.
+- It is used for the encryption of almost every service in aws.
+- **Type of key**
 	- **Customer Managed Key:**
 		- Create, manage and used by the customer, can enable or disable
 		- Possibility of rotation policy (new key generated every year, old key preserved)
@@ -831,7 +933,7 @@ Central security tool to manage security across several AWS accounts and automat
 	- **CloudHSM Keys (custom keystore):** 
 		- Keys generated from your own CloudHSM hardware device
 		- Cryptographic operations are performed within the CloudHSM cluster
-- CMK(Customer Master Key): are the primary resources in AWS KMS. Is a logical representation of a master key . Support both Symmethric(one key) and Assymethric CMKs(2 keys).
+- **CMK(Customer Master Key):** are the primary resources in AWS KMS. Is a logical representation of a master key . Support both Symmethric(one key) and Assymethric CMKs(2 keys).
 ## Audit Manager
 Continually audit your AWS usage to simplify risk and compliance assessment. 
 AWS Audit Manager contains: Framework Library, Control Library.
@@ -845,19 +947,21 @@ You can create assesments to review the evidence collected and generate an asses
  - **Terminating SSL End-to-End**: Traffic is encrypted in-transit all the way to the application
  ![[Pasted image 20241003163241.png]]
 ## AWS Cognito
-Is a Customer identity and access management system. It provides authentication, authorization and user management for your web and mobile apps. It also provides authentication to AWS Services 
-![[Pasted image 20241003163859.png]]
+Is a Customer identity and access management system. It provides authentication, authorization and user management for your web and mobile apps. It also provides authentication to AWS Services.
+
+**Components:**
+- **Cognito User Pools**: User directoru with authentication to grant access to your app
+- **Cognito Identity Pools**: Provide temporary credential for users
+- **Cognito Sync**: Sync user data accross all devices
 ## Amazon Detective
 Amazon Detective analyzes, investigates, and quickly identifies the root cause of security issues or suspicious activities (using ML and graphs). More powerful than **GuardDuty, Macie, and Security Hub.**
-![[Pasted image 20241003164356.png]]
-
 ## Directory Service
 A directory service  that maps the names of network resources to their network addresses.
 A directory service is shared information infrastructure for locating, managing, administering and organizing resources.
 
-Well known services:
+**Well known services:**
 - Domain Name Service (DNS), Microsoft Active Directory, Apache Directory Server, Oracle Internet Directory, Open LDAP, CLoud Identity, JumpCloud
-AWS Directory service: provides multiple ways to use Microsoft Active Directory. 
+**AWS Directory service**: provides multiple ways to use Microsoft Active Directory. 
 - Simple AD: Not available for all the regions.  powered by Sambda.
 - AD Connector: a proxy service to connect your existing on-premise AD Directory
 - AWS Managed Microsoft AD: A full feature managed version of MS active directory
@@ -990,9 +1094,14 @@ You can setup automatic rotation, is not enabled by default.
 Is a managed full-text search service that makes it easy to deploy operate and scale OpenSearch and ElasticSearch, a popular open-source search and analytics engine.
 
 ## Elastic Transcoder
-Elastic Transcoder is video-transcoding server, used to convert media files stored in S3 into media files in the formats required by consumer playback devices. (Very expensive)
+Elastic Transcoder is video-transcoding server, used to convert media files stored in S3 into media files in the formats required by consumer playback devices. **(Very expensive)**
 
-![[Pasted image 20241002105413.png]]
+- AWS Elastic Transcoder cannot be used via AWS CFN
+	- If you need to automate you need to use the AWS SDK or AWS CLI
+- Create a pipeline
+	- Create a job
+		- Choose a preset (determines what to cover the file to)
+		- Choose source and destination bucket
 ## SNS
 - **Publish Subscribe pattern:** 
 	![[Pasted image 20241002105940.png]]
@@ -1592,6 +1701,23 @@ Is Active by default and will collect logs for 90 days via Event History. If you
 - Helps understand how your application and its underlying services are performing to identify and troubleshoot the root cause of performance issues and errors.
 - Can collect data across AWS Accounts. The **X-Ray agent** can **assume a role** to publish data into an account different from the one in which it is running. This enables you to publish data from various components of your application into a **central account**.
 # Management
+## (IAM) Identity Access Manager
+- Anatomy of IAM policy
+	- ![[Pasted image 20241001113136.png]]
+- Principle of Least Privilege:
+	- Just Enough Access: Permitting only the exact actions  for the identity to perform task
+	- Just In Time: Permitting the smallest length of duration a identity can use permissions
+- Password policy: you can set expires date for user password in rder to rotate them
+- Access Key: you can have a maximum of 2 access key per account
+- MFA: (vedi appunti aws)
+- Temporary Security Credentials: Generated dynamically, every time you use a roles a you a temporary security cred are created automatically
+- IAM Identity federetion: the means of linking a person to eletronic identity and attribute. When you connect using facebook or google you're using identity fed
+- STS: (vedi appunti AWS)
+- Cross Account Role: You can grant users from different AWS account access to resources in your account through a Cross-Account Role. This allows you to not to have to create them a user account within your systems
+	- ![[Pasted image 20241001115206.png]]
+- IAM AssumeRoleWithWebIdentity: Returns a set of temporary security credentials for users who have been authenticated in a mobile or web application with web identity provider
+	- ![[Pasted image 20241001115642.png]]
+	- You always authenticate with the web identity first
 ## Service Catalog
 - ![[Pasted image 20241002115439.png]]
 - Anatomy:
@@ -1652,23 +1778,6 @@ Single sign-on for multi account in aws
     1. Remove the member accounts from the organizations using procedure above
     2. Delete the old organization
     3. Repeat the process above to invite the old master account to the new org
-## (IAM) Identity Access Manager
-- Anatomy of IAM policy
-	- ![[Pasted image 20241001113136.png]]
-- Principle of Least Privilege:
-	- Just Enough Access: Permitting only the exact actions  for the identity to perform task
-	- Just In Time: Permitting the smallest length of duration a identity can use permissions
-- Password policy: you can set expires date for user password in rder to rotate them
-- Access Key: you can have a maximum of 2 access key per account
-- MFA: (vedi appunti aws)
-- Temporary Security Credentials: Generated dynamically, every time you use a roles a you a temporary security cred are created automatically
-- IAM Identity federetion: the means of linking a person to eletronic identity and attribute. When you connect using facebook or google you're using identity fed
-- STS: (vedi appunti AWS)
-- Cross Account Role: You can grant users from different AWS account access to resources in your account through a Cross-Account Role. This allows you to not to have to create them a user account within your systems
-	- ![[Pasted image 20241001115206.png]]
-- IAM AssumeRoleWithWebIdentity: Returns a set of temporary security credentials for users who have been authenticated in a mobile or web application with web identity provider
-	- ![[Pasted image 20241001115642.png]]
-	- You always authenticate with the web identity first
 ## AWS Artifact
 Portal that provides customers with on-demand access to AWS compliance documentation and AWS agreements.
 
@@ -1688,24 +1797,6 @@ Portal that provides customers with on-demand access to AWS compliance documenta
 - Create **custom reports** that analyze cost and usage data
 - **Recommendations** to choose an optimal savings plan
 - View usage for the **last 12 months & forecast up to 12 months**
-## EC2 Pricing Models
- Type of purchasing option:
-- **On-Demand Instances** : Has **high cost but no upfront payment** is a **pay-as-you-go** model. Thi is the default option when create EC2. Recommended for **short-term and un-interrupted** workloads commitment
-- **Reserved Instance(1 & 3 years)**: up to 72% save, long workloads/ long workloads with flexible instances. 
-	- 2 types: **Standard:** 72% save, **Convertible:** 54% save, you can change RI based on RI Attributes. If greater or equal in value.
-		![[Pasted image 20241004110849.png]]
-	- Type of payments: **All upfront, Partial upfront, No upfront**
-	- **RI Attributes**: can affect cost (Instance type, Region, Tenancy, Platform)
-	- **Limits**: Per month -> 20 Regional RI per region, 20, Zonal RI per zone
-	- **RI Marketplace**: allows you to sell your unused Standard RI to recup your RI spend for RI you do not intend or cannot use.
-- **Savings Plans (1 & 3 years)** :commitment to an amount of usage, long workload, up to 72%
-- **Spot Instances** : short workloads, cheap, can lose instances (less reliable), up to 90%
-- **Dedicated Hosts** and Dedicated Instance:
-	 ![[Pasted image 20241004112027.png]]
-
-**Capacity Reservations** : Is a service of EC2 that allows you to request a reserve of EC2 instance type for a specific Region and AZ
-
-
 
 # Machine Learning 
 ## CodeGuru
