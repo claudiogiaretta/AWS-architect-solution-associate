@@ -42,8 +42,8 @@ Informazioni utili:
 ### Encryption
 
 - Can be enabled at the bucket level or at the object level
-- **Server Side Encryption (SSE)**
-    - **SSE-S3**
+- **Server Side Encryption (SSE) - implemented by default**
+    - **SSE-S3 (Default)**
         - Keys managed by S3
         - AES-256 encryption
         - HTTP or HTTPS can be used
@@ -57,14 +57,11 @@ Informazioni utili:
         - Keys managed by the client
         - Client sends the key in HTTPS headers for encryption/decryption (S3 discards the key after the operation)
         - **HTTPS must be used** as key (secret) is being transferred
-- **Client Side Encryption**
+- **Client Side Encryption (CSE)**
     - Keys managed by the client
     - Client encrypts the object before sending it to S3 and decrypts it after retrieving it from S3
 
-Enforcing Encryption
-
 ### Access Management
-
 - **User based security**
     - IAM policies define which API calls should be allowed for a specific user
     - Preferred over bucket policy for **fine-grained access control**
@@ -86,7 +83,7 @@ Enforcing Encryption
     - `<bucket-name>.s3-website-<region>.amazonaws.com`
     - `<bucket-name>.s3-website.<region>.amazonaws.com`
 - If you get a `403 (Forbidden)` error, make sure the bucket policy allows public reads
-- For cross-origin access to the S3 bucket, we need to enable [CORS](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Concepts#cross-origin-resource-sharing-cors) on the bucket
+- **For cross-origin access to the S3 bucket, we need to enable [CORS](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Concepts#cross-origin-resource-sharing-cors) on the bucket**
     - ![attachments/Pasted image 20220507175558.jpg](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/attachments/Pasted%20image%2020220507175558.jpg)
 - To host an S3 static website on a custom domain using Route 53, the bucket name should be the same as your domain or subdomain Ex. for subdomain `portal.tutorialsdojo.com`, the name of the bucket must be `portal.tutorialsdojo.com`
 
@@ -107,7 +104,7 @@ Enforcing Encryption
 
 - **Asynchronous replication**
 - Objects are replicated with the **same version ID**
-- Supports **cross-region** and **cross-account** replication
+- Supports **cross-region, same region, bidirectional, batch replication**
 - **Versioning must be enabled for source and destination buckets**
 - For DELETE operations:
     - Replicate delete markers from source to target (optional)
@@ -132,6 +129,7 @@ Enforcing Encryption
     - Instant retrieval
     - No cost on retrieval (only storage cost)
     - For frequently accessed data
+- **Express One-Zone**: 50% discount but reduced availability
 - **Infrequent Access**
     - For data that is infrequently accessed, but requires rapid access when needed
     - Lower storage cost than Standard but **cost on retrieval**
@@ -176,7 +174,7 @@ Enforcing Encryption
     - Moves objects automatically between Access Tiers based on usage
     - Small monthly monitoring and auto-tiering fee
     - **No retrieval charges**
-- #### Moving between Storage Classes[¶](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/simple%20storage%20service%20(s3)/#moving-between-storage-classes "Permanent link")
+- #### Moving between Storage Classes
     
     - In the diagram below, transition can only happen in the downward direction
     - ![attachments/Pasted image 20220514201314.jpg](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/attachments/Pasted%20image%2020220514201314.jpg)
@@ -194,10 +192,6 @@ Enforcing Encryption
 > - When you use bucket default settings, you don't specify a `Retain Until Date`. Instead, you specify a duration, for which every object version placed in the bucket should be protected.
 > - Different versions of a single object can have different retention modes and periods
 
-### S3 Analytics
-- Provides analytics to determine when to transition data into different storage classes
-- **Does not work for ONEZONE_IA & GLACIER**
-
 ### Performance
 
 - 3,500 PUT/COPY/POST/DELETE and 5,500 GET/HEAD requests per second per prefix
@@ -214,12 +208,6 @@ Enforcing Encryption
     - **S3 Transfer Acceleration**
         - Speed up **upload and download** for **large objects (>1GB)** for **global users**
         - Data is ingested at the nearest edge location and is transferred over AWS private network (uses [CloudFront](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudFront) internally)
-
-### S3 Select
-
-- Select a subset of data from S3 using **SQL queries** (**server-side filtering**)
-- Less network cost
-- Less CPU cost on the client-side
 
 ### Data Transfer Costs
 - Uploads to S3 are free
@@ -243,8 +231,8 @@ Enforcing Encryption
 - Used to share large datasets with other AWS accounts
 - The requester must be authenticated in AWS (cannot be anonymous)
 
-### Object Lock
-
+### Object Lock (feature)
+- Can only be turned on during creation
 - WORM (Write Once Read Many) model
 - Block an object version modification or deletion for a specified amount of time
 - Modes:
@@ -260,9 +248,12 @@ Enforcing Encryption
 - For compliance and data retention
 
 ## EBS
+Non global service, allows you to create "EBS volume" which are **network drive** you can attach to your instances while they run. **They can only be mounted to one instance at a time.** **EBS volume is not multi Availability Zone**.
+	1. **EBS Snapshot Archive:** Move a Snapshot to an ”archive tier” that is 75% cheaper
+	2. **Recycle Bin for EBS Snapshots**: Specify retention (from 1 day to 1 year)
 
 ![[Pasted image 20241001174016.png]]
-- EBS: (vedi appunti AWS)
+- volums type: 
 	![[Pasted image 20241001174105.png]]
 	N.B io2 doesn't exist anymore use io2 Block Express
 - Volume type usages:
@@ -270,12 +261,20 @@ Enforcing Encryption
 	![[Pasted image 20241001174656.png]]
 
 ## EFS
-(vedi appunti AWS per la definizione)
-![[Pasted image 20241001175602.png]]
+Managed NFS (network file system) that can be mounted on 100s of EC2 • EFS works with **Linux** EC2 instances in multi-AZ • Highly available, scalable, expensive (3x gp2), pay per use, no capacity planning 
+-  AWS managed Network File System (NFS)
+- Can be mounted to multiple EC2 instances **across AZs**
+- **Pay per use** (no capacity provisioning)
+- **Auto scaling** (up to PBs)
+- Compatible with **Linux** based AMIs (**POSIX** file system)
+- **Uses security group to control access to EFS**
+- Lifecycle management feature to move files to **EFS-IA** after N days
+- Creates multiple **mount targets**
+
+#### EFS Client
 - EFS Client (amazon-efs-utils package): is an open-source collection of Amazon EFS tools.
 	- enables the ability to use Amazon CloudWatch to monitor an EFS file system's mount status
 	- You need to install the Amazon EFS client on an Amazon EC2 instance prior to mounting an EFS file system
-	- ![[Pasted image 20241001180345.png]]
 
 ## Fsx
 Allows you to deploy scale feature-rich, high performance file systems in the cloud. Fsx support a variety of file system protocol.
@@ -293,65 +292,73 @@ Allows you to deploy scale feature-rich, high performance file systems in the cl
 Allows you to centrally manage backup accross AWS Services
 
 - Component:
-	- Backup Plan: A backup policy defines the backup schedule, backup window, backup lifecycle.
-	- Backup Vault: backup are stored in a backup vault
-	- AWS backup Audit Manager is built in reporting and auditing for AWS backup
+	- **Backup Plan**: A backup policy defines the backup schedule, backup window, backup lifecycle.
+	- **Backup Vault**: backup are stored in a backup vault
+	- **AWS backup Audit Manager** is built in reporting and auditing for AWS backup
 
 ## Snow Family
-AWS Snow Family are storage and compute devices used to phisically move data in or out the cloud when moving data over the internet or private connection is to slow, difficult or costly.
+AWS Snow Family are storage and compute devices used to phisically move data in or out the cloud when moving data over the internet or private connection is too slow, difficult or costly.
+- **Takes around 2 weeks to transfer the data**
+- **Snowball cannot import to Glacier directly** (transfer to S3, configure a lifecycle policy to transition the data into Glacier)
+- Pay per data transfer job
 
 ![[Pasted image 20241002093152.png]]
-- Snowcone: Portable secure devicce for edge computing
+- **Snowcone**: Portable secure device for edge computing
 	- types:
 		- Snowcone: 8 TB HDD
 		- Snowcone SSD: 8 TB SSD
 	- Two ways of sending data:
-		- Phisically shipping the device which runs on the device's compute
-		- AWS DataSync which runs on the device's compute
-	- Has an E link shipping label for easy shipping
-- SnowballEdge: Similar to Snowcone but with more local processing, edge computing worloads, and device configuration options.
+		- **Phisically shipping** the device which runs on the device's compute
+		- **AWS DataSync** which runs on the device's compute
+- **SnowballEdge**: Similar to Snowcone but with more local processing, edge computing workloads, and device configuration options.
 	- Config Options:
-		- Storage Optimized (for data transfer): 
+		- **Storage Optimized (for data transfer):** 
 			- 100 TB (80 TB usable)
-		- Storage Optimized
+		- **Storage Optimized**
 			- 210 TB usable
-		- Storage Optimized with EC2-Compatible compute
+		- **Storage Optimized with EC2-Compatible compute**
 			- 80 TB usable storage , 40vCPUs and 80 GB of memory
-		- Compute Optimized
+		- **Compute Optimized**
 			- Up to 104 vCPUs, 416 GB of memory,and 28 TB of dedicated NVMe SSd
-		- Compute Optimized with GPU
-			- Has addition of GPUs equivalent to the one available in the Instance Type P3
-- AWS Snowmobile: 45-foot ship container truck. Used to handle 100 PB of data
+		- **Compute Optimized with GPU**
+			- Useful for video processing
+- **AWS Snowmobile**: 45-foot ship container truck. Used to handle 100 PB of data
 - Comparison
 	![[Pasted image 20241002094449.png]]
 
 ## AWS transfer family
-Offers fully managed support for the tansfer files over SFTP, AS2,FTPS and FTP directly into and out of Amazon S3.
-![[Pasted image 20241002094829.png]]
+Offers fully managed support for the transfer files over SFTP, AS2,FTPS and FTP directly into and out of Amazon S3.
+
+- Supported Protocols
+    - **FTP** (File Transfer Protocol) - unencrypted network protocol
+    - **FTPS** (File Transfer Protocol over SSL) - FTP with SSL/TLS encryption
+    - **SFTP** (Secure File Transfer Protocol) -  uses SSH to provide secure but unencryped 
+    - **AS2** (Applicability Statement): Enable secure and reliable messaging
+
 ![[Pasted image 20241002094906.png]]
 
 ## AWS Migration Hub
 Is a single place to discover your existing servers, plan migrations, and track the status of each application migration.
 
 AWS Migration hub can monitor migration using:
-- Application Migration Service (AMS)
-- Database Migration Service (DMS)
+- **Application Migration Service (AMS)**
+- **Database Migration Service (DMS)**
 
 Tools to migrate:
-- AWS Discovery Agent: Agent installed on your VM
-- Migration Evaluator Collector : You submit a request to ask helps from AWS team
+- **AWS Discovery Agent:** Agent installed on your VM
+- **Migration Evaluator Collector** : You submit a request to ask helps from AWS team
 Other tools:
 - AWS Migration Hub Refactor: Bridges networking accross AWS Accounts so that legacy and new services can communicate while they maintain the independence of separate accounts
 - AWS Migration Hub Journey: guided templates
 ## AWS Data Sync
-Is a data transfer service that simplifies data migration to, from, and between cloud storage services
+ Move **large amounts of data** from your **on-premises NAS or file system** via **NFS** or **SMB** protocol to AWS over the **public internet using TLS**
+ - Need to install **AWS DataSync Agent** on premises
 ## Data Migration Service (DMS)
-AWS Database Migration Service (AWS DMS) is a managed migration and replication service that helps move your database and analytics workloads to AWS quickly, securely, and with minimal downtime and zero data loss.
+**AWS Database Migration Service (AWS DMS)** is a managed migration and replication service that helps move your database and analytics workloads to AWS quickly, securely, and with minimal downtime and zero data loss.
 ![[Pasted image 20241002101336.png]]
-**AWS Schema Conversion** is udes in many cases to automatically convert a source database schema to a target database schema
+**AWS Schema Conversion** is used in many cases to automatically convert a source database schema to a target database schema
 For data warehouse you can use the desktop app **AWS schema conversion tool** 
 
-- Migration Methods:
 	![[Pasted image 20241002101956.png]]
 
 
