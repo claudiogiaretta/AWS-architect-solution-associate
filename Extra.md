@@ -11,3 +11,6 @@ Amazon MSK:
 **Amazon MSK Connect:** is a feature of Amazon MSK that makes it easy for developers to stream data to and from their apache kafka clusters.
 
 - **Apache kafka**: Open source streaming platform to create high performance data pipelines, streaming analytics, data integration, and mission critical applications. (Developed by Linkedin). based on Consumer/Producer architecture.
+
+## Keyspace
+![[Pasted image 20241003125003.png]]

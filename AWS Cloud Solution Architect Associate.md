@@ -1481,145 +1481,174 @@ It’s a managed DB service for DB use SQL as a query language. It allows you to
 ## Aurora
 ***Serverless***,• Automated database instantiation and auto -scaling based on actual usage • PostgreSQL and MySQL are both supported as Aurora Serverless DB. **Aurora costs more than RDS (20% more).
 
-- **Aurora Scaling:** 
-	![[Pasted image 20241003114728.png]]
-- **Aurora Serverless Provisioned:** default compute configuration for Aurora. primary db that perform read and writes and up to 15 Replica. primary DB instance is not created by default
+- **Aurora Global Database:** is a database spanning multiple regions for global low latency  and high availabilty. Primary cluster is in a separate region
+- **RDS Data API:** allows you to use HTTP to securely query an Aurora database. Unlimited max request per seconds. Unlimited max request per seconds. Must be enabled 
+### Durability and Fault Tolerance
+- Aurora Backup and Failover are handled automatically 
+- Snapshots of data can be shared with other AWS accounts
+- Storage is self-healing, in that data blocks and disks are continuously scanned for errors and repaired automatically.
+### Availability
+- Aurora deploys in a minimum of 3 availability zones each contain 2 copies of your data at all times.
+- That means there are 6 copies
+- Lose up to 2 copies of your data without affecting write availability.
+- Lose up to 3 copies of your data without affecting read availability.
+### Storage
+- A cluster starts with 10GB of storage and scale in 10GB increments up to 64TB or 128 TB depending on DB engine version. Storage is autoscaling.
+- Computing resources can scale up to 32 vCPUs and 244GB of memory.
+### Security
+- TLS/SSL certificate can be applied to encrypt security connections so termination occurs at the database
+### Type
+#### Aurora Serverless Provisioned
+Default compute configuration for Aurora. primary db that perform read and writes and up to 15 Replica. primary DB instance is not created by default
 - **Reader vs Writer Instances:** 
 	![[Pasted image 20241003115330.png]]
-- **Aurora Serverless V2:** fully manages the autoscaling configuration for Amazon Aurora
+#### Aurora Serverless V2
+fully manages the autoscaling configuration for Amazon Aurora
 	- Capacity is adjusted automatically based on application demand
 	- charge only for resources used
 	- use case: Highly variable workloads
-	- Does not scale to zeero, must mainaine at least 0.5 ACU
-	![[Pasted image 20241003115938.png]]
-- **Aurora Serverless V2 vs Provisioned:**
+	- Does not scale to zeero, must mantain at least 0.5 ACU(unit mesurement of Aurora to determine cost vs capacity)
+#### Aurora Serverless V2 vs Provisioned
 	![[Pasted image 20241003120332.png]]
-- **Aurora Global Database:** is a database spanning multiple regions for global low latency  and high availabilty. Primary cluster is in a separate region
-- **RDS Data API:** allows you to use HTTP to securely query an Aurora database. Unlimited max request per seconds. Unlimited max request per seconds. Must be enabled 
-## DocumentDB
- - **MongoDB:** use BSON(Binary JSON). has a shell(mongosh).
- - **DocumentDB**: is a NOSQL document database that is "MongoDB compatible" MongoDB is very popular NoSQL among developers. 
-	![[Pasted image 20241003122328.png]]
-## DynamoDB
-Amazon DynamoDB is a ***serverless***, NoSQL (key/value), fully managed database with single-digit millisecond performance at any scale. **• Fully Managed Highly available with replication across 3 AZ.
 
-![[Pasted image 20241003122625.png]]
-- **Read Consistency:** When data needs to be updated in all of its copy and keep data consistent.
-	- there are different types of read consistency:
+## DocumentDB
+NOSQL, document database that is based on MongoDB MongoDB: 
+- Cluster types:
+	- **Instance based Cluster**: manage your instances directly choosing instance type
+	- **Elastic Cluster**: clusters automatically scale, you choose vCPU and number of instances per shard
+- Compatible with MongoDB 4.0 and 5.0
+- DocumentDB does not support all functionality for MongoDB eg. Writable Retries is not support
+- DocumentDB storage volume grows in increments of 10 GB, up to a maximum of 128 TB.
+- Create up-to 15 replicas
+- Amazon DocumentDB continuously monitors the health of your cluster and automatically restart failed instances Failover automatically will occur to upto 15 replicas in other AZS
+- Backup is turned on by default (can't be turned off) with a **max retention period of 35 days**
+- Supports **point-in-time recovery**
+- Clusters are deployed into a customer's VPC
+- Performance Insights feature to determine bottlenecks for reads and writes
+- In-transit and at-rest encryption. You must connect using TLS connect.
+## DynamoDB
+Amazon DynamoDB is a ***serverless***, NoSQL (key/value), fully managed database with single-digit millisecond performance at any scale.  
+- **Highly available** with replication across 3 AZ.
+- **Multi-Region**
+- **Single digit millisecond** response time at any scale
+- **Maximum size of an item: 400 KB**
+- Max 100 table
+- DyanmoDB creates partitions for you as your data grow. creates a partition every 10 GB or when you exceed.... 
+### Capacity
+- **Provisioned Mode** (default)
+    - Provision read & write capacity
+    - Pay for the provisioned capacity
+    - Auto-scaling option (eg. set RCU and WCU to 80% and the capacities will be scaled automatically based on the workload)
+- **On-demand Mode**
+    - Capacity auto-scaling based on the workload
+    - Pay for what you use (more expensive)
+    - Great for unpredictable workloads
+
+### Read Consistency 
+When data needs to be updated in all of its copy and keep data consistent.
+there are different types of read consistency:
 		![[Pasted image 20241003123002.png]]
-- **Partitions:** is an allocation of storage for a able, and automatically replicated accross multiple AZs. DyanmoDB creates partitions for you as your data grow. starts off with single partition
-	- creates a partition evry 10 GB or when you exceed ...
-- **Primary Keys:** cannot be changed.
+
+### Primary Keys 
 - **Simple Primary Key:** a primary key with ony a Partition key to choose which partition
 - **Composite Primary Key:** a primary key with both a Partition and a sort key to choose partition
 - **Query:** 
 	![[Pasted image 20241003124503.png]]
-- **Scan:** scan throush all items return one or more items. (much less efficient then query - not said by amazon)
+- **Scan:** scan through all items return one or more items. (much less efficient then query - not said by amazon)
 
 
 ## Amazon Keyspace
-![[Pasted image 20241003125003.png]]
+Amazon Keyspaces is a fully managed Apache Cassandra database. Cassandra is an open-source NoSQL key/value database similar to DynamoDB in that is columnar store database but has some additional functionality. When you want to use Apache Casandra.
 
-
+- **Cluster** - a collection of nodes 
+- **Nodes** - holds 2 - 4 TB of data
+	- All nodes read and write
+	- Nodes represent smallest unit of a database
+	- Data is replicated on multiple nodes
+- **Ring** - Nodes are arranged in a ring where all nodes connect to each other
+- **Keyspace** - a namespace that specifies data replication on nodes
+- **Table** - tabular data of columns and rows with a primary key
 ## Neptune
 Amazon Neptune is a fast, reliable, fully managed graph database service that makes it easy to build and run applications that work with highly connected datasets.
 
-![[Pasted image 20241003130018.png]]
-- Netpune Database: 2 types
-	- Provisioned: you choose an instance type
-	- Serverless: set a min and max Nepune Capacity units
-- Neptun Anlyses:  provide capabilites to run large-scale graph analytics algorithms efficiently
-- Gremlin: is the graphic traversal language for Apache TinkerPop
-	- designed to the WORA (Write once, run anywhere)
-	- real time database query (OLTP)
-	- batch analytics query (OLAP)
-- OpenCypher: opensource implementation of cypher 
-	- more developer friendly to write query insetad of Gremlin
-- SparQL is an RDF(Resource Description Framework) query language. Allows users to write queries against what can loosely be called key-value data.
-
-
-
+- **Netpune Database**: **2 types**
+	- **Provisioned**: you choose an instance type
+	- **Serverless**: set a min and max Nepune Capacity units
+- **Neptune Analyses**:  provide capabilites to run large-scale graph analytics algorithms efficiently
+- Highly available across **3 AZ** with up to **15 read replicas**
 ## ElastiCache
 Amazon ElastiCache is a web service that makes it easy to set up, manage, and scale a distributed in-memory data store or cache environment in the cloud
 
- Can only accessible by resources in the same VPC
-	- this ensure low-latency 
-It can be cross region if enabled
+ - Can only accessible by resources in the same VPC (to ensure low latency)
+- It can be cross region if enabled
 - Deployment Options:
-	- Serverless or Standard
-		![[Pasted image 20241002154102.png]]
-- Chaching types:
-	- Memcache: is generally preferred for caching HTML fragments. Memcached is a simple key/value store. The trade off to being simple is taht it is very fast 
-	- Redis: Can perform many different kind of operations on your data. It is very good for leaderboards, and keep track of unread notification data. It is very fast, but arguably not as fast as memcached
-- Redis: Open source in-memory database store. Redis acts as caching layer, or a very fast database. is key/value store
-	- Strings: most basic value, max length 512MB
-		- Command:
-	- Sets: unorder collection of strings. String are unique
-		- Command.
-	- Sorted Sets: are a collection of strings that are sorted based on an associated score
-		- Command:
-	- Lists: Order collection of strings, you can have duplicate
-		- Command:
-	- Hashes: represent mapping between string fields and string values
-		- Command:
-- MemCached: is an open-source distributed memory object caching system. It's a caching layer for web-applications. Key/value store
-	- Command
-		- Set
-		- get
-		- delete
-		- incr
-		- decr
-		- add
-		- replace
-		- flush_all
-		- appened
-		- prepend
-		- stats
+
+|            | Serverless                                                     | Standard                                                                       |
+| ---------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Use case   | Unpredictable workloads                                        | Predictable Workloads                                                          |
+| Management | Automatically scales                                           | Customer managers cluster and nodes                                            |
+| Billing    | <ul><li>Data Stored</li><li>ElasticCache Processing Units</li> | <ul><li>Based on number of nodes</li><li>Based of node type(size of node)</li> |
+### Types
+#### Redis
+Open source in-memory database store. Redis acts as caching layer, or a very fast database. is key/value store.
+Can perform many different kind of operations on your data. It is very good for leaderboards, and keep track of unread notification data. It is very fast, but arguably not as fast as memcached
+
+#### MemCached
+Is an open-source distributed memory object caching system. It's a caching layer for web-applications. Key/value store.
+
+Is generally preferred for caching HTML fragments. Memcached is a simple key/value store. The trade off to being simple is taht it is very fast 
+**Command**: Set, get, delete, incr, decr, add, replace, flush_all, appened, prepend, stats
+
 ## MemoryDB
 Is a Redis-compatible in-memory database for ultra-fast performance
 Suitable to be primary database. Slower writes but better performance in general.
 ## Amazon Redshift
- **Serverless,** An Amazon Redshift is an enterprise-class relational database based on postgresql, Is thinked for data warehouse and for OLAP(analytics and data warehousing). Storage is done by **column** and not by row. **Pay as you go based**
+ **Serverless,** Is an enterprise-class relational database based on postgresql. Is thinked for data warehouse and for **OLAP(analytics and data warehousing)**. Storage is done by **column** and not by row. **Pay as you go based**
 
-Datawerehouse: Built to store large quantities of historical data and enable fast, complex queries across all the data.
+**Datawerehouse**: Built to store large quantities of historical data and enable fast, complex queries across all the data.
 
 **OLAP** applications look at multiple records at the same time. You save memory because you fetch  just the columns of data you need
  instead of whole rows.
 
-- Different type of configurations
-	![[Pasted image 20241002163927.png]]
-different type of nodes:
-	![[Pasted image 20241002164003.png]]
-- Compression
-	- Redshift uses multiple compression techniques.
+- **Different type of configurations:**
+	- **Single Node**: Nodes comes in sizes of 160GB. You can launch a single node to get started with Redshift.
+	- **Multi Node**: You can launch a cluster of nodes with Multi-node mode
+	- **Leader Node**: manages client connections and receiving queries
+	- **Compute Node**: stores data and performs queries up to 128 computes nodes
+- **Different type of nodes:**
+	- **Dense Compute(dc)**: best for high performance, but they have less storage
+	- **Dense Storage(dc)**: cluster in which you have a lot of data
+- **Compression**
+	- **Redshift** uses multiple compression techniques.
 	- Similar data is stored sequentially on disk
 	- Does not require indexes or materialized views, compared to traditional systems
 	- When loading data to an empty table, data is sampled and the most appropriate compression scheme is selected automatically
-- Processign
+- **Processing**
 	- Uses massively Parallel Processing(MPP)
 	- Automatically distributes data and query loads accross all nodes
 	- Lets you easily add new nodes to your data warehouse while still maintaining fast query performance.
-- Backup
-	- enabled by default 1 day retention,up to 35
+- **Backup**
+	- enabled by default, 1 day retention, up to 35
 	- always attempt to keep 3 copies of your data
-- Billing
+- **Billing**
 	- total number hours
 	- 1 unit per node
 	- not charged for leader node hours only compute nodes incur changes
-- Security
+- **Security**
 	- Dat in transit: SSL
 	- Data at rest: AES 256
 	- Encryption applied using KMS, CloudHSM
-- Availability
+- **Availability**
 	- Redshift is Single AZ. In order to reach high availability you need to run multiple redshift cluster in different AZ. Anapshot can be restored o a different AZ 
 
-**CHEETSHET**
 ![[Pasted image 20241002165058.png]]
 
 ## Athena
-**Serverless** query service to analyze data stored in Amazon S3 that uses standard SQL language to query the files and their content
+**Serverless** query service to analyze data stored in Amazon S3 that uses standard SQL language to query the files and their content.
+Athena can do 2 things:
+- Lets you run SQL queries on S3 Buckets
+- Interactively, run data analytics, using Apache Spark
 
-![[Pasted image 20241002165508.png]]
 - Athena SQL
 	- Component
 		- workgroup: saved queries which you grant permissions to other user to access
@@ -1629,12 +1658,23 @@ different type of nodes:
 		- dataset: raw data of table
 	- Table
 		- You can create using SQL and AWS Glue Wizard
-	- SerDe: is a serialization and deserialization libraries for parsing data form different format
+	- **SerDe**: is a serialization and deserialization libraries for parsing data form different format
 		- Can override the DDL configuration that you specify in Athena when you create your table
 ## Quantum Ledger Database
 Used to review history of all the changes made to your **application data** over time, serverless. **Difference with Amazon Managed Blockchain**: no decentralization component
 
-![[Pasted image 20241002105101.png]]
+**Features:**
+
+- **Immutable Logs**: Data cannot be altered or deleted after entry, ensuring permanent records.
+- **Cryptographic Verification**: Utilizes SHA-256 hashing for secure, verifiable transaction histories.
+- **Fully Managed**: Automated management of infrastructure allows users to focus on application development without worrying about underlying hardware.
+- **Serverless**: Scales automatically with application demands, enhancing efficiency.
+- **SQL-like Queries**: Supports PartiQL for flexible, SQL-compatible data querying.
+- **Central Governance**: Managed under a central trusted authority, ideal for applications needing a reliable transaction log.
+- **High Throughput and Scalability**: Designed for rapid and frequent updates with minimal latency.
+- **AWS Integration**: Works seamlessly with other AWS services for improved functionality and simpler management.
+- **ACID Transactions**: Ensures database integrity with transactions that are atomic, consistent, isolated, and durable.
+- **Journal Storage**: Records changes sequentially in a document-oriented format for structured data handling.
 
 # Monitoring
 ## Cloud Trail
@@ -1917,3 +1957,7 @@ Is a realt-time AI coding companion. Genaretes suggested code while you're writi
 
 ## Connect:
 Amazon Connect is an AI-powered application that provides one seamless experience for your contact center customers and users. It's comprised of a full suite of features across communication channels.
+
+
+
+
