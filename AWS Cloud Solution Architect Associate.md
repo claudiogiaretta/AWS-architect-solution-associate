@@ -1251,21 +1251,17 @@ With Elastic Beanstalk you can quickly deploy and manage applications in the AWS
 ## DeviceFarm
 Give you access to virtual mobile devices and environment to testing mobile and web app.
 ## AWS Amplify
-A set of tools and services that helps you develop and deploy scalable full stack web and mobile applications
-
-Components:
-![[Pasted image 20241002102613.png]]
+A set of tools and services that helps you develop and deploy scalable full stack web and mobile applications.
 
 Support a set of famous framework (Angular, React, Flutter ecc...)
 ## Amazon API Gateway
 
 **Open API**: is a specification, defines a standard, language agnostic interface to RESTFUL api. Represented as either JSON or YAML.
 
-**API Gateway:** is a program that sits between a single-entry point and multiple backends.
-**Amazon API Gateway:** is a soultion for creating secure APIs in your cloud environment at any scale.
+**Amazon API Gateway:** is a program that sits between a single-entry point and multiple backends,  a soultion for creating secure APIs in your cloud environment at any scale.
 Create APIs that act as a front door for applications to access data, business logic or functionality from a back-end service.
-![[Pasted image 20241003095122.png]]
-- 3 types:
+![[Pasted image 20241008142105.png]]
+- **3 types:**
 	- Rest API (API Gateway V1)
 		- Higher cost
 		- Both private and public options
@@ -1274,7 +1270,7 @@ Create APIs that act as a front door for applications to access data, business l
 		- Only public APIs
 	- Web Socket API: persistent connections for real time use cases such as chat application or dashboard
 
-Diffeerence between REST and HTTP API Gateway:
+Difference between REST and HTTP API Gateway:
 ![[Pasted image 20241003100632.png]]
 ![[Pasted image 20241003100745.png]]
 **REST API Components:**
@@ -1311,11 +1307,14 @@ ECR Lifecyle policy: can be used to expire old images based on specific criteria
 
 **ECS Fargate**
 AWS Fargate is a technology that you can use with Amazon ECS to run [containers](https://aws.amazon.com/what-are-containers) without having to manage servers or clusters of Amazon EC2 instances. With AWS Fargate, you no longer have to provision, configure, or scale clusters of virtual machines to run containers. 
-![[Pasted image 20241003143010.png]]
 
-You can apply a security group to a task
-You can apply an IAM role to the Task
-
+- You can create an **empty** ECS cluster (no EC2's provisioned) and then launch Tasks as Fargate
+- You **no longer have to provision, configure, and scale clusters** of EC2 instances to run containers
+- You are charged for **at least one minute**, then it's by the second, and you pay per duration.
+- When using ELB to point to Fargate you have to use IP addresses since Fargate tasks do not have -a hostname
+- You can apply a security group to a task
+- You can apply an IAM role to the Task
+### Components
 - **Execution role**: used to prepare or manage the contianer
 - **Task role:** is the role that is used by the running compute of the container (when the container is running)
 - **ECS capacity providers** manage the scaling of the infracture for tasks in your clusters.
@@ -1326,48 +1325,58 @@ You can apply an IAM role to the Task
 	- Family, Execution role, Task role, Network Mode, CPU and Memory, Requires compatibilities, Container definition
 	- Container Definition
 		- Name, Dockerhub, Essential, Health Chekcs, port mapping, log configuration, environment, secrets
-- Port Mappings
-	![[Pasted image 20241003144650.png]]
-- ECS Exec: allows you to direct interact with containers without needing to first interact with the host conatiner operating system, open inbound ports, or manage SSH Keys. cannot be used with AWS console.
-- Log configuration: You can set log driver that tells where the container should log. There are other third-party log driver. AWS log is blocked by default you need to configure it to enable it.
-- ECS Service Connect: makes it easy to setup a service mesh for service-to-service communication. Evolution of AppMesh.
+- **ECS Exec**: allows you to direct interact with containers without needing to first interact with the host conatiner operating system, open inbound ports, or manage SSH Keys. cannot be used with AWS console.
+- **Log configuration**: You can set log driver that tells where the container should log. There are other third-party log driver. AWS log is blocked by default you need to configure it to enable it.
+- **ECS Service Connect**: makes it easy to setup a service mesh for service-to-service communication. Evolution of AppMesh.
 	- Service Connect will deploy a sidecar proxy container. You can use the service discovery name to easily talk to other service
-- ECS Optimized AMIs are preconfigured with the requirements and reccomnadations to run your containerA
-	![[Pasted image 20241003150216.png]]
-- ECS ANywhere: allows you to register external VMS residing from you ron-premises network to your cluster
-	![[Pasted image 20241003151049.png]]
+- **ECS Optimized AMIs** are preconfigured with the requirements and reccomnadations to run your container, they are used by default.
+- **ECS Anywhere**: allows you to register external VMS residing from you on-premises network to your cluster
+	- $0.01025 per hour for each managed ECS Anywhere on-premises instance
+	- You can register an external instance to a single cluster
+	- External instances require an IAM role that allows them to communicate with AWS APIs
+	- Service load balancing isn't supported.
+	- EFS volumes aren't supported
 ## EKS
 Amazon Elastic Kubernetis Service is a managed service that eliminates the need to install, operate, and maintain your own kubernetes control panel
 ![[Pasted image 20241003151405.png]]
- EKS can use for its compute nodes: ...
+ EKS can use different type of compute nodes: 
+ - EC2 instances 
+ - Fargate Instances
+ - External instances
+
  EKS Connector: if you want to connect your own kubernetis cluster
  EKS CTL: is CLI tool for waily setting up kubernetis clusters on AWS.
- - EKS Distro: is a Kubernetis distribution based on and used by EKS to create reliable and secure kubernetis clusters.
-	 ![[Pasted image 20241003152350.png]]
-- **EKS anywhere**: is a deployment option for Amazon EKS to easily create and operate kubernetis clusters on premises with your own Vms or bare metal hosts.
-- Traces and Spans: 
+ 
+ **EKS Distro**: is a Kubernetis distribution based on and used by EKS to create reliable and secure kubernetis clusters.
+ 
+**Use Cases:**
+- Hybrid Deployments - consistency between AWS and on-prem
+- Development and Testing - identical prod and dev environment
+- AWS Services Extension - AWS integration to on-premises setups
+
+- **EKS anywhere(EKS-A)**: is a deployment option for Amazon EKS to easily create and operate **kubernetis(k8s)** clusters on premises with your own Vms or bare metal hosts. EKS anywhere uses **EKS Distro** as the **kubernetis** cluster distribution.
+- **Traces and Spans:** 
 	- Trace is a data/execution path through the system, and can be thought of as a directed acyclic graph (DAG) of spans
 	- Span: represents a logical unit of work in Jaeger that has an operation name, the start time of the operation, and the duration. Spans may be nested and ordered to model causal relationships
 - AWS Distro for Open Telemetry is a secure, production ready, AWS supported distribution of the Open Telemetry project 
-- Prometheus: Open soruce monitoring and alerting toolkit originally built at SounCLoud. Is a timeseries database (Collect and stores itrs metrics as time series data). 
-- Amazon Managed Service for Prometheus (AMP) is a Prometheus compatible monitoring service for container infraswtructure and application metrics
-	![[Pasted image 20241003153857.png]]
-- Graphana: is an open source analytics web application. is used with timeseries database like Prometheus
-- Amazon Managed Service for Graphana: is fully managed and secure data visualization service that you can use to instanly query, correlate, and visualize operational metrics , logs, and traces from multiple sources.
+## Amazon managed service for Prometheus (AMP) 	
+ **Prometheus**: Open soruce monitoring and alerting toolkit originally built at SounCLoud. Is a timeseries database (Collect and stores itrs metrics as time series data). 
+
+Amazon Prometheus: Is a Prometheus compatible monitoring service for container infraswtructure and application metrics
+## Amazon managed service for Graphana
+**Graphana**: is an open source analytics web application. is used with timeseries database like Prometheus
+
+**Amazon Graphana**: Fully managed and secure data visualization service that you can use to instanly query, correlate, and visualize operational metrics , logs, and traces from multiple sources.
 
 
 ## Lake Formation 
-**Data Lakes**: A data lake is a centralized data repositoru for unstructured and semi structured data. contain vast amount of data. Data lakes generally use object(blob) or file as its storage type.
-![[Pasted image 20241003093952.png]]
+**Data Lakes**: A data lake is a centralized data repository for unstructured and semi structured data. Contain vast amount of data. Data lakes generally use object(blob) or file as its storage type.
+
 **AWS Lake Formation:** is a data lake to centrally govern secure and globally share data for analytics and machine learning.
-![[Pasted image 20241003094159.png]]
 
-## Amazon Dev Tools
-- Amazon Q is an AI chatboat using multiple LLm models via Bedrock Ask Amazon Q a question similar to chatGPT or other generative AI. 
 
-![[Pasted image 20241003174240.png]]
-- **Amazon CodeWhisper**: is a realt-time AI coding companion. Genaretes suggested code while you're writing code.
-![[Pasted image 20241003174535.png]]
+![[Pasted image 20241003093952.png]]
+
 ## AWS CodeDeploy
  CodeDeploy is a deployment service that automates application deployments to Amazon EC2 instances, works with On-Premises Servers • Hybrid service
 ## AWS CodeCommit
@@ -1885,6 +1894,26 @@ Data:
 Automatically extracts text, handwriting, and data from any scanned documents using AI and ML.
 
 ![[Pasted image 20241002175758.png]]
+
+## AI Dev Tools
+#### Amazon Q
+Is an AI chatboat using multiple LLm models via Bedrock Ask Amazon Q a question similar to chatGPT or other generative AI. 
+#### Amazon Q Business
+connect it to company data, information, and systems, made simple with more than 40 built-in connectors.
+#### Amazon Q Developer
+ coding, testing and upgrading to troubleshooting and optimizing your AWS resources.
+ Integrated into the AWS Managed Console, VSCode via the AWS Toolkit, Cloud9, AWS Lambda Code Editor, Slack and other places
+#### Amazon Q for Amazon QuickSight
+Ask questions about your BI data within QuickSight
+Generative BI capabilities to quickly build compelling visuals, summarize insights,
+answer data questions, and build data stories using natural language.
+#### Amazon Q for Amazon Connect
+real-time conversation with the customer along with relevant company content 
+#### Amazon Q for AWS Supply Chain
+get intelligent answers about what is happening in their supply chain
+#### Amazon CodeWhisper
+Is a realt-time AI coding companion. Genaretes suggested code while you're writing code.
+![[Pasted image 20241003174535.png]]
 
 ## Connect:
 Amazon Connect is an AI-powered application that provides one seamless experience for your contact center customers and users. It's comprised of a full suite of features across communication channels.

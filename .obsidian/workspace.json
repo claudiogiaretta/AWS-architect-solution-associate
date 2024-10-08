@@ -18,6 +18,16 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "e4be1cd33c0dff72",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "images/Pasted image 20241003151049.png"
+              }
+            }
           }
         ]
       }
@@ -148,19 +158,19 @@
   },
   "active": "d4ad88daa11096ea",
   "lastOpenFiles": [
-    "Extra.md",
-    "Appunti_aws.md",
-    "images/Pasted image 20241004115502.png",
+    "images/Pasted image 20241003151049.png",
     "AWS Cloud Solution Architect Associate.md",
+    "images/Pasted image 20241003143010.png",
+    "Appunti_aws.md",
+    "Pasted image 20241008143253.png",
+    "Pasted image 20241008142105.png",
+    "Pasted image 20241008142045.png",
+    "Extra.md",
+    "images/Pasted image 20241004115502.png",
     "images/Pasted image 20241001113136.png",
     "images/Pasted image 20241002150103.png",
     "images/Pasted image 20241002145345.png",
     "images/Pasted image 20241002111647.png",
-    "Pasted image 20241008111643.png",
-    "images/Pasted image 20241004152801.png",
-    "Pasted image 20241008100115.png",
-    "images/Pasted image 20241002111335.png",
-    "images/Pasted image 20241001160633.png",
     "images",
     "Nuova cartella",
     "Progetti.md",
