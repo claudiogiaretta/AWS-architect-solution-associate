@@ -983,7 +983,7 @@ Store and rotate automatically database credentials. Enforce encryption at rest 
 
 You can setup automatic rotation, is not enabled by default. 
 (Under the hood it uses lambda)
-# Other
+# Utils
 ## QuickSight
 ***Serverless*** machine learning-powered business intelligence service to create interactive dashboards
 ## Elastic Map Reduce (EMR)
@@ -1650,8 +1650,22 @@ Is Active by default and will collect logs for 90 days via Event History. If you
 		- **CloudWatch Insights:** enables you to interactively search and analyze your CloudWatch log data
 			- CloudWatch discover fields, when reads a logs 
 		- **CloudWatch Metrics:** time order set of data points, its a variable that monitored over time. You can provide you customize Metrics using CLI/SDK
-		- **CloudWatch Agent**: Some metrics need to install CloudWatch agent to been tracked
-			- ![[Pasted image 20241004115502.png]]
+		- **CloudWatch Agent**: Some metrics need to install CloudWatch agent to been tracked.
+			- Host Level Metrics
+				- These are what you get without installing the Agent
+					- CPU usage
+					- Network Usage
+					- Disk Usage
+					- Status Check
+						- Underlying Hypervisor status
+						- Underlying EC2 instance status
+			- **Agent Level Metrics**
+				- These are what you get when installing the Agent
+					- **Memory utilization**
+					- Disk Swap utilization
+					- **Disk Space utilization**
+					- Page file utilization
+					- Log collection
 ## Amazon EventBridge
 **Event Bus**: An event bus receives events from a source and routates events to a target based on rules. 
 **EventBridge** is a serverless event bus service that is used for application integration by streaming real-time data to your applications.
@@ -1694,35 +1708,38 @@ Is Active by default and will collect logs for 90 days via Event History. If you
 # Management
 ## (IAM) Identity Access Manager
 - Anatomy of IAM policy
-	- ![[Pasted image 20241001113136.png]]
-- Principle of Least Privilege:
+	- **Version policy language** version. 2012-10-17 is the latest version.
+	- **Statement container** for the policy element you are allowed to have multiples
+	- **Sid (optional)** a way of labeling your statements.
+	- **Effect Set** whether the policy will Allow or Deny
+	- **Action list** of actions that the policy allows or denies
+	- **Principal** account, user, role, or federated user to which you would like to allow or deny access
+	- **Resource** the resource to which the action(s) applies
+	- **Condition (optional)** circumstances under which the policy grants permission
+- **Principle of Least Privilege:**
 	- Just Enough Access: Permitting only the exact actions  for the identity to perform task
 	- Just In Time: Permitting the smallest length of duration a identity can use permissions
-- Password policy: you can set expires date for user password in rder to rotate them
-- Access Key: you can have a maximum of 2 access key per account
-- MFA: (vedi appunti aws)
-- Temporary Security Credentials: Generated dynamically, every time you use a roles a you a temporary security cred are created automatically
-- IAM Identity federetion: the means of linking a person to eletronic identity and attribute. When you connect using facebook or google you're using identity fed
-- STS: (vedi appunti AWS)
-- Cross Account Role: You can grant users from different AWS account access to resources in your account through a Cross-Account Role. This allows you to not to have to create them a user account within your systems
+- **Password policy**: you can set expires date for user password in rder to rotate them
+- **Access Key**: you can have a maximum of 2 access key per account
+- **MFA**: (vedi appunti aws)
+- **Temporary Security Credentials**: Generated dynamically, every time you use a roles a you a temporary security cred are created automatically
+- **IAM Identity federetion**: the means of linking a person to eletronic identity and attribute. When you connect using facebook or google you're using identity fed
+- **STS**: (vedi appunti AWS)
+- **Cross Account Role:** You can grant users from different AWS account access to resources in your account through a Cross-Account Role. This allows you to not to have to create them a user account within your systems
 	- ![[Pasted image 20241001115206.png]]
-- IAM AssumeRoleWithWebIdentity: Returns a set of temporary security credentials for users who have been authenticated in a mobile or web application with web identity provider
-	- ![[Pasted image 20241001115642.png]]
+- **IAM AssumeRoleWithWebIdentity**: Returns a set of temporary security credentials for users who have been authenticated in a mobile or web application with web identity provider
 	- You always authenticate with the web identity first
 ## Service Catalog
-- ![[Pasted image 20241002115439.png]]
-- Anatomy:
-	![[Pasted image 20241002115631.png]]
-- **Users**
-	![[Pasted image 20241002115733.png]]
 
-
-
+AWS Service Catalog enables organizations to create and manage catalogs of products that are approved for use on AWS to achive consistent governance and meet compliance requirements.
+Alternative to granting direct access to AWS resources via the AWS console
 ## AWS Resource Access Manager (AWS RAM)
   Share AWS resources that you own with other AWS accounts. **Avoid resource duplication**. Supported resources includes: Aurora, VPC Subnets, Transit Gateway, Route 53, EC2 Dedicated Hosts, License Manager Configurations
 
 ## AWS IAM Identity Center: 
-Single sign-on for multi account in aws 
+**Single sign-on** for multi account in aws.
+
+**AWS Identity Center (formerly AWS Single Sign-On)** is a service that provides centralized management of user and group access to AWS resources. It enables authentication and authorization, integrating with identity providers like Active Directory or other SAML-compliant IdPs.
 ## OpsWorks
 
 - **Chef & Puppet** are two open-source softwares that help you perform **server configuration** automatically, or repetitive actions
