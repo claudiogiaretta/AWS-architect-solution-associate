@@ -795,36 +795,48 @@ Transit Gateway: (vedi appunti AWS)
 ### Network Address Usage(NAU)
 Is a metric applied in your VPC to help you plan for and monitor the size of your VPC, in a way that you don't run out of space for your VPC.
 ## Route 53
-- Hosted Zones: Container for records sets, scoped to route traffic for a specific domain or subdomains
+Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web service. You can use Route 53 to perform three main functions in any combination: domain registration, DNS routing, and health checking.
+
+- **Hosted Zones**: Container for records sets, scoped to route traffic for a specific domain or subdomains
 	- Public: How you want to route traffic through an Internet
 	- Private: How you want to route traffic through an Amazon VPC
-- Records set: collection of records which determine where to send traffic
+- **Records set**: collection of records which determine where to send traffic
 	- Always changed using batch via the API
 	- Record Alias: sppecific DNS record of AWS which extends DNS functionality. It rwill route traffic to specific AWS resources.
-	- ![[Pasted image 20241001160633.png]]
-- Traffic Flow: Visual tool, lets you create soshisticated routing configurations for your resources using routing types (50$ per policy -> very expensive)
-- Routing Policies:
-	![[Pasted image 20241001161413.png]]
-	- Simple Routing Policies: Most basic Routing policies
-		- you have 1 record and provide multiple IP addresses
-		- When multiple values are specified for a record, Route53 will return values back to the user in a random order
-		- ![[Pasted image 20241001163913.png]]
-	- Weighted Routing Polcies: Let you split up traffic based on different weight assigned
-		- This allows you to send a certain percentage of overall traffic to one server and have other traffic to be directed to a completeley different server
-	- Latency Based Routing: allows you to direct traffic based on the lowest network latency possible for your end-user based on region
-	- Failover Routing Policy: allow you to create active passive/setup in situations where you want a primary site in one location and a secondary data recovery. Automatically monitors health checks from your primary site
-	- Geolocation Routing Policies: allow you to direct traffic based on the geographic location of where **the request originated from**
-	- Geoproximity routing policy: allow you to direct traffic based on the geographic location of **your users and your AWS resources**
-- Multi- Value Answe Policies let you configure Route 53 to return multiple values such as IP addresses for your web servers, in response to DNS queries.
--  Health Checks (not free): 
-	![[Pasted image 20241001165610.png]]
-- Route 53 Resolver: is a DNS server that allows you to resolve DNS queries between your on-premise network and your VPC
-	- ![[Pasted image 20241001165819.png]]
-- DNSSEC: Are a suite of extensions specifications by the Internet Engineering Task Force (IETF) for securing data exchanged in the Domain Name System (DNS) in Internet Protocol (IP) networks.
-	- ![[Pasted image 20241001170421.png]]
-- Zonal Shift: is a capability in Route 53 Application Recovery Controller (Route 53 ARC). Shift a load balancer resource away from an impaired Availability Zone with a single action. Only supported by ALB an NLB
-	- ![[Pasted image 20241001170649.png]]
-- Route 53 Profiles: lets you apply and manage DNS related Route 53 configurations accross many VPCs and in differente AWS accounts
+	- **Alias Target** can point to:
+		- CloudFront
+		- Elastic Beanstalk environment
+		- ELB load balancer
+		- S3 website endpoint
+		- Resource record set
+		- VPC endpoint
+		- API Gateway Endpoint custom regional API
+- **Traffic Flow**: Visual tool, lets you create soshisticated routing configurations for your resources using routing types (50$ per policy -> very expensive)
+### Routing Policies:
+- **Simple Routing Policies**: Most basic Routing policies
+	- You have 1 record and provide multiple IP addresses
+	- When multiple values are specified for a record, Route53 will return values back to the user in a random order
+	- ***Example***: if you had a record for www.exampro.co with 3 different IP addess values, users would be directly randomly to 1 of them
+- **Weighted Routing Policies**: Let you split up traffic based on different weight assigned
+	- This allows you to send a certain percentage of overall traffic to one server and have other traffic to be directed to a completeley different server
+- **Latency Based Routing Policies:** allows you to direct traffic based on the lowest network latency possible for your end-user based on region
+- **Failover Routing Policy Policies:** allow you to create active passive/setup in situations where you want a primary site in one location and a secondary data recovery. Automatically monitors health checks from your primary site
+- **Geolocation Routing Policies**: allow you to direct traffic based on the geographic location of where **the request originated from**
+- **Geoproximity routing polices**: allow you to direct traffic based on the geographic location of **your users and your AWS resources**
+- **Multi-Value Answer Policies:** let you configure Route 53 to return multiple values such as IP addresses for your web servers, in response to DNS queries.
+
+### Health Checks (not free): 
+- Checks health every **30s** by default. Can be reduced to every **10s**
+- A health check can **initiate a failover** if the status is returned unhealthy
+- A CloudWatch Alarm can be created to alert you of status unhealthy
+- A health check can monitor other health checks to create a chain of reactions.
+- Can create up to **50 health checks** for AWS endpoints within or linked to the same AWS account.
+### Other Feature and tools
+- **Route 53 Resolver:** is a DNS server that allows you to resolve DNS queries between your on-premise network and your VPC
+	![[Pasted image 20241008092916.png]]
+- **DNSSEC**: Are a suite of extensions specifications by the Internet Engineering Task Force (IETF) for securing data exchanged in the Domain Name System (DNS) in Internet Protocol (IP) networks.
+- **Zonal Shift**: is a capability in **Route 53 Application Recovery Controller** (Route 53 ARC). Shift a load balancer resource away from an impaired Availability Zone with a single action. Only supported by ALB an NLB
+- **Route 53 Profiles**: lets you apply and manage DNS related Route 53 configurations accross many VPCs and in differente AWS accounts
 
 ## AWS Global Accelerator
 Improve global application **availability** and performance using the AWS global network (Can find the optimal path from the end user to your web servers) 
@@ -1103,90 +1115,111 @@ Elastic Transcoder is video-transcoding server, used to convert media files stor
 		- Choose a preset (determines what to cover the file to)
 		- Choose source and destination bucket
 ## SNS
-- **Publish Subscribe pattern:** 
-	![[Pasted image 20241002105940.png]]
-- **SNS**: Amazon Simple Notification Service (Amazon SNS) is a managed service that provides message delivery from publishers to subscribers (also known as _producers_ and _consumers_). In this way is possible to send one message to many receivers. Used to decouple microvservices.
+### Concept:
+**Publish Subscribe pattern:** Common message pattern, the sender send their message to an event bus that categorized message in groups and than the receiver subscribe o these groups. Whenever new messages appear within their subscription the messages are immediatly delivered to them
+![[Pasted image 20241008111643.png]]
+### SNS
+ Amazon Simple Notification Service (Amazon SNS) is a managed service that provides message delivery from publishers to subscribers (also known as _producers_ and _consumers_). In this way is possible to send one message to many receivers. Used to decouple microvservices.
 	- Source: Publisher
-	- Destinations: They are the subscribers:
-		- Application to application (A2A)
-		- Application to person (A2P)
-- **Topics:** allows you to group multiple subscriptions together.
-	- 2 types: **Standard** and **FIFO**
-	- ![[Pasted image 20241004152801.png]]
-- **Messages:** Is it possible to programmatically publish messages to SNS Topic. Maximum limit of message dimension: 256KB. Message bigger than 256KB can be publish using AMAzon SNS Ectended Client library (Max: 2GB). 
-- **Subscription:** A subscription can only subscribe to one protocol and one topic
-	![[Pasted image 20241002111335.png]]
+	- Destination: Subscriber
+#### Topics:
+Allows you to group multiple subscriptions together.
+- 2 types: **Standard** and **FIFO**
 
+|                      | **Standard**                                                                                                                    | **First-in-First-Out**                                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Throughput**       | High throughput                                                                                                                 | Lower throughput compared to Standard                                                                                  |
+| **Delivery**         | At least once (possibility of duplicates)                                                                                       | Exactly once (no duplicates)                                                                                           |
+| **Ordering**         | No ordering guarantees                                                                                                          | Messages are delivered in the order they are sent within a message group                                               |
+| **Use-Case**         | Where the volume of messages is high and exact ordering/delivery isn't critical: <ul><li>alerts</li><li>notifications</li></ul> | Where the order and exact delivery are crucial: <ul><li>banking transactions</li><li>ordered data processing</li></ul> |
+| **Message Grouping** | N/A                                                                                                                             | Supports message grouping, allowing multiple ordered streams within the same topic                                     |
+
+- **Messages:** Is it possible to programmatically publish messages to SNS Topic. **Maximum limit** of message dimension: 256KB. **Message bigger than 256KB can be publish using Amazon SNS Extended Client library (Max: 2GB).** 
+- **Subscription:** A subscription can only subscribe to one protocol and one topic: HTTP/S, Email, Amazon SQS, AWS Lambda, SMS, Platform application endpoint
 - **Filter policy:** allows you to filter a subset a messages only to be delivery.
-- **Message Data Protection**: Message data protection safeguards the data that's published to your Amazon SNS Topic. by using protection polices to audit, mask,redact, or block the sensitive information that moves between applications or AWS services.
-- Raw Message Delivery 
-- Delivery Policy: SNS Delivery Policy retries the delivery of messages when server-side errors occur. Each delivery protocol has its own delivery policy.
-	- ![[Pasted image 20241004155004.png]]
+- **Message Data Protection**: Message data protection safeguards the data that's published to your Amazon SNS Topic. 
+- **Delivery Policy**: defined how SNS **retries** the delivery of messages when **server-side errors** occur. Each delivery protocol has its own delivery policy.
 - **SNS Dead Letter Queue (DLQ)** will send fail message attempts to an SQS queue. Topic and Queue type need to match.
-	- ![[Pasted image 20241004155317.png]]
+![[Pasted image 20241008100115.png]]
 ## SQS
-![[Pasted image 20241002111647.png]]
-![[Pasted image 20241004155752.png]]
-Maximum limit of message dimension: 256KB. Message bigger than 256KB can be publish using AMAzon SQS Extended Client library (Max: 2GB). 
+### Concept
+
+**Messaging System**: Used to provide asynchronous communication and decouple processes via messages/events from a sender and receiver (producer and consumer)
+**Queueing System**: messaging system that generally will delete messages once they are consumed. Simple communication. Not Real-time. Have to pull. Not reactive.
+### SQS
+**Simple Queueing Service (SQS)**: Fully managed queuing service that enables you to decouple and scale microservices, distributed systems, and serverless applications
+
+**Use Case**: You need to queue up transaction emails to be sent e.g. Signup, Reset Password.
+SQS Queue types:
 
 - 2 types of queue: 
-	- **Standard:** allows you to send nearly unlimited number of transactions per second
-	- **FIFO:** guarantees the order of messages when being consumed. 300 transaction, no duplicates, order by id, 10 message read a time.
+	- **Standard:** allows you to send nearly unlimited number of transactions per second, but message are out of order
+	- **FIFO:** guarantees the order of messages when being consumed. 300 transaction, no duplicates, order by id, 10 message read a time. doesn't accept duplicates.
+
+- **Message Size**: The maximum size of a message is 256 KB. Message bigger than 256KB can be publish using Amazon SQS Extended Client library (Max: 2GB).
+- **Message retention**: by default is 4 days. can be adjusted from a minimum of 60 seconds to a max of 14 Days
+- **Queue Encryption**: SQS queue can be encrypted using Amazon managed Server-Side-Encryption (SSE) or using KMS
+- Message are grouped by ID
+- Is possible to attach an ASG to the consumer instances
 - **ABAC**: Is an authorization process that defines permissions based on tags that are attached to users aqnd AWS resources. Use tag and aliases.
-- **Acccess Policy:** Allows you to grant other principals permission to the SQS Queue.
+- **Access Policy:** Allows you to grant other principals permission to the SQS Queue.
 - **Message Metadata:** allows you to attach metadata to messages
-- **Visibility Timeout:** is a period of time message will be invisible after they are read/consumed by an application to avoid being read and processed by other applications
+- **Message Visibility Timeout:** is a period of time message will be invisible after they are read/consumed by an application to avoid being read and processed by other applications. Default is 30 second
 - **Delay Queues:** let you postpone the delivery of new messages to consumers for a number of second when your app needs more time. Message remain invisible to consumers for the duration of the delay period.
 - **Message Timers:** let you specify an initial invisibility period for an individual message when sending to the queue
 - **Temporary Queues:** Let you specify an initial invisibility period for an individual message when sending to the queue. Don't support timers on individual message
-- **Short vs Long Polling:**
-	- Polling is the method by which we retrive messages from the queues
-	- ![[Pasted image 20241004163711.png]]
+- **Short vs Long Polling:** Polling is the method by which we retrive messages from the queues
+
+|                          | **Short Polling (default)**                                                 | **Long Polling**                                                    |
+|--------------------------|-----------------------------------------------------------------------------|---------------------------------------------------------------------|
+| **Description**           | Returns messages immediately, even if the message queue being polled is empty. | Waits until message arrives in queue or till long poll timeout expires. |
+| **Use-Case**              | When you need a message **right away**                                      | When you need to **save money** by reducing how often you poll       |
+
 ## Amazon MQ 
-Is a managed message broker service for the opensource Apache ActiveMQ and RabbitMQ
-![[Pasted image 20241002114243.png]]
-- AMQP: 
-	
-- **MQTT**:
-	![[Pasted image 20241002115035.png]]
-- **STOMP:**
-	![[Pasted image 20241002115116.png]]
-
-
-
+Is a managed message broker service for the opensource Apache ActiveMQ (Apache message broker) and RabbitMQ :
+- Supporta vari tipi di protocolli: **AMQP,MQTT,STOMP**
 ## Amazon Kinesis
-AWS fully managed solution for collecting processing, and analyzing streaming real-time data in the cloud.
+AWS fully managed solution, not serverless, for collecting processing, and analyzing streaming real-time data in the cloud.
+### Types
+#### Kineses Data Streams:
+is a real time data streaming service. **Most flexible option**.
+**Has 2 capacity mode:**
 
-- 4 Different types
-	- Kineses Data Streams: is a real time data streaming service. Most flexible option 
-		- 2 capacity mode
-			![[Pasted image 20241002145345.png]]
-		- Producer and consumer
-			![[Pasted image 20241002150103.png]]
-	- Amazon Data FireHose: Serverless, simple version of data streams. allows for simple transformation and delivery of data.
-		- Usage
-			- You choose one consumer from a predefined list
-			- Data immediatly disappears once it's consumed
-		- Sources (Producers): In firehose allows easily to configure a source
-		- Destination(Consumer):
-			![[Pasted image 20241002152246.png]]
-		- Data Transformation: before data is sent to a destination it can be tranformed with AWS Lambda
-		- Dynamic Partitioning: enables you to continuosly streaming data by using keys within data and then deliver the data grouped by these keys into Amazon S3 Prefixes. Makes easier to run anlalytics. Once enabled it cnnot be disabled.
-		- Convert record format: Data firehose can convert JSON data into different file formats before being delivered to S3
-	- Manage Service for Apache Fink: Is a fully managed AWS service, to stream live video from devices to tha AWS cloud, or build applications for real time video processing or batch oriented analytics.
-	- Kinesis video streams: allows you to run queries agains that is flowing through your real time stream so you can create and analysis on emerging data.
-		![[Pasted image 20241002153311.png]]
-- Shards:
-	![[Pasted image 20241002150247.png]]
+|                | **On Demand**                                                                                                                                                                   | **Provisioned**                                                                                                                  |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Use Case**   | Unpredictable workloads                                                                                                                                                         | Predictable workloads                                                                                                            |
+| **Management** | Automatically scales                                                                                                                                                            | Customer manages shards                                                                                                          |
+| **Billing**    | Volume of data ingested and retrieved                                                                                                                                           | Number of shards, data transfer                                                                                                  |
+| **Capacity**   | Writes: 200 MiB per second<br>200,000 records per second<br>Reads: 400 MiB per second per consumer<br>2 consumers by default<br>Enhanced Fan-Out (EFO) to add 20 more consumers | Write: 1 MiB per second per shard<br>1,000 records per second per shard<br>Read: 2 MiB per second per shard<br>Max shards is 200 |
+- **Data Retention:** 1 day (default) to 365 days.
 - Partition Keys and Sequence Number:
 	![[Pasted image 20241002150355.png]]
-- Retention period: how long data will remain in the stream. It can be increase
-- Data Streams CLI: 
+- **Data Streams CLI:** 
 	- Using the AWS CLI the PutRecord alow us to send data to the stream. Note that data has to be based64 encoded
 	- Using the AWS CLI the getRecords we can retrive data
-- EFO(Enhance Fan Out): allows upto 20 consumers to retrive records from a stream throughput of up to 2 MB of data per second per shard
-- KPL managed library by AWS to let you publish data to a Kineses data stream. Is a Java library
-- KCL: Kinese Client Library is a java library that makes it easy for developers to easily consume data for kineses. via the MultiDaemon other programming languages can be used
+- **EFO(Enhance Fan Out)**: allows upto 20 consumers to retrive records from a stream throughput of up to 2 MB of data per second per shard
+- **Producers** use SDK, Kinesis Producer Library (KPL) or **Kinesis Agent** to publish records
+	- **Kinesis Producer Library(KPL)** is a managed library by AWS to let you publish data to a Kineses data stream. Is a Java library
+- **Consumers** use SDK or KCL: 
+	- **Kinese Client Library** is a java library that makes it easy for developers to easily consume data for kineses. via the MultiDaemon other programming languages can be used
+
+#### Amazon Data FireHose
+**Serverless**, simple version of data streams. allows for simple transformation and delivery of data.
+- Usage
+	- You choose one consumer from a predefined list
+	- Data immediatly disappears once it's consumed
+- **Sources (Producers)**: In firehose allows easily to configure a source
+- **Destination (Consumer)**: Data Firehose can send to:
+	- (**S3, Redshift**, OpenSearch)
+	- Splunk, MongoDB, DataDog, NewRelic, etc.
+	- HTTP endpoint.
+- **Data Transformation:** before data is sent to a destination it can be tranformed with AWS Lambda
+- **Dynamic Partitioning**: enables you to continuosly streaming data by using keys within data and then deliver the data grouped by these keys into Amazon S3 Prefixes. Makes easier to run anlalytics. Once enabled it cnnot be disabled.
+- **Convert record format**: Data firehose can convert JSON data into different file formats before being delivered to S3
+#### Kineses Data Analytics
+**Serverless**, AWS service, to stream live video from devices to tha AWS cloud, or build applications for real time video processing or batch oriented analytics.
+#### Kinesis video streams
+allows you to run queries agains that is flowing through your real time stream so you can create and analysis on emerging data.
 
 
 
@@ -1196,54 +1229,12 @@ Is a catalogue of third-party datasets. You can download for free subscribe or p
 You can download dataset and upload your own dataset. Data grants is the tool that allow you to control access to your datasets.
 
 ## AWS Glue
-AWS Glue is serverless data integration that makes it easy for analytics users to discover, prepare, move and integrate data from multiple sources.
+AWS Glue is serverless data integration that makes it easy for **analytics** users to discover, prepare, move and integrate data from multiple sources. Visually create, run, monitor, extract and load ETL pipelines to load data into your data lakes. A pipeline is composed of more jobs
 
-![[Pasted image 20241003092304.png]]
-- 3 Engines for AWS Glue Jobs
-	- Python Shell Engine
-	- Ray Job
-	- Spark
-AWS Glue ETL jobs are charged based on the number of data processing units DPUs
-- AWS GLue allocates 10DPUs to each hspark job
-- 2 DPU to each Spark Streaming job
-- AWS Glue allocates 6 M-DPUs to each Ray job
-A combination of Work type and Number of worker will determine DPUs
-
-- AWS Glue Studio allows to visually build ETL pipelines
-	- Pipeline:
-		- Composed by nodes
-			- Sources
-			- Transform
-			- Targets
-		- You can use version control
-- AWS Glue  Data Catalog: is a fully manage Apache Hive Metastore-compatible catalog service that makesit easy for customer to store, anntoate and share metadata about their data
-	- Components:
-		- Glue Database: is a container for multiple AWS Glue tables
-		- Table
-			- Glue Table: metadata definition that represent your data, including schema.
-			- Apache Iceberg table
-		- Glue Crawler:Is a tool that is used to analyze a targeted data source to determine its schema and generate AWS Glue Data Tables
-			- Data Sources: S3, JDBC, DynamoDb, MongoDB, Delta lake, Apache Iceberg, Hudi
-			- Can be run on demand or on schedule
-
-## Amazon MSK
-Amazon Managed Streaming for Apache Kafka is a fully managed service that enables you to build and run application that use Apache Kafka to process streaming data. 
-Amzon utilizes Zookeper servers.
-
-Amazon MSK:
-- Provisioned: you managed the broker instances 
-- Serverless: you pay for what you use, and you don't have to manage instances
-
-**Bootstrap brokers** refers to list of brokers endpoints that an Apache Kafka client use as a starting point to connect to the cluster.
-
-Zookeper connection string URL is used with Kafka to specify the host and port of the ZooKeeper ensemble that Kafka should connect to for managing cluster metadata coordinator.
-
-**Amazon MSK Connect:** is a feature of Amazon MSK that makes it easy for developers to stream data to and from their apache kafka clusters.
-
-- Apache kafka: Open source streaming platform to create high performance data pipelines, streaming analytics, data integration, and mission critical applications. (Developed by Linkedin). based on Consumer/Producer architecture.
-
-
-
+- Search and catalog using, Athena, EMR and Redshift
+- **AWS Glue Studio**, feature that allows you to visually build ETL jobs and pipelines
+- **AWS Glue ETL jobs are charged based on the number of data processing units (DPUs)**
+- **AWS Glue  Data Catalog:** is a fully manage Apache Hive Metastore-compatible catalog service that makesit easy for customer to store, anntoate and share metadata about their data
 
 # Develop
 ## ElasticBeanStalk 
