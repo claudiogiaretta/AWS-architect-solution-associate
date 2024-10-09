@@ -249,15 +249,70 @@ Informazioni utili:
 Non global service, allows you to create "EBS volume" which are **network drive** you can attach to your instances while they run. **They can only be mounted to one instance at a time.** **EBS volume is not multi Availability Zone**.
 	1. **EBS Snapshot Archive:** Move a Snapshot to an ”archive tier” that is 75% cheaper
 	2. **Recycle Bin for EBS Snapshots**: Specify retention (from 1 day to 1 year)
+### Volume Types
 
-![[Pasted image 20241001174016.png]]
-- volums type: 
-	![[Pasted image 20241001174105.png]]
-	N.B io2 doesn't exist anymore use io2 Block Express
-- Volume type usages:
-	![[Pasted image 20241001174432.png]]
-	![[Pasted image 20241001174656.png]]
+#### General Purpose SSD Volumes (gp2)
+- **Use Case**:
+    - Most general workloads
+    - Transactional workloads
+    - Virtual desktops
+    - Medium-sized, single-instance databases
+    - Low-latency interactive applications
+    - Boot volumes
+    - Development and test environments
+- **Durability**: 99.8% - 99.9%
+- **Volume Size**: 1 GiB – 16 TiB
+- **Max IOPS**: 16,000 (16 KiB I/O)
+- **Max Throughput**: 250 MiB/s
 
+**N.B General Purpose SSD Volumes (gp3)**: Same but with max throughput og 1000MB/s
+#### Provisioned IOPS SSD Volumes (io2 Block Express)
+- **Use Case**:
+    - Sub-millisecond latency
+    - Sustained IOPS performance
+    - More than 64,000 IOPS or 1,000 MiB/s of throughput
+- **Durability**: 99.999%
+- **Volume Size**: 4 GiB – 64 TiB
+- **Max IOPS**: 256,000 (16 KiB I/O)
+- **Max Throughput**: 4,000 MiB/s
+#### Throughput Optimized HDD (st1)
+- **Use Case**:
+    - Big data
+    - Data warehouses
+    - Log processing
+- **Durability**: 99.8% - 99.9%
+- **Volume Size**: 125 GiB - 16 TiB
+- **Max IOPS**: 500 (1 MiB I/O)
+- **Max Throughput**: 500 MiB/s
+#### Cold HDD (sc1)
+- **Use Case**:
+    - Throughput-oriented storage for data that is infrequently accessed
+    - Where lowest storage cost is important
+- **Durability**: 99.8% - 99.9%
+- **Volume Size**: 125 GiB - 16 TiB
+- **Max IOPS**: 250 (1 MiB I/O)
+- **Max Throughput**: 250 MiB/s
+#### Magnetic (standard)
+- **Use Case**:
+    - Workloads where data is infrequently accessed
+- **Durability**: N/A
+- **Volume Size**: 1 GiB - 1 TiB
+- **Max IOPS**: 40-200
+- **Max Throughput**: 40-90 MiB/s
+---
+
+### Snapshots
+- **Data Lifecycle Manager (DLM)** can be used to automate the creation, retention, and deletion of snapshots of EBS volumes
+- Snapshots are incremental
+- Only the most recent snapshot is required to restore the volume
+### RAID
+- **RAID 0**
+    - Improve performance of a storage volume by distributing reads & writes in a stripe across attached volumes
+    - If you add a storage volume, you get the straight addition of throughput and IOPS
+    - For high performance applications
+- **RAID 1**
+    - Improve data availability by mirroring data in multiple volumes
+    - For critical applications
 ## EFS
 Managed NFS (network file system) that can be mounted on 100s of EC2 • EFS works with **Linux** EC2 instances in multi-AZ • Highly available, scalable, expensive (3x gp2), pay per use, no capacity planning 
 -  AWS managed Network File System (NFS)
@@ -851,23 +906,66 @@ Improve global application **availability** and performance using the AWS global
 	- **Endpoints**: represent a resource to send traffic to
 
 ## Cloud Front
-![[Pasted image 20241001172029.png]]
-- Cloud Front is a CDN 
-	- CDN(Content Delivery Network): A CDN is a distributed network of servers that delivrs web pages and content to users based on their geographical location, the origin of the wbpage and a content delivery server 
-
-- Lambda Edge: are lambda functions that override the behaviour of request and responses 
-	![[Pasted image 20241001172905.png]]
-- CloudFront functions:
-	![[Pasted image 20241001173411.png]]
-- CloudFront functions vs Lambda Edge:
-	![[Pasted image 20241001173651.png]]
-	![[Pasted image 20241001173709.png]]
-- CloudFront Origin: is the source where CloudFront will send the requests
+![[Pasted image 20241009101827.png]]
+- Cloud Front is a **CDN**
+	- **CDN(Content Delivery Network):** A distributed network of servers that delivrs web pages and content to users based on their geographical location, the origin of the wbpage and a content delivery server.
 
 
+- Global service
+- Global Content Delivery Network (CDN)
+- **Edge Locations are present outside the VPC** so the origin's SG must be configured to allow inbound requests from the list of public IPs of all the edge locations.
+- Supports HTTP/RTMP protocol (**does not support UDP protocol**)
+- **Caches content at edge locations**, reducing load at the origin
+- **Geo Restriction feature**
+- Improves performance for both cacheable content (such as images and videos) and dynamic content (such as API acceleration and dynamic site delivery)
+- To block a specific IP at the CloudFront level, deploy a [WAF](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Web%20Application%20Firewall%20(WAF)) on CloudFront
+- Supports **Server Name Indication (SNI)** to allow SSL traffic to multiple domains
+### Origin
 
+- **[S3](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Simple%20Storage%20Service%20(S3)) Bucket**
+    - For distributing static files
+    - **Origin Access Identity (OAl) or Origin Access Control (OAC)** allows the S3 bucket to only be accessed by CloudFront
+    - Can be used as ingress to upload files to S3
+- **Custom Origin** (for HTTP) - need to be publicly accessible on HTTP by public IPs of edge locations
+    - EC2 Instance
+    - ELB
+    - S3 Website (may contain client-side script)
+    - On-premise backend
 
+> To restrict access to ELB directly when it is being used as the origin in a CloudFront distribution, create a VPC Security Group for the ELB and use AWS Lambda to automatically update the CloudFront internal service IP addresses when they change.
 
+## Pricing
+
+- Price Class All: all regions (best performance)
+- Price Class 200: most regions (excludes the most expensive regions)
+- Price Class 100: only the least expensive regions
+### Origin Groups
+
+- Consists of a **primary** and a **secondary** origin (can be in **different regions**)
+- Automatic failover to secondary
+    ![attachments/Pasted image 20220508161659.jpg](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/attachments/Pasted%20image%2020220508161659.jpg)
+- Provides **region-level** [High Availability](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Concepts#high-availability)
+- Use when getting 504 (gateway timeout) Error
+## Field-level Encryption
+
+- Sensitive information sent by the user is encrypted at the edge close to user which can only be decrypted by the web server (intermediate services can't see the encrypted fields)
+- **Asymmetric Encryption** (public & private key)
+- Max 10 encrypted field
+## CloudFront Functions
+Lightweight edge functions for high-scale, latency-sensitive CDN customizations. CloudFront Functions are cheaper, faster, but more limited than Lambda edge functions.
+
+- **Programming languages**: JavaScript (ECMAScript 5.1 compliant)
+- **Event sources**:
+    - Viewer request/response
+- **Scale**: 10,000,000 requests per second or more
+- **Function duration**: Submillisecond
+- **Maximum memory**: 2 MB
+- **Maximum size function code + libs**: 10 KB
+- **Network, File System, and Request Body access**: No
+- **Access to geolocation and device data**: Yes
+- **Can build/test entirely within CloudFront**: Yes
+- **Function logging and metrics**: Yes
+- **Pricing**: Free tier available; charged per request
 ## AWS Shield
  - **AWS Shield:** • Provides protection from attacks of layer **3,4 and 7**
 	- **AWS Shield Standard:** • Free service that is activated for every AWS customer • Provides protection from attacks such as SYN/UDP Floods, Reflection attacks and other layer 3/layer 4 attacks 
@@ -879,15 +977,13 @@ Improve global application **availability** and performance using the AWS global
 			- AWS Global Accelerator
 			- Route 53
 		- 24/7 access to AWS DDoS response team (DRP) • Protect against higher fees during usage spikes due to DDoS
-
 ## WAF
 Protects your web applications from common web exploits **Layer 7**.
 ALLOW and DENY rules based on the contents of HTTP request. Can only be deployed 
-
 - Can only be deployed on
-    - [Application Load Balancer](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Elastic%20Load%20Balancer%20(ELB)#application-load-balancer-alb)
-    - [API Gateway](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/API%20Gateway)
-    - [CloudFront](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudFront)
+    - Application Load Balancer
+    - API Gateway
+    - CloudFront
 - WAF contains **Web ACL (Access Control List)** containing rules to **filter requests** based on:
     - **IP addresses**
     - HTTP headers
@@ -1185,24 +1281,31 @@ AWS fully managed solution, not serverless, for collecting processing, and analy
 is a real time data streaming service. **Most flexible option**.
 **Has 2 capacity mode:**
 
-|                | **On Demand**                                                                                                                                                                   | **Provisioned**                                                                                                                  |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| **Use Case**   | Unpredictable workloads                                                                                                                                                         | Predictable workloads                                                                                                            |
-| **Management** | Automatically scales                                                                                                                                                            | Customer manages shards                                                                                                          |
-| **Billing**    | Volume of data ingested and retrieved                                                                                                                                           | Number of shards, data transfer                                                                                                  |
-| **Capacity**   | Writes: 200 MiB per second<br>200,000 records per second<br>Reads: 400 MiB per second per consumer<br>2 consumers by default<br>Enhanced Fan-Out (EFO) to add 20 more consumers | Write: 1 MiB per second per shard<br>1,000 records per second per shard<br>Read: 2 MiB per second per shard<br>Max shards is 200 |
+|                | **On Demand**                                                                                                                                                                                                                                  | **Provisioned**                                                                                                                                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Use Case**   | Unpredictable workloads                                                                                                                                                                                                                        | Predictable workloads                                                                                                                                                                |
+| **Management** | Automatically scales                                                                                                                                                                                                                           | Customer manages shards                                                                                                                                                              |
+| **Billing**    | Volume of data ingested and retrieved                                                                                                                                                                                                          | Number of shards, data transfer                                                                                                                                                      |
+| **Capacity**   | <ul>Writes: <li>200 MiB per second</li><br><li>200,000 records per second</li></ul><br><ul>Reads: <li>400 MiB per second per consumer</li><br><li>2 consumers by default</li><br><li>Enhanced Fan-Out (EFO) to add 20 more consumers</li></ul> | <ul>Write: <li>1 MB per second per shard</li><br><li>1,000 records per second per shard</li></ul><br><ul>Read: <li>2 MiB per second per shard</li><br><li>Max shards is 200</li><ul> |
+|                |                                                                                                                                                                                                                                                |                                                                                                                                                                                      |
 - **Data Retention:** 1 day (default) to 365 days.
-- Partition Keys and Sequence Number:
-	![[Pasted image 20241002150355.png]]
+- **Partition Keys**
+	- used to group data by shard within a stream
+	- partition keys are Unicode strings, with a maximum length limit of 256 characters for each key
+	- MD5 hash function is used to map partition keys to 128-bit integer values and to map associated data records to shards using the hash key ranges of the shards
+	- When an application puts data into a stream, it must specify a partition key.
+- **Sequence Number**
+	- Each data record has a sequence number that is unique per partition-key within its shard
+	- Sequence numbers for the same partition key generally increase over time
+		- The longer the time period between write requests, the larger the sequence numbers become
 - **Data Streams CLI:** 
 	- Using the AWS CLI the PutRecord alow us to send data to the stream. Note that data has to be based64 encoded
 	- Using the AWS CLI the getRecords we can retrive data
-- **EFO(Enhance Fan Out)**: allows upto 20 consumers to retrive records from a stream throughput of up to 2 MB of data per second per shard
+- **EFO(Enhance Fan Out)**: allows up to 20 consumers to retrive records from a stream throughput of up to 2 MB of data per second per shard
 - **Producers** use SDK, Kinesis Producer Library (KPL) or **Kinesis Agent** to publish records
 	- **Kinesis Producer Library(KPL)** is a managed library by AWS to let you publish data to a Kineses data stream. Is a Java library
 - **Consumers** use SDK or KCL: 
-	- **Kinese Client Library** is a java library that makes it easy for developers to easily consume data for kineses. via the MultiDaemon other programming languages can be used
-
+	- **Kineses Client Library** is a java library that makes it easy for developers to easily consume data for kineses. via the Multi-Daemon other programming languages can be used
 #### Amazon Data FireHose
 **Serverless**, simple version of data streams. allows for simple transformation and delivery of data.
 - Usage
@@ -1234,7 +1337,7 @@ AWS Glue is serverless data integration that makes it easy for **analytics** use
 - Search and catalog using, Athena, EMR and Redshift
 - **AWS Glue Studio**, feature that allows you to visually build ETL jobs and pipelines
 - **AWS Glue ETL jobs are charged based on the number of data processing units (DPUs)**
-- **AWS Glue  Data Catalog:** is a fully manage Apache Hive Metastore-compatible catalog service that makesit easy for customer to store, anntoate and share metadata about their data
+- **AWS Glue Data Catalog:** is a fully manage Apache Hive Metastore-compatible catalog service that makes it easy for customer to store, anntoate and share metadata about their data
 
 # Develop
 ## ElasticBeanStalk 
@@ -1394,15 +1497,22 @@ Amazon Prometheus: Is a Prometheus compatible monitoring service for container i
 # Database
 ## RDS
 It’s a managed DB service for DB use SQL as a query language. It allows you to create databases in the cloud that are managed by AWS. (puoi decidere di usa un db relazionale anche senza rds sulle ec2 ma te lo devi gestire tu). 
-![[Pasted image 20241003101453.png]]
+![[Pasted image 20241009092943.png]]
 
-**Encryption:**
+**DB instances:** is an isolated database environment running in the cloud
+- DB instance can contain one or multiple user created database
+- Each database has user defined database identifier which forms part of the DNS hostname
+- DB instance Class: just like ec2 instance class determine available compute memory or a db instance
+- DB instance use Elastic Block Storage (EBS) volumes for database and log storage
+- Maximum storage of 64TB
+
+### Encryption
 - Encryption in transit: enabled by default
 - Encryption at rest: can be enabled 
 - Encrypt also automated backups, snapshot and read replica
 - Can be enabled only during creation
 
-**RDS Backup:**
+### RDS Backup
 - Types
 	- Automated backup: choose retention period between 0 and 35 days
 		- enabled by default
@@ -1416,64 +1526,44 @@ It’s a managed DB service for DB use SQL as a query language. It allows you to
 		- Restoring Point in time (PITR): similar but provide restore time
 - Take long time to restore database: is not immidiate.
 
+#### Scelte architetturali
+#### Read Replicas: 
+- **Disaster recovery** solution if the primary DB instance fails  
+- Improve **read contention** which means improve performance latency. 
+	- Read contention: when multiple proccesses or instances competing for access to the same index or data block at the same time.
+- You must have **automatic backups enabled**. 
+- Type of replicaion: asyncronous replication
+- Maximum of 5 replicas of a database
+- Replica techniques:
+	- **Standard**
+	- **Multi-az**
+	- **Cross-region**
+#### Multi AZ vs Read Replicas
+	![[Pasted image 20241003104808.png]]
+
+### Subnet Group
+
 **DB Subnet Group**: collection of subnet that you create in a VPC and that you then designate for your DB instances.
 - Each DB subnet group should have subnets in at least two Availability Zones in a given AWS Region.
 - RDS will choose a subnet from your subnet group to deploy your RDS Instance
 - Subnets in a DB subnet group are either public or private
 - For a DB instance to be publicly accessible, all of the subnets in its DB subnet group must be public
 ![[Pasted image 20241003103052.png]]
-**Scelte architetturali:**
-- **Read Replicas:** 
-	- **disaster recovery** solution if the primary DB instance fails  
-	- Improve **read contention** which means improve performance latency. 
-		- Read contention: when multiple proccesses or instances competing for access to the same index or data block at the same time.
-	- You must have automatic backups enabled. 
-	- type of replicaion: asyncronous replication
-	- Maximum of 5 replicas of a database
-	- Replica techniques:
-		![[Pasted image 20241003104330.png]]
-	
-- **Multi AZ vs Read Replicas**
-	![[Pasted image 20241003104808.png]]
-- **DB instances:** is an isolated database environment running in the clous
-	- DB instance can contain one or multiple user created database
-	- Each database has user defined database identifier which forms part of the DNS hostname
-	- DB instance Class: just like ec2 instance class determine available compute memory or a db instance
-	- DB instance use Elastic Block Storage (EBS) volumes for database and log storage
-	- Maximum storage of 64TB
+
+### Other feature
 - **RDS Performance Insights:** helps you easily identify bottlenecks and performance issues. Is default by default and provides  1 week of performing data. For additional cost you can change the retention period to 2 years.
-- **RDS Custom:** automates database administration tasks and operatio. Allows customers to directlu manage aspects of RDS aspects of RDS instead of AWS, for company that needs third party applications for their dataabse.
-	![[Pasted image 20241003105648.png]]
 - **RDS Proxy:** create a connection pooler so that short lived AWS Lambda functions connecting to RDS does not quick exahaust all connection. Reuse existing connection to do this.
-	![[Pasted image 20241003110329.png]]
-- **Optimized Reads and Writes:** allow database operations to maximize perfrmance efficency and throughtput. Use NVMe based SSD block storage instead
-	- Query use temporary tables
 - **IAM Authentication:** allows you to authenticate with an IAM authentication token to an RDS instance's database insteas of using a password.
-	 ![[Pasted image 20241003110737.png]]
+	- Each token has a lifetime of 15 minutes
 	- You have to create a policy and attach to user
 	- You have to create db user 
 	- You need to generate auth token to be used for password authentication
-- **Kerberos Authentication:** Is a network auth protocol which is also directly integreted into Microsoft Active Directoruy.
-- **RDS Secrets Manager Integration:** can manage an RDS instance's master user password, allowing it to be rotated. default rotate pass every 7 days.
 - **Master User Account:** is the initial databse account that's created when you provision a new Db instance. Has full privilages. Pass and username set at creation time.
-- **Database Activity Streams:** allows you to control administrator access to data streams to secure both external and internal security threats. It can be turned on from CLI.
-	- Work with kinesis pushing data from rds to kinesis in real time.
-- **Parameter Groups:** act as a container for engine configuration values that are applied to one or more DB instances. Let you change database parameters specify how the database is configured.
-- **Public Accessibility:** is an option that changes if the DNS Endpoint reslve to the private IP address from traffic from outside the VPC
-- **Establishing Public Connections:** few options:
-	- Use a DB management/ DB IDE 
-	- AWS CloudShell and use database client or database driver
-	- Programmatcially connect with database driver from your language of choice
-	- Connection url string: A single string containing all the parameters to connect to a database drivers and database command line clients.
-- **Establishing Private Connections:** 
-	- ![[Pasted image 20241003113624.png]]
-	- How
-		- Using Cloud9
-		- Through Bation or Jumpbox
-		- Launch EC2 instances and connect via SSH or session manager
-		- Use AWS Client VPN to connect 
-		- For On-premise using AWS Direct Connect
-		- AWS CLoudShell can't be used because is not in the same VPC
+- **Public Accessibility:** is an option that changes if the DNS Endpoint resolve to the private IP address from traffic from outside the VPC
+
+### Extra
+- **RDS Custom:** automates database administration tasks and operation. Allows customers to directly manage aspects of RDS instead of AWS, for company that needs third party applications for their databse.
+- **Optimized Reads and Writes:** allow database operations to maximize perfrmance efficency and throughtput. Use NVMe based SSD block storage instead
 - **RDS Security Groups:** In order to establish connection for both public and private you need to open the port
 - **RDS Blue Green Deployments:** copies a production database environment in a separate, synchronized staging environment
 - **RDS Extended Support:** allows you to run your database on a major engine version past the RDS end of standard support date for an additional cost.
