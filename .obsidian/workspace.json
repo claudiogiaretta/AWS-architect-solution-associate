@@ -18,6 +18,16 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "11a38273109d0486",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "images/Pasted image 20241002101956.png"
+              }
+            }
           }
         ]
       }
@@ -148,6 +158,8 @@
   },
   "active": "d4ad88daa11096ea",
   "lastOpenFiles": [
+    "images/Pasted image 20241002101956.png",
+    "AWS Cloud Solution Architect Associate.md",
     "images/Pasted image 20241008092903.png",
     "images/Pasted image 20241007172433.png",
     "images/Pasted image 20241007170821.png",
@@ -158,8 +170,6 @@
     "images/Pasted image 20241009101756.png",
     "images/Pasted image 20241009101443.png",
     "images/Pasted image 20241009101431.png",
-    "images/Pasted image 20241009092943.png",
-    "AWS Cloud Solution Architect Associate.md",
     "Appunti_aws.md",
     "Extra.md",
     "images",

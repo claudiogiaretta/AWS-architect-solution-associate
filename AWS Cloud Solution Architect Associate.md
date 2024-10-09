@@ -15,9 +15,8 @@ Informazioni utili:
 - Object store (key-value pairs)
 - Buckets must have a globally unique name
 - **Buckets are defined at the regional level**
-- Objects have a key (full path to the object): `s3://my_bucket/my_folder/another_folder/my_file.txt`
 - The key is composed of bucket + _prefix_ + **object name** s3://my_bucket _/my_folder/another_folder/_ **my_file.txt**
-- There’s no concept of directories within buckets (just keys with very long names that contain slashes)
+- There’s **no concept of directories** within buckets (just keys with very long names that contain slashes)
 - **Max Object Size: 5TB**
 - Durability: 99.999999999% (total 11 9's)
 - **SYNC** command can be used to **copy data between buckets**, possibly in **different regions**
@@ -64,7 +63,7 @@ Informazioni utili:
     - IAM policies define which API calls should be allowed for a specific user
     - Preferred over bucket policy for **fine-grained access control**
 - **Resource based security (Bucket Policy)**
-    - Grant public access to the bucket
+    - Grant **public access** to the bucket
     - Force objects to be encrypted at upload
     - Cross-account access
     - Object Access Control List (ACL) - applies to the objects while uploading
@@ -119,7 +118,7 @@ Informazioni utili:
 
 ### Storage Classes
 
-- Data can be transitioned between storage classes manually or automatically using lifecycle rules
+- Data can be transitioned between storage classes manually or automatically using **lifecycle rules**
 - Data can be put directly into any storage class
 - **Standard**
     - **99.99% availability**
@@ -131,7 +130,7 @@ Informazioni utili:
 - **Infrequent Access**
     - For data that is infrequently accessed, but requires rapid access when needed
     - Lower storage cost than Standard but **cost on retrieval**
-    - Can **move data into IA from Standard only after 30 days**
+    - Can **move data into Infrequent Access from Standard only after 30 days**
     - Two types:
         - **Standard IA**
             - **99.9% Availability**
@@ -179,7 +178,7 @@ Informazioni utili:
 
 ### Lifecycle Rules
 
-- Used to automate transition or expiration actions on S3 objects
+- **Used to automate transition or expiration actions on S3 objects**
 - **Transition Action** (transitioned to another storage class)
 - **Expiration Action** (delete objects after some time)
     - delete a version of an object
@@ -193,7 +192,7 @@ Informazioni utili:
 ### Performance
 
 - 3,500 PUT/COPY/POST/DELETE and 5,500 GET/HEAD requests per second per prefix
-- Recommended to spread data across prefixes for maximum performance
+- Recommended to **spread data across prefixes** for maximum performance
 - SSE-KMS may create bottleneck in S3 performance
 - Performance Optimizations
     - **Multi-part Upload**
@@ -208,9 +207,8 @@ Informazioni utili:
         - Data is ingested at the nearest edge location and is transferred over AWS private network (uses [CloudFront](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudFront) internally)
 
 ### Data Transfer Costs
-- Uploads to S3 are free
-- Downloads from S3 are paid
-- Using S3 Transfer Acceleration, you pay only for transfers that are accelerated
+- **Uploads** to S3 are **free**, **Downloads** from S3 are **paid**
+- Using **S3 Transfer Acceleration**, you pay only for transfers that are accelerated
 - Since buckets are defined within a region, **data transfer within a region is free**
 
 ### S3 Notification Events
@@ -231,7 +229,7 @@ Informazioni utili:
 
 ### Object Lock (feature)
 - Can only be turned on during creation
-- WORM (Write Once Read Many) model
+- **WORM (Write Once Read Many)** model
 - Block an object version modification or deletion for a specified amount of time
 - Modes:
     - **Governance mode**
@@ -246,7 +244,7 @@ Informazioni utili:
 - For compliance and data retention
 
 ## EBS
-Non global service, allows you to create "EBS volume" which are **network drive** you can attach to your instances while they run. **They can only be mounted to one instance at a time.** **EBS volume is not multi Availability Zone**.
+Non global service, allows you to create "EBS volume" which are **network drive** you can attach to your instances while they run. **They can only be mounted to one instance at a time. EBS volume is not multi Availability Zone**.
 	1. **EBS Snapshot Archive:** Move a Snapshot to an ”archive tier” that is 75% cheaper
 	2. **Recycle Bin for EBS Snapshots**: Specify retention (from 1 day to 1 year)
 ### Volume Types
@@ -261,29 +259,32 @@ Non global service, allows you to create "EBS volume" which are **network drive*
     - Boot volumes
     - Development and test environments
 - **Durability**: 99.8% - 99.9%
-- **Volume Size**: 1 GiB – 16 TiB
-- **Max IOPS**: 16,000 (16 KiB I/O)
-- **Max Throughput**: 250 MiB/s
+- **Volume Size**: 1 GB – 16 TB
+- **Max IOPS**: 16,000 (16 KB I/O)
+- **Max Throughput**: 250 MB/s
+- **Price**: 0,10 USD per GB per month
 
-**N.B General Purpose SSD Volumes (gp3)**: Same but with max throughput og 1000MB/s
+**General Purpose SSD Volumes (gp3)**: 
+like gp2 but:
+- **Price**: 0,08 USD per GB month
+- **Throughput:** 1000 MB
 #### Provisioned IOPS SSD Volumes (io2 Block Express)
 - **Use Case**:
     - Sub-millisecond latency
     - Sustained IOPS performance
-    - More than 64,000 IOPS or 1,000 MiB/s of throughput
 - **Durability**: 99.999%
-- **Volume Size**: 4 GiB – 64 TiB
-- **Max IOPS**: 256,000 (16 KiB I/O)
-- **Max Throughput**: 4,000 MiB/s
+- **Volume Size**: 4 GB – 64 TB
+- **Max IOPS**: 256,000 (16 KB I/O)
+- **Max Throughput**: 4,000 MB/s
 #### Throughput Optimized HDD (st1)
 - **Use Case**:
     - Big data
     - Data warehouses
     - Log processing
 - **Durability**: 99.8% - 99.9%
-- **Volume Size**: 125 GiB - 16 TiB
+- **Volume Size**: 125 GB - 16 TB
 - **Max IOPS**: 500 (1 MiB I/O)
-- **Max Throughput**: 500 MiB/s
+- **Max Throughput**: 500 MB/s
 #### Cold HDD (sc1)
 - **Use Case**:
     - Throughput-oriented storage for data that is infrequently accessed
@@ -302,9 +303,11 @@ Non global service, allows you to create "EBS volume" which are **network drive*
 ---
 
 ### Snapshots
+- It is a point-in-time copies of your EBS volume
 - **Data Lifecycle Manager (DLM)** can be used to automate the creation, retention, and deletion of snapshots of EBS volumes
 - Snapshots are incremental
 - Only the most recent snapshot is required to restore the volume
+
 ### RAID
 - **RAID 0**
     - Improve performance of a storage volume by distributing reads & writes in a stripe across attached volumes
@@ -314,43 +317,50 @@ Non global service, allows you to create "EBS volume" which are **network drive*
     - Improve data availability by mirroring data in multiple volumes
     - For critical applications
 ## EFS
-Managed NFS (network file system) that can be mounted on 100s of EC2 • EFS works with **Linux** EC2 instances in multi-AZ • Highly available, scalable, expensive (3x gp2), pay per use, no capacity planning 
--  AWS managed Network File System (NFS)
+Managed NFS (network file system) that can be mounted on 100s of EC2 • EFS works with **Linux** EC2 instances in multi-AZ • **Highly available, scalable, expensive** (3x gp2), pay per use, no capacity planning 
+- AWS managed Network File System (NFS)
 - Can be mounted to multiple EC2 instances **across AZs**
 - **Pay per use** (no capacity provisioning)
 - **Auto scaling** (up to PBs)
 - Compatible with **Linux** based AMIs (**POSIX** file system)
-- **Uses security group to control access to EFS**
+- Uses **security group** to control access to EFS
 - Lifecycle management feature to move files to **EFS-IA** after N days
 - Creates multiple **mount targets**
 
 #### EFS Client
-- EFS Client (amazon-efs-utils package): is an open-source collection of Amazon EFS tools.
+- Is an open-source collection of Amazon EFS tools.
 	- enables the ability to use Amazon CloudWatch to monitor an EFS file system's mount status
-	- You need to install the Amazon EFS client on an Amazon EC2 instance prior to mounting an EFS file system
+	- You need to install the **Amazon EFS client** on an Amazon EC2 instance prior to mounting an EFS file system
 
 ## Fsx
 Allows you to deploy scale feature-rich, high performance file systems in the cloud. Fsx support a variety of file system protocol.
 
-- types:
-	- Amazon FSX for NetApp ONTAP
-	- Amazon Fsx for OpenZFS
-	- Amazon FSX for Windows File Server (WFS)
-	- Amazon FSX for Lustre
+- Types:
+	- **Amazon FSX for NetApp ONTAP**: Property enterprise storage platform known for handling petabytes of data
+	- **Amazon Fsx for OpenZFS**: Open-source storage platform originally developer by Sun Microsystem
+	- **Amazon FSX for Windows File Server (WFS)**: File storage on a Windows server supporting native window features for Windows developer
+	- **Amazon FSX for Lustre**: Open-source file system for parallel computing (several processors work simultaneously)
 
-- Amazon FSX for Windows File Server (WFS)
 - File Cache: high speed cache for datasets stored anywhere, accelerate bursting workloads
+### FSx for Windows
+
+- Shared File System for Windows (like EFS but for Windows)
+- Supports **SMB** protocol, Windows **NTFS**, Microsoft **Active Directory** integration, ACLs, user quotas
+- Built on **SSD**, scale up to 10s of GB/s, millions of IOPS, 100s PB of data
+- Supports **Multi-AZ** (high availability)
+- Data is backed-up daily to S3
+- **Does not integrate with S3** (cannot store cold data)
 
 ## AWS BACKUP
 Allows you to centrally manage backup accross AWS Services
 
 - Component:
 	- **Backup Plan**: A backup policy defines the backup schedule, backup window, backup lifecycle.
-	- **Backup Vault**: backup are stored in a backup vault
+	- **Backup Vault**: backup are stored in a backup vault following WORM model
 	- **AWS backup Audit Manager** is built in reporting and auditing for AWS backup
 
 ## Snow Family
-AWS Snow Family are storage and compute devices used to phisically move data in or out the cloud when moving data over the internet or private connection is too slow, difficult or costly.
+AWS Snow Family are storage and compute devices used to phisically move data in or out the cloud **when moving data over the internet or private connection is too slow, difficult or costly.**
 - **Takes around 2 weeks to transfer the data**
 - **Snowball cannot import to Glacier directly** (transfer to S3, configure a lifecycle policy to transition the data into Glacier)
 - Pay per data transfer job
@@ -358,24 +368,24 @@ AWS Snow Family are storage and compute devices used to phisically move data in 
 ![[Pasted image 20241002093152.png]]
 - **Snowcone**: Portable secure device for edge computing
 	- types:
-		- Snowcone: 8 TB HDD
-		- Snowcone SSD: 8 TB SSD
+		- **Snowcone**: 8 TB HDD
+		- **Snowcone SSD**: 8 TB SSD
 	- Two ways of sending data:
 		- **Phisically shipping** the device which runs on the device's compute
 		- **AWS DataSync** which runs on the device's compute
 - **SnowballEdge**: Similar to Snowcone but with more local processing, edge computing workloads, and device configuration options.
 	- Config Options:
-		- **Storage Optimized (for data transfer):** 
-			- 100 TB (80 TB usable)
 		- **Storage Optimized**
 			- 210 TB usable
+		- **Storage Optimized (for data transfer):** 
+			- 100 TB (80 TB usable)
 		- **Storage Optimized with EC2-Compatible compute**
 			- 80 TB usable storage , 40vCPUs and 80 GB of memory
 		- **Compute Optimized**
 			- Up to 104 vCPUs, 416 GB of memory,and 28 TB of dedicated NVMe SSd
 		- **Compute Optimized with GPU**
 			- Useful for video processing
-- **AWS Snowmobile**: 45-foot ship container truck. Used to handle 100 PB of data
+- **AWS Snowmobile**: 45-foot ship container truck. Used to handle 100 PB of data. (not used anymore)
 - Comparison
 	![[Pasted image 20241002094449.png]]
 
@@ -388,8 +398,10 @@ Offers fully managed support for the transfer files over SFTP, AS2,FTPS and FTP 
     - **SFTP** (Secure File Transfer Protocol) -  uses SSH to provide secure but unencryped 
     - **AS2** (Applicability Statement): Enable secure and reliable messaging
 
-![[Pasted image 20241002094906.png]]
+**Transfer Family Managed File Transfer Workflows:**
+Fully managed serverless File Transfer Workflow service to set up, run, automate, and monitor processing of files uploaded using AWS Transfer Family.
 
+Workflow allow you to: copy, tag, delete, decrypt file
 ## AWS Migration Hub
 Is a single place to discover your existing servers, plan migrations, and track the status of each application migration.
 
@@ -404,21 +416,37 @@ Other tools:
 - AWS Migration Hub Refactor: Bridges networking accross AWS Accounts so that legacy and new services can communicate while they maintain the independence of separate accounts
 - AWS Migration Hub Journey: guided templates
 ## AWS Data Sync
- Move **large amounts of data** from your **on-premises NAS or file system** via **NFS** or **SMB** protocol to AWS over the **public internet using TLS**
+ Move **large amounts of data** from your **on-premises NAS or file system** via **NFS** or **SMB** protocol to AWS over the **public internet using TLS**.
  - Need to install **AWS DataSync Agent** on premises
+
+For Use cases check: https://docs.aws.amazon.com/datasync/latest/userguide/what-is-datasync.html
 ## Data Migration Service (DMS)
 **AWS Database Migration Service (AWS DMS)** is a managed migration and replication service that helps move your database and analytics workloads to AWS quickly, securely, and with minimal downtime and zero data loss.
 ![[Pasted image 20241002101336.png]]
 **AWS Schema Conversion** is used in many cases to automatically convert a source database schema to a target database schema
 For data warehouse you can use the desktop app **AWS schema conversion tool** 
 
-	![[Pasted image 20241002101956.png]]
-
+### Migration Methods
+- **Homogenous data migration**
+	- Migrate data with native database tools. **Eg. pg_dump, pg_restore**
+	- You create a migration project in DMS and it will perform the migration using a serverless compute
+		- Uses a **pay as you go** model
+- **Instance Replication**
+	- Provision an instance with chosen instance type to perform the replications between databases
+- **Serverless Replication (DMS Serverless)**
+	- a **serverless** offering where you pay as you go, **with some limitations**:
+	- Does not have public Ips
+	- Must use VPC endpoints to access specific AWS services. Eg. S3, Kinesis, DynamoDB, OpenSearch
+	- Limited selection of possible sources and targets
+	- Doesn't support views with selection and transformation rules.
 
 ## Auto Scaling (different from ASG)
-**AWS auto scaling** is a service that can discover scaling resources whithin your aws account, and quickly add scaling plans to your scaling resources
+**AWS auto scaling** is a service that can discover scaling resources whithin your aws account, and quickly add scaling plans to your scaling resources.
 
-![[Pasted image 20241002102340.png]]
+It can manage and make reccomandations for the following scaling resources: ASG, ECS, EC2,Aurora, DynamoDB, Spot Fleet
+
+- **Predictive Scaling**: analyze historical load, generate a forecast and scale based on that forecast
+- **Dynamic Scaling**: when a metric changes so does the capacity.
 
 ## Storage Gateway
 **AWS Storage Gateway**: is a hybrid storage service that allows your on-premises applications to seamlessly use AWS cloud storage (Bridge between on-premise data and cloud data in s3). Use example: backups to the cloud, using on-premises file shares backed by cloud storage, and providing low-latency access to data in AWS for on-premises applications.
@@ -453,7 +481,6 @@ Think of it as a remote drive
 Stores files onto Vrual Library Tapes for backing up you files on very cost effective long term
 - **Tape Gateway**: **durable**, cost effective solution to archive your data in thw AWS CLoud. Use VTL interface, that helps you leverage existing tape-based backups.Store data on virtual tape that you create on you tape gateway. Tape storage has proven redability for 30 years
 	- VTL media changer is a a robot that moves tapes around:
-	![[Pasted image 20241004104332.png]]
 #### Amazon FsX File Gateway
 Allows your files to be stored in Amazon FSx Windows FIle Storage (WFS). Allow your Windoes developers to easily store data in the cloud using the tools they already know
 
@@ -1287,7 +1314,6 @@ is a real time data streaming service. **Most flexible option**.
 | **Management** | Automatically scales                                                                                                                                                                                                                           | Customer manages shards                                                                                                                                                              |
 | **Billing**    | Volume of data ingested and retrieved                                                                                                                                                                                                          | Number of shards, data transfer                                                                                                                                                      |
 | **Capacity**   | <ul>Writes: <li>200 MiB per second</li><br><li>200,000 records per second</li></ul><br><ul>Reads: <li>400 MiB per second per consumer</li><br><li>2 consumers by default</li><br><li>Enhanced Fan-Out (EFO) to add 20 more consumers</li></ul> | <ul>Write: <li>1 MB per second per shard</li><br><li>1,000 records per second per shard</li></ul><br><ul>Read: <li>2 MiB per second per shard</li><br><li>Max shards is 200</li><ul> |
-|                |                                                                                                                                                                                                                                                |                                                                                                                                                                                      |
 - **Data Retention:** 1 day (default) to 365 days.
 - **Partition Keys**
 	- used to group data by shard within a stream
@@ -1339,6 +1365,11 @@ AWS Glue is serverless data integration that makes it easy for **analytics** use
 - **AWS Glue ETL jobs are charged based on the number of data processing units (DPUs)**
 - **AWS Glue Data Catalog:** is a fully manage Apache Hive Metastore-compatible catalog service that makes it easy for customer to store, anntoate and share metadata about their data
 
+
+## AWS Instance Scheduler
+The Instance Scheduler on AWS solution automates the starting and stopping of various AWS services including [Amazon Elastic Compute Cloud](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html) (Amazon EC2) and [Amazon Relational Database Service](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) (Amazon RDS) instances.
+
+You are responsible for the cost of the AWS services used while running Instance Scheduler on AWS. As of the latest revision, the cost for running this solution a small deployment in two accounts and two Regions is approximately **$13.15 per month.**
 # Develop
 ## ElasticBeanStalk 
 With Elastic Beanstalk you can quickly deploy and manage applications in the AWS Cloud without having to learn about the infrastructure that runs those applications. 
