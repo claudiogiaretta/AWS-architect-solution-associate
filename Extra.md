@@ -58,3 +58,18 @@ Amazon MSK:
 
 ## Keyspace
 ![[Pasted image 20241003125003.png]]
+
+
+## Step Function
+- Step Function Inputs and Outputs: receive JSON event data as input and pass JSON as output
+	- You can manipulate JSON payload 
+		- InputhPath: allows us to select what we plan to pass to current step
+		- Parameters: allows to construct key paris. When you want to use JSONPATH for parameters you  need to add ".$" to the key name
+		- ResultSelector: lets you create a collection of key value pairs, where the values are static or selected from the state's result.
+		- ResultPath: Let's you decide to
+			- Use only the output from a task
+			- Use the input as the output
+			- Use the output and add or have it replace an existing key in the input and have that as the output
+		- OutputPath:
+	- JSONPath is a query languafe for JSON, similar to Xpath for XML
+		

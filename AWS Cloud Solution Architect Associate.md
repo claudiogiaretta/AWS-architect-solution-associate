@@ -454,23 +454,22 @@ It can manage and make reccomandations for the following scaling resources: ASG,
 ### Types of Storage
 
 #### S3 File Gateway
-Allows you run gateway within your on-premises environment so you can interact through a SMB or NFS File system
+ Amazon S3 File Gateway supports a file interface into s3 and combines a service and a virtual software appliance. By using this combination, you can store and retrieve objects in Amazon S3 using industry-standard file protocols such as **Network File System (NFS)** and **Server Message Block (SMB)**.
 - **Data is cached at the file gateway** for low latency access
 -  Integrated with **Active Directory (AD)** for user authentication
-- 
 ![[Pasted image 20241007125534.png]]
 #### Volume Gateway
-Allows you to mount s3 as local drive using the iSCSI protocol
+Allows you to mount s3 as local drive using the **iSCSI** protocol
 - 2 types: 
-		- **Store Volumes:** store primary data locally and asynchronously that data to AWS:
-			- Provide your on-premises applications with low-latency access to their entire datasets while still providing durable off-site backups.
-			- Create storage volumes and mount them as iSCSI devices from your on-premises servers.
+		- **Store Volumes:** store primary data locally and asynchronously to AWS:
+			- Provide your on-premises applications with **low-latency access** to their entire datasets while still providing durable off-site backups.
+			- **Create storage volumes** and mount them as iSCSI devices from your on-premises servers.
 			- Any data written to stored volumes are stored on your on-premises storage hardware.
 			- Amazon Elastic Block Store (EBS) snapshots are backed up to AWS S3.
-			- Stored Volumes can be between 1GB - 16TB in size
+			- **Stored Volumes can be between 1GB - 16TB in size**
 		- **Cache volumes:** 
-			- Minimizes the need to scale your on-premises storage infrastructure while still providing your applications with low-latency data access.
-			- Create storage volumes up to 32TB in size and attach them as iSCSI devices from your on-premises servers.
+			- **Minimizes the need to scale your on-premises storage infrastructure** while still providing your applications with low-latency data access.
+			- **Create storage volumes up to 32TB in size and attach them as iSCSI** devices from your on-premises servers.
 			- Your gateway stores data that you write to these volumes in S3 and retains recently read data in your on-premises storage gateway cache, and upload buffer storage.
 			- Cached volumes can be between 1GB - 32GB in size
 
@@ -478,18 +477,18 @@ Think of it as a remote drive
 
 ![[Pasted image 20241007125555.png]]
 #### Tape Gateway
-Stores files onto Vrual Library Tapes for backing up you files on very cost effective long term
-- **Tape Gateway**: **durable**, cost effective solution to archive your data in thw AWS CLoud. Use VTL interface, that helps you leverage existing tape-based backups.Store data on virtual tape that you create on you tape gateway. Tape storage has proven redability for 30 years
-	- VTL media changer is a a robot that moves tapes around:
+Stores files onto **Virtual Library Tapes** for backing up you files on very cost effective long term
+
+**Durable**, cost effective solution to archive your data in thw AWS CLoud. Use **VTL** interface, that helps you leverage existing tape-based backups. Store data on virtual tape that you create on you tape gateway. Tape storage has proven redability **for 30 years**
 #### Amazon FsX File Gateway
 Allows your files to be stored in Amazon FSx Windows FIle Storage (WFS). Allow your Windoes developers to easily store data in the cloud using the tools they already know
 
 ## Instance Store
-- Used as cache
+- Used as **cache**
 - **Hardware storage directly attached to EC2 instance** (cannot be detached and attached to another instance)
 - **Highest IOPS** of any available storage (millions of IOPS)
 - **Ephemeral storage** (loses data when the instance is stopped, **hibernated** or terminated)
-- Good for buffer / cache / scratch data / temporary content
+- **Good for buffer / cache / scratch data / temporary content**
 - AMI created from an instance does not have its instance store volume preserved
 
 > You can specify the instance store volumes only when you launch an instance. You can’t attach instance store volumes to an instance after you’ve launched it.
@@ -497,14 +496,14 @@ Allows your files to be stored in Amazon FSx Windows FIle Storage (WFS). Allow y
 ### RAID
 
 - **RAID 0**
-    - Improve performance of a storage volume by distributing reads & writes in a stripe across attached volumes
+    - **Improve performance** of a storage volume by distributing reads & writes in a stripe across attached volumes
     - If you add a storage volume, you get the straight addition of throughput and IOPS
     - For high performance applications
 - **RAID 1**
-    - Improve data availability by mirroring data in multiple volumes
+    - **Improve data availability by mirroring data** in multiple volumes
     - For critical applications
 ## Amazon AppFlow
-Is managed integration service for data transfer between data sources. Easily exchange data with over 80+ cloud services. By specifing a source destination. (Easy way to connect services)
+Is managed integration service for data transfer between data sources. Easily exchange data with over 80+ cloud services. By specifing a source destination. **(Easy way to connect services)**
 
 ![[Pasted image 20241007142942.png]]
 - **Run on Demand** - User manually run the flow as needed
@@ -523,31 +522,27 @@ Is managed integration service for data transfer between data sources. Easily ex
 
 # Computing
 ## EC2
-- **Cloud-Init**: is the industry standard multi-distribution method for cross-platform cloud instance initialization. It is supported accross all major public cloud providers, provisioning systems for private cloud infrastructure, and bare metal installations.
+Amazon Elastic Compute Cloud (Amazon EC2) provides on-demand, scalable computing capacity in the Amazon Web Services (AWS) Cloud. Using Amazon EC2 reduces hardware costs so you can develop and deploy applications faster.
+
 - **EC2 User data**: Used to automate **dynamic** boot tasks (that cannot be done using AMIs). **Runs with root privileges**
-- - **EC2 Placement Group:** the logical placement of your instances to optimize communication, performance, or durability. Free
+-  **EC2 Placement Group:** the logical placement of your instances to optimize communication, performance, or durability. Free
 	- Cluster
 	- Partition
 	- Availability Zone
-- **EC2 Meta Data**: You can access to Ec2 Metadata from MDS(Meta data service). There are 2 typers Version 1 adn Verison 2.
-	- You can enforce the use of tokens 
-	- You can turn off endpoints all together
+- **EC2 Meta Data**: You can access to Ec2 Metadata from **MDS(Meta data service)** a special endpoint. There are 2 versions of MDS v1 and v2. Should be used v2.
 - **EC2 Naming convention:**
 	![[Pasted image 20241001121648.png]]
 - **Instance Family:** Are different combination of CPU,Memory,Storage and Networking capacity
-	![[Pasted image 20241001122001.png]]
-	N.B these are not all but only the most important
-	
-- **EC2 Instance Profile**: is a reference to an IAM role that will be passed and assumed by the EC2 instance when it starts up. allows you to avoid passing long live AWS credentials.
+- **EC2 Instance Profile**: is a reference to an IAM role that will be passed and assumed by the EC2 instance when it starts up. Allows you to avoid passing long live AWS credentials.
 - **EC2 Lifecycle:** 
-	![[Pasted image 20241001123523.png]]
+	![[Pasted image 20241009172903.png]]
 - **EC2 Instance Console Screenshot**: will take a screenshot of the current state of the instance
-- Hostname; unique name in your network to identify a machine via DNS.
+- **Hostname**: unique name in your network to identify a machine via DNS.
 	- two types:
 		- IP Name: legacy name based on private access
 		- Resource Name: EC2 instance ID is included in the hostname
 - **EC2 Default user name:** The default user name for an operating system managed by AWS will vary based on distribution:
-	- When using SSM you will need to change yoour user to default
+	- When using SSM you will need to change your user to default
 	- ```sudo su -ec2-user```
 -  **EC2 Bustable Instances:** allow workloads to handle bursts of higher CPU utilization fro very short duration
 - **EC2 system log:** Accessed by the EC2 Management Console, allows you to observe the system log for the EC2 Instance. Troubleshoot on boot to see if anything is wrong
@@ -559,18 +554,19 @@ Is managed integration service for data transfer between data sources. Easily ex
 	- EC2 Serial console: establishes a serial connection giving you direc access
 - **EC2 Amazon Linux:** AWS's managed Linux distribution is based off CentOS and Fedora which in turn is based off Red Hat Linux. Reccomended to use Amazon Linux AL2023 e non AL2
 	- Amazon Linux extra: is a feature of AL2 that provides a way for users to install additional software packages.
-- **Elastic Network Interfaces (ENIs):** are virtual network interfaces that provide networking capabilities to Amazon EC2 instances. An ENI functions as a virtual network card, enabling instances to connect to networks and communicate with other resources within the AWS environment.
+- **Elastic Network Interfaces (ENIs):** Are **virtual network interfaces** that provide networking capabilities to Amazon EC2 instances. An **ENI** functions as a virtual network card, enabling instances to connect to networks and communicate with other resources within the AWS environment.
 ### Type of instances
 
-- **Compute Optimized:** Great for compute-intensive tasks that require high performance
-- **Memory Optimized:** Great for compute-intensive tasks that require high performance (Use case: cache, database)
-- **Storage Optimized:** Storage optimized instances are designed for workloads that require high, sequential read and write access to very large data sets on local storage. They are optimized to deliver tens of thousands of low-latency, random I/O operations per second (IOPS) to applications.
+![[Pasted image 20241001122001.png]]
+N.B these are not all but only the most important
+
 ### Intsance Classes
  Type of purchasing option:
-- **On-Demand Instances** : Has **high cost but no upfront payment** is a **pay-as-you-go** model. Thi is the default option when create EC2. Recommended for **short-term and un-interrupted** workloads commitment
+- **On-Demand Instances**: Has **high cost but no upfront payment** is a **pay-as-you-go** model. This is the default option when create EC2. Recommended for **short-term and un-interrupted** workloads commitment
 - **Reserved Instance(1 & 3 years)**: up to 72% save, long workloads/ long workloads with flexible instances. 
-	- 2 types: **Standard:** 72% save, **Convertible:** 54% save, you can change RI based on RI Attributes. If greater or equal in value.
-		![[Pasted image 20241004110849.png]]
+	- Types:
+		- **Standard**: These provide the most significant discount, but can only be modified. Standard Reserved Instances can't be exchanged.
+		- **Convertible**: These provide a lower discount than Standard Reserved Instances, but can be exchanged for another Convertible Reserved Instance with different instance attributes. Convertible Reserved Instances can also be modified.
 	- Type of payments: **All upfront, Partial upfront, No upfront**
 	- **RI Attributes**: can affect cost (Instance type, Region, Tenancy, Platform)
 	- **Limits**: Per month -> 20 Regional RI per region, 20, Zonal RI per zone
@@ -597,21 +593,21 @@ Is managed integration service for data transfer between data sources. Easily ex
 ## ASG(Auto Scaling Group)
 Creation of instances based on amount of workload. **High Availability
 ![[Pasted image 20241007144844.png]]
-- Automatic scaling can occur via:
-- **Capacity Settings:** The size of an Auto Scaling group based on Min Size, Max Size, Desired Capacity
-- **Health Check Replacement:** when an ASG replaces an instances if is considered unhealty. Two types of health checks ASG can perform
+- Automatic scaling can occur via different method:
+- **Capacity Settings:** The size of an Auto Scaling group based on **Min Size, Max Size, Desired Capacity**
+- **Health Check Replacement:** ASG replaces an instances if is considered unhealty. Two types of health checks ASG can perform
 	- **EC2 Health Check**: If the EC2 instance fails either of its EC2 Status Check
 	- **ELB Health Check**: ASG will perform a health check based on the ELB health check. ELB pings an HTTP endpoint at a specific path, port and status code
-- **Dynamic Scaling Policies**: how much ASG should change capacity. Policies are triggered based on Cloud Watch Alarms:
+- **Dynamic Scaling Policies**: how much ASG should change capacity. Policies are triggered based on **Cloud Watch Alarms**:
 	- **Adjustment types**: how capacity should change
 		- ChangeInCapacity
 		- ExactCapacity
 		- PercentChangeInCapacity
 	- **Scaling Policies:**
 		- **Simple Scaling**: When a **CloudWatch alarm** is triggered(example CPU > 70%), then add 2 units or/and (example CPU < 30%), then remove 1
-		- **Step Scaling:** Also scale wehn CloudWatch alarm but more rfficient when cloudWatch allarm is **repetedly trigger**
-		- **Target Tracking Scaling:** Example: I want the average ASG CPU to stay at around 40%
-		- **Predictive Scaling**: Triggers scaling by analyzing historical load data to detect daily or weeklu patterns in traffic flows
+		- **Step Scaling:** Also scale when CloudWatch alarm are trigger but more granular control over how the ASG. You can define multiple **steps** in the scaling policy, where each step specifies different scaling actions based on specific ranges of the metric.
+		- **Target Tracking Scaling:** **Example:** I want the average ASG CPU to stay at around 40%
+		- **Predictive Scaling**: Triggers scaling by analyzing historical load data to detect daily or weekly patterns in traffic flows
 
 ***Extra:*** 
 ELB integration: An ELB can be attached to you Auto Scaling Group 
@@ -623,17 +619,17 @@ It is a suite of Load balancer from AWS. A **Load balancer** is a tool to distri
 
 - Rules of traffic
 	- Structure:
-		- Listeners: incoming traffic is evaluetad against listeners. check matches with the Port (ex port 443 or port 80)
-		- Rules (only ALB): Listeners will then invoke rules to decide what to do with the traffic. Generally, the next step is to forward traffic to a Target Group
-		- Target Groups(not CLB): Are logical grouping of possible targets such as specific EC2 instances, IP addresses
-		- **only for CLB traffic** is sent to the Listeners. When the port matches, it forwards the traffic to any EC2 instances that are registered to che Classic Load Balancer. CLB does not allow you to apply rules to listeners.
+		- **Listeners**: incoming traffic is evaluetad against listeners. check matches with the Port (ex port 443 or port 80)
+		- **Rules (only ALB):** Listeners will then invoke rules to decide what to do with the traffic. Generally, the next step is to forward traffic to a Target Group
+		- **Target Groups(not CLB):** Are logical grouping of possible targets such as specific EC2 instances, IP addresses
+		- **only for Classic Load Balancer traffic** is sent to the Listeners. When the port matches, it forwards the traffic to any EC2 instances that are registered to che Classic Load Balancer. CLB does not allow you to apply rules to listeners.
 ### Application Load Balancer:
 - ALB is designed to balance HTTP and HTTPS traffic.
 - It operate at **Layer 7 (OSI Model)**
 - It allows you to add routing rules to your listeners based on the HTTP Protocol
 - Supports WebSockets and HTTP for real time, bi-directional communications
 - **Security Groups can be attached to ALBs** to filters requests
-- **ACM** can be attached to listeners to server custom domains over SSL/TLS for HTTPS
+- **ACM** can be attached to listeners to server custom domains over **SSL/TLS** for HTTPS
 - **Use Cases:**
 	- Microservices and Containerized Applications
 	- E-commerce and Retail Websites
@@ -642,8 +638,7 @@ It is a suite of Load balancer from AWS. A **Load balancer** is a tool to distri
 ### Network Load Balancer:
 - NLB is designed to balance TCP/UDP.
 - It operate at **Layer 4** (OSI Model)
-- It can handle millions of requests per second while still maintaining extremely
-- low latency.
+- It can handle millions of requests per second while still maintaining extremely low latency.
 - **Global Accelerator** can be placed in front of ALB to improve **global** availability
 - Preserves the client source IP
 - When a static IP address is needed for a load balancer
@@ -695,11 +690,11 @@ Example of use:
 	- Code is delivered as a zip archive
 ## Step functions
 With AWS Step Functions, you can create workflows, also called [State machines](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-statemachines.html), to build distributed applications, automate processes, orchestrate microservices, and create data and machine learning pipelines.
-State machines (think of it asflow chart)
+**State machines (think of it asflow chart)**
 
 - 2 types State Machines:
-	- Standard: general purpose -> reccomended for Long Workload
-	- Express: for sreaming data -> reccomended Short Workload, (streaming, data ingection, even driven ecc...)
+	- **Standard**: general purpose -> reccomended for Long Workload
+	- **Express**: for sreaming data -> reccomended Short Workload, (streaming, data ingection, even driven ecc...)
 - Some use cases:
 	- Manage a Batch job , if job fails send message with SNS
 	- Manage a Fargate Container
@@ -717,18 +712,7 @@ State machines (think of it asflow chart)
 	- Succed State: stop an execution succesfully
 	- Fail State: stops eh executiion of a state machine and set failure
 	- Parallel States: can be used to create parallel branches of execution in your state machine The state machine does not move forward until both states complete
-- Step Function Inputs and Outputs: receive JSON event data as input and pass JSON as output
-	- You can manipulate JSON payload 
-		- InputhPath: allows us to select what we plan to pass to current step
-		- Parameters: allows to construct key paris. When you want to use JSONPATH for parameters you  need to add ".$" to the key name
-		- ResultSelector: lets you create a collection of key value pairs, where the values are static or selected from the state's result.
-		- ResultPath: Let's you decide to
-			- Use only the output from a task
-			- Use the input as the output
-			- Use the output and add or have it replace an existing key in the input and have that as the output
-		- OutputPath:
-	- JSONPath is a query languafe for JSON, similar to Xpath for XML
-		
+
 ## AWS Compute Optimizer
 Analyzes the current configuration of your AWS Compute resources, and their utilization metrics from Amazon CloudWatch over a period of the last 14 days. 
 It will reccomend specific configuration changes

@@ -23,13 +23,16 @@
             "id": "11a38273109d0486",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "images/Pasted image 20241002101956.png"
+                "file": "Extra.md",
+                "mode": "source",
+                "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -95,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "AWS Cloud Solution Architect Associate.md",
+                "file": "Extra.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -112,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "AWS Cloud Solution Architect Associate.md",
+                "file": "Extra.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -135,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "AWS Cloud Solution Architect Associate.md"
+                "file": "Extra.md"
               }
             }
           }
@@ -156,10 +159,13 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "d4ad88daa11096ea",
+  "active": "eeddb0682ea1d13e",
   "lastOpenFiles": [
     "images/Pasted image 20241002101956.png",
     "AWS Cloud Solution Architect Associate.md",
+    "Pasted image 20241009172903.png",
+    "Appunti_aws.md",
+    "Untitled.md",
     "images/Pasted image 20241008092903.png",
     "images/Pasted image 20241007172433.png",
     "images/Pasted image 20241007170821.png",
@@ -168,9 +174,6 @@
     "images/Pasted image 20241009101827.png",
     "images/Pasted image 20241009101802.png",
     "images/Pasted image 20241009101756.png",
-    "images/Pasted image 20241009101443.png",
-    "images/Pasted image 20241009101431.png",
-    "Appunti_aws.md",
     "Extra.md",
     "images",
     "Nuova cartella",
