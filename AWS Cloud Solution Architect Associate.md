@@ -774,9 +774,9 @@ Endpoints allow you to connect to AWS Services **using a private network** inste
 - Eliminates the need for Internet Gateway, NAT Device, VPN connection, AWS Direct
 - **Bound to a region**
 ![[Pasted image 20241007170821.png]]
-#### Type of Endpoint
+#### Type of VPC Endpoint
 ##### Interface Endpoint
- It is a Elastic Network Interfaces (ENI) with a private IP addess. they serve as an entry point for traffic going to a supported service. **(Does not include S3 and DynamoDB)**
+ It is a Elastic Network Interfaces (ENI) with a private IP addess. they serve as an entry point for traffic going to a supported service. It is used by **AWS PrivateLink** **(Does not include S3 and DynamoDB)**
 - **Use Case**: Private connection to AWS services, partner services, and other VPCs without public IPs.
 - **Service Integration**: AWS PrivateLink
 - **Supported Services**: Many AWS Services
@@ -835,13 +835,33 @@ AWS PrivateLink establishes private connectivity between virtual private clouds 
 **N.B:** Need an Interface endpoint and Service endpoint in order to work
 ### AWS Site-to-site VPN:
 ![[Pasted image 20241001102606.png]]
-- ![[Pasted image 20241001102856.png]]
-- ![[Pasted image 20241001103123.png]]
-#### Virtual Private Gateway
-VPN endpoint on the Amazon side of your Site-to-site VPN connection that can be attached to a single VPC
-	 You need to assign an Amazon ASN or custom ASN (a unique identifier that is globally allocated to each autonomous system)
-#### Customer Gateway: 
-Is a resource that you create in AWS that represents customer gateway device in your on premises network. 
+
+**Components:**
+- **VPN Connection** - secure connection between VPC and on-premises equipment
+- **VPN tunnel** - encrypted connection for your data
+- **Customer gateway (CGW)**-provides information to AWS about your customer gateway device
+- **Customer gateway device** - A physical device or software application on your side of the Site-to-Site VPN connection.
+- **Target gateway** - A generic term for the VPN endpoint on the Amazon side of the Site-to-Site VPN connection.
+- **Transit gateway or Virtual private Gateway**
+	- **Virtual private gateway (VGW)** -VPN endpoint on the Amazon side of your Site-to-Site VPN connection that can be attached to a single VPC
+	- **Transit gateway** - A transit hub that can be used to interconnect multiple VPCS and on-premises networks.
+
+**Features:**
+- CloudWatch metrics
+- Reusable IP addresses for your customer gateways
+- Additional encryption options
+	- AES 256-bit encryption
+	- SHA-2 hashing,
+	- Additional Diffie-Hellman groups
+	- Configurable tunnel options
+
+**Limitations:**
+- IPv6 traffic is not supported for VPN connections on a virtual private gateway.
+- Recommend that you use non-overlapping CIDR blocks for your networks
+
+**Pricing:**
+- Each VPN connection hour
+- Data transfer out from Amazon EC2 to the internet.
 ### AWS Client VPN: 
 Connect from **your computer** using OpenVPN to your VPC in AWS and on-premises system.
 **Use case**: You travel around the world and need connection to services.
@@ -855,42 +875,42 @@ Connect from **your computer** using OpenVPN to your VPC in AWS and on-premises 
 - Self-service portal to download AWS VPN Desktop Client
 
 ### NAT Gateway: 
-NAT (Network Address Translation):
-	- ![[Pasted image 20241001104604.png]]
- (Vedi appunti AWS)
-	![[Pasted image 20241001104657.png]]
-	- 1 Nat gateway per subnet
-	- Pricing
-		- Per hour 0.045
-		- Per GB 0.045
-	- 2 types: Public and Private
-- NAT Instance (legacy not used anymore): is an AWS managed IAM to launch a NAT onto an individual EC2 instances. NAT Instances required the customer to handle scaling
-- Jumpbox/Bastion: security hardenend virtual machines that provide secure access to private subnets
-	- ![[Pasted image 20241001105435.png]]
-	- Nat should not be used as Bastion
-### VPC Lattice 
-Is a fully managed application networking service that you use to connect, secure, and monitor the services for your application -> Turn your AWS resources into services for a micro services architecture
-	- ![[Pasted image 20241001110138.png]]
+**What is Network Address Translation (NAT)?**
+A method of mapping an IP address space into another by modifying network address information in the IP header of packets while they are in transit across a traffic-routing device
 
-- Traffic Mirroring: sends a copy network traffic from a source ENI to target ENI, or UDP-enabled NLB or GWLB
-- Route 53 Resolver DNS Firewall: Firewall that protect against DNS exfiltration of your data
-	![[Pasted image 20241001111708.png]] ![[Pasted image 20241001111926.png]]
-- AWS Network firewall: is a stateful, managed, network firewall and IDS/IPS for VPCs (use open source Suricata )
+**NAT Gateway(Network Address Translation)**: Allow your instances in your Private Subnets to access the internet while remaining private
+
+![[Pasted image 20241001104657.png]]
+- 1 Nat gateway per subnet
+- Pricing
+	- Per hour 0.045
+	- Per GB 0.045
+- **2 types**: Public and Private
+- **NAT Instance (not very used anymore):** is an AWS managed IAM to launch a NAT onto an individual EC2 instances. NAT Instances required the customer to handle scaling
+
 ### Transit Gateway: 
-Transit Gateway: (vedi appunti AWS) 
-	- ![[Pasted image 20241001110353.png]]
-	- ![[Pasted image 20241001110427.png]]
+[AWS Transit Gateway](https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html) provides a hub and spoke design for connecting VPCs and on-premises networks as a fully managed service without requiring you to provision third-party virtual appliances. No VPN overlay is required, and AWS manages high availability and scalability.
+
+- Transit Gateway leverages AWS Resource Manager (RAM)
+- **Operates at the regional level.**
+- You can attach up to 5000 VPCs to each gateway
+	- An ENI will be provisioned in target VPCs to facilitate VPC to Transit Gateway communication
+- Each attachment can handle up to 50 Gbits/second of trafficù
+- Support IP multicast
+- You can peer connection with other Transit Gateways
+
+	![[Pasted image 20241010120643.png]]
 ### Network Address Usage(NAU)
 Is a metric applied in your VPC to help you plan for and monitor the size of your VPC, in a way that you don't run out of space for your VPC.
 ## Route 53
-Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web service. You can use Route 53 to perform three main functions in any combination: domain registration, DNS routing, and health checking.
+Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web service. You can use Route 53 to perform three main functions in any combination: **domain registration, DNS routing, and health checking.**
 
 - **Hosted Zones**: Container for records sets, scoped to route traffic for a specific domain or subdomains
-	- Public: How you want to route traffic through an Internet
-	- Private: How you want to route traffic through an Amazon VPC
+	- **Public**: How you want to route traffic through an Internet
+	- **Private**: How you want to route traffic through an Amazon VPC
 - **Records set**: collection of records which determine where to send traffic
 	- Always changed using batch via the API
-	- Record Alias: sppecific DNS record of AWS which extends DNS functionality. It rwill route traffic to specific AWS resources.
+	- **Record Alias:** specific DNS record of AWS which extends DNS functionality. It rwill route traffic to specific AWS resources.
 	- **Alias Target** can point to:
 		- CloudFront
 		- Elastic Beanstalk environment
@@ -904,16 +924,21 @@ Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web
 - **Simple Routing Policies**: Most basic Routing policies
 	- You have 1 record and provide multiple IP addresses
 	- When multiple values are specified for a record, Route53 will return values back to the user in a random order
+	- No health check
 	- ***Example***: if you had a record for www.exampro.co with 3 different IP addess values, users would be directly randomly to 1 of them
 - **Weighted Routing Policies**: Let you split up traffic based on different weight assigned
 	- This allows you to send a certain percentage of overall traffic to one server and have other traffic to be directed to a completeley different server
+	- Health check
 - **Latency Based Routing Policies:** allows you to direct traffic based on the lowest network latency possible for your end-user based on region
-- **Failover Routing Policy Policies:** allow you to create active passive/setup in situations where you want a primary site in one location and a secondary data recovery. Automatically monitors health checks from your primary site
+	- Can be used for **Active-Active failover** strategy (two resources active at the same time)
+- **Failover Routing Policy Policies:** allow you to create **active passive/setup** in situations where you want a primary site in one location and a secondary data recovery. **Active-passive** means that one is actively used and the other in stanby until the first fail.
+	- Automatically monitors health checks from your primary site
 - **Geolocation Routing Policies**: allow you to direct traffic based on the geographic location of where **the request originated from**
 - **Geoproximity routing polices**: allow you to direct traffic based on the geographic location of **your users and your AWS resources**
 - **Multi-Value Answer Policies:** let you configure Route 53 to return multiple values such as IP addresses for your web servers, in response to DNS queries.
 
 ### Health Checks (not free): 
+- HTTP Health Checks are only for public resources
 - Checks health every **30s** by default. Can be reduced to every **10s**
 - A health check can **initiate a failover** if the status is returned unhealthy
 - A CloudWatch Alarm can be created to alert you of status unhealthy
@@ -927,25 +952,27 @@ Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web
 - **Route 53 Profiles**: lets you apply and manage DNS related Route 53 configurations accross many VPCs and in differente AWS accounts
 
 ## AWS Global Accelerator
+
 Improve global application **availability** and performance using the AWS global network (Can find the optimal path from the end user to your web servers) 
 - Leverage the AWS internal network to optimize the route to your application 
--  2 Static Anycast IP are created for your application and traffic is sent through **Edge Locations
-- 2 types: 
-	- Standard: automatically route to the nearest healthy endpoint
-	- Custom Routing: Route specifies EC2 Instances
+-  **2 Static Anycast IP** are created for your application and traffic is sent through **Edge Locations
+- 2 types Routing: 
+	- **Standard**: automatically route to the nearest healthy endpoint
+	- **Custom**: Route specifies EC2 Instances
 - Components: 
 	- **Listeners**: Listens for traffic on a specific port and sends traffic to a endpoint group
 	- **Endpoint Groups**: collection of endpoint
 	- **Endpoints**: represent a resource to send traffic to
-
+#### Unicast vs Anycast IP
+- **Unicast IP**: one server holds one IP address
+- **Anycast IP**: all servers hold the same IP address and the client is routed to the nearest host with that IP
 ## Cloud Front
 ![[Pasted image 20241009101827.png]]
 - Cloud Front is a **CDN**
-	- **CDN(Content Delivery Network):** A distributed network of servers that delivrs web pages and content to users based on their geographical location, the origin of the wbpage and a content delivery server.
+	- **CDN(Content Delivery Network):** A distributed network of servers that delivers web pages and content to users based on their geographical location, the origin of the webpage and a content delivery server.
 
 
-- Global service
-- Global Content Delivery Network (CDN)
+- **Global service**
 - **Edge Locations are present outside the VPC** so the origin's SG must be configured to allow inbound requests from the list of public IPs of all the edge locations.
 - Supports HTTP/RTMP protocol (**does not support UDP protocol**)
 - **Caches content at edge locations**, reducing load at the origin
@@ -977,14 +1004,14 @@ Improve global application **availability** and performance using the AWS global
 - Consists of a **primary** and a **secondary** origin (can be in **different regions**)
 - Automatic failover to secondary
     ![attachments/Pasted image 20220508161659.jpg](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/attachments/Pasted%20image%2020220508161659.jpg)
-- Provides **region-level** [High Availability](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Concepts#high-availability)
+- Provides **region-level** High Availability
 - Use when getting 504 (gateway timeout) Error
 ## Field-level Encryption
 
-- Sensitive information sent by the user is encrypted at the edge close to user which can only be decrypted by the web server (intermediate services can't see the encrypted fields)
+- Sensitive information sent by the user is **encrypted at the edge** close to user which can only be decrypted by the web server (intermediate services can't see the encrypted fields)
 - **Asymmetric Encryption** (public & private key)
 - Max 10 encrypted field
-## CloudFront Functions
+### CloudFront Functions
 Lightweight edge functions for high-scale, latency-sensitive CDN customizations. CloudFront Functions are cheaper, faster, but more limited than Lambda edge functions.
 
 - **Programming languages**: JavaScript (ECMAScript 5.1 compliant)
@@ -1009,30 +1036,31 @@ Lightweight edge functions for high-scale, latency-sensitive CDN customizations.
 			- Amazon CloudFront
 			- AWS Global Accelerator
 			- Route 53
-		- 24/7 access to AWS DDoS response team (DRP) • Protect against higher fees during usage spikes due to DDoS
+		- 24/7 access to AWS DDoS response team (DRP) 
+		- Protect against higher fees during usage spikes due to DDoS
 ## WAF
 Protects your web applications from common web exploits **Layer 7**.
-ALLOW and DENY rules based on the contents of HTTP request. Can only be deployed 
-- Can only be deployed on
-    - Application Load Balancer
-    - API Gateway
-    - CloudFront
-- WAF contains **Web ACL (Access Control List)** containing rules to **filter requests** based on:
-    - **IP addresses**
-    - HTTP headers
-    - HTTP body
-    - URI strings
-    - Size constraints (ex. max 5kb)
-    - **Geo-match** (block countries)
-    - **Rate-based rules** (to count occurrences of events per IP) for **DDoS protection**
+**ALLOW and DENY** rules based on the contents of HTTP request. 
+Can only be deployed on
+- Application Load Balancer
+- API Gateway
+- CloudFront
+WAF contains **Web ACL (Access Control List)** containing rules to **filter requests** based on:
+- **IP addresses**
+- HTTP headers
+- HTTP body
+- URI strings
+- Size constraints (ex. max 5kb)
+- **Geo-match** (block countries)
+- **Rate-based rules** (to count occurrences of events per IP) for **DDoS protection**
 ## Cloud HSM
 **HSM:**
 Hardware Security Module it is a piece of hardware designed to store encryption keys. HSM hold keys in memory and never write them to disk.
-It follows FIPS (Federal Information Processing Standards): US and CANAdian governmant standard for cryptographic modules.
+It follows FIPS (Federal Information Processing Standards): US and Canadian governament standard for cryptographic modules.
 
 **2 types:**
-- Multi-tenant (FIPS 140-2 Level 2 Compliant): 
-- Single-Tenant (FIPS 140-2 Level 3 Compliant):
+- **Multi-tenant** (FIPS 140-2 Level 2 Compliant): 
+- **Single-Tenant** (FIPS 140-2 Level 3 Compliant):
 
 **Cloud HSM:** 
 Is **single tenant** HSM as a service that automates hardware provisioning. Enables you to generate and use your encryption keys on a FIPS 140-2 Level 3 validated hardware.
@@ -1042,8 +1070,7 @@ It is easy to migrate aws key between cloudHSM.
 ## Amazon GuardDuty
 Intrusion Detection System and Intrusion Protection System.(IDS)
 
-Intelligent **Threat discovery** to protect your AWS Account. Uses Machine Learning algorithms, **anomaly detection**, 3rd party data. **Uses EventBridge and lambda funtion to make action**. Check for (CloudTrail logs, VPC flow logs, DNS logs)
-
+Intelligent **Threat discovery** to protect your AWS Account. Uses Machine Learning algorithms, **anomaly detection**, 3rd party data. **Uses EventBridge and lambda funtion to make action**. Check for **(CloudTrail logs, VPC flow logs, DNS logs)**
 ## AWS Firewall Manager
  AWS Firewall Manager allows  you to centrally configure and manage firewall rules accross accounts and applications. 
  - Must be a member of AWS organizzation
@@ -1052,46 +1079,57 @@ Intelligent **Threat discovery** to protect your AWS Account. Uses Machine Learn
 ## AWS Inspector
 Amazon Inspector is an **automated** security assessment service that helps improve the security and compliance of applications deployed **on your Amazon EC2 instances**. Amazon Inspector automatically assesses applications for exposure.
 ## Amazon Macie
-![[Pasted image 20241003171751.png]]
+Amazon Macie is a fully managed data security and data privacy service that uses machine learning and pattern matching to discover and protect your sensitive data in AWS. Work alongside CloudTrail
 ## AWS Security Hub
-Central security tool to manage security across several AWS accounts and automate security checks. Allow you to generate a security score to determine your security posture. Allows you to enable standards(collection of security control)ù
+Central security tool to manage security across several AWS accounts and **automate** security checks. Allow you to generate a security score to determine your security posture. Allows you to enable standards(collection of security control)ù
 
 ## KMS
-KMS makes iteasy for you to create, control and rotate encryption keys in AWS.
+KMS makes it easy for you to create, control and rotate encryption keys in AWS.
+- **Regional service (keys are bound to a region)**
 - Is **multi-tenant**: There are multiple customers that are using the same piece of hardware. In this way is it possible to reduce the cost of the service. Each part is isolated per user.
 - It is used for the encryption of almost every service in aws.
+-  **Encrypt up to 4KB of data per call (if data > 4 KB, use envelope encryption)**
+#### Customer Master Key (CMK)
+**Symmetric keys**
 - **Type of key**
 	- **Customer Managed Key:**
 		- Create, manage and used by the customer, can enable or disable
 		- Possibility of rotation policy (new key generated every year, old key preserved)
-		- Possibility to bring-your-own-key 
+		- Possibility to bring-your-own-key
 	- **AWS Managed Key:**
 		- Created, managed and used on the customer’s behalf by AWS
-		- Used by AWS services (aws/s3, aws/ebs, aws/redshift)
+		- Used by AWS services **(aws/s3, aws/ebs, aws/redshift)**
 	- **AWS Owned Key:**
 		- Collection of CMKs that an AWS service owns and manages to use in multiple accounts
 		- AWS can use those to protect resources in your account (but you can’t view the keys)
 	- **CloudHSM Keys (custom keystore):** 
 		- Keys generated from your own CloudHSM hardware device
 		- Cryptographic operations are performed within the CloudHSM cluster
-- **CMK(Customer Master Key):** are the primary resources in AWS KMS. Is a logical representation of a master key . Support both Symmethric(one key) and Assymethric CMKs(2 keys).
-## Audit Manager
-Continually audit your AWS usage to simplify risk and compliance assessment. 
-AWS Audit Manager contains: Framework Library, Control Library.
-You can create assesments to review the evidence collected and generate an assesment report.
-
+#### Key Policies
+Cannot access KMS keys without a key policy
+- **Default Key Policy**
+    - Created if you don’t provide a specific Key Policy
+    - Complete access to the key for the root user ⇒ any user or role can access the key (most permissible)
+- **Custom Key Policy**
+    - Define users, roles that can access the KMS key
+    - Define who can administer the key
+    - Useful for cross-account access of your KMS key
 ## AWS Certificate Manager
  Let’s you easily provision, manage, and deploy SSL/TLS Certificates. 2 types of certificate **Public, Private**. ACM can be attached to the following AWS resources: **Elastic Load Balancer,CloudFront, API Gateway, Elastic Beanstalk.**
  
- - **Terminating SSL at the Load Balancer.** All traffic in-transit beryond the ALB is unencrypted. You can add as many as EC2 instances that you want
+ - **Terminating SSL at the Load Balancer.** All traffic in-transit beyond the ALB is unencrypted. You can add as many as EC2 instances that you want
  ![[Pasted image 20241003163140.png]]
  - **Terminating SSL End-to-End**: Traffic is encrypted in-transit all the way to the application
  ![[Pasted image 20241003163241.png]]
+#### Certificate Renewal
+There are 2 ways to renew your certificates:
+- **Automatically** using DNS validation
+- **Manually** using emaill validation
 ## AWS Cognito
 Is a Customer identity and access management system. It provides authentication, authorization and user management for your web and mobile apps. It also provides authentication to AWS Services.
 
 **Components:**
-- **Cognito User Pools**: User directoru with authentication to grant access to your app
+- **Cognito User Pools**: User directory with authentication to grant access to your app
 - **Cognito Identity Pools**: Provide temporary credential for users
 - **Cognito Sync**: Sync user data accross all devices
 ## Amazon Detective
@@ -1205,10 +1243,10 @@ You can setup automatic rotation, is not enabled by default.
 - Smithy: is AWS open source interface definition language for web services. It is used to define service
 - STS: Temporary limited credential. global service that go through a singlel endpoint
 - Signing API: when you send API request, you sign the requests so that AWS can identify who sent them
-- Service Enpoints: Is the URL of the entry point for an AWS web services
+- **Service Enpoints**: Is the URL of the entry point for an AWS web services
 	types:
 	- **Global Endpoints**
-	- **Regional Endpoints**
+	- **Private Endpoints** 
 	- **FIPS Endpoints**
 	- **Dualstack Endpoints**
 	example:
@@ -1378,18 +1416,33 @@ The Instance Scheduler on AWS solution automates the starting and stopping of va
 You are responsible for the cost of the AWS services used while running Instance Scheduler on AWS. As of the latest revision, the cost for running this solution a small deployment in two accounts and two Regions is approximately **$13.15 per month.**
 # Develop
 ## ElasticBeanStalk 
-With Elastic Beanstalk you can quickly deploy and manage applications in the AWS Cloud without having to learn about the infrastructure that runs those applications. 
+With Elastic Beanstalk you can quickly deploy and manage applications in the AWS Cloud without having to learn about the infrastructure that runs those applications. It provides CloudFormation templates for you.
 
 **Is not reccomended for production level application**
+### Environment
+Elasti Beanstalk provide 2 types of environment:
+#### Web environment
+Used for running web application, cames in 2 types:
+- **Single Instance:**
+	- Is designed to scale
+	- Uses an ESG and ELB
+- **Load Balance**
+	- Still uses an ASG but Desired capacity is set to 1 to ensure server is always running.
+	- No ELB to save cost
+	- Public IP addess has to be used to route traffic
+#### Worker environment
+Used for running background job
+- Create ASG 
+- Create SQS Queue
+- Installs the SQS Daemon on the EC2 instances
+- Create CloudWatch Alarm to dynamically scale instances based on health.
 
-- Supported Languages
-	![[Pasted image 20241002143955.png]]
-- Web vs Worker environment
-	![[Pasted image 20241002144228.png]]
-	- Web environment types:
-		- ![[Pasted image 20241002144443.png]]
 ## DeviceFarm
-Give you access to virtual mobile devices and environment to testing mobile and web app.
+Device Farm is an app testing service that you can use to test and interact with your Android, iOS, and web apps on real, physical phones and tablets that are hosted by Amazon Web Services (AWS).
+
+Used for:
+- Automated app testing
+- Remote access interaction
 ## AWS Amplify
 A set of tools and services that helps you develop and deploy scalable full stack web and mobile applications.
 
@@ -1398,8 +1451,7 @@ Support a set of famous framework (Angular, React, Flutter ecc...)
 
 **Open API**: is a specification, defines a standard, language agnostic interface to RESTFUL api. Represented as either JSON or YAML.
 
-**Amazon API Gateway:** is a program that sits between a single-entry point and multiple backends,  a soultion for creating secure APIs in your cloud environment at any scale.
-Create APIs that act as a front door for applications to access data, business logic or functionality from a back-end service.
+**Amazon API Gateway** is an AWS service for creating, publishing, maintaining, monitoring, and securing REST, HTTP, and WebSocket APIs at any scale. API developers can create APIs that access AWS or other web services, as well as data stored in the **AWS Cloud**.
 ![[Pasted image 20241008142105.png]]
 - **3 types:**
 	- Rest API (API Gateway V1)
@@ -1410,83 +1462,72 @@ Create APIs that act as a front door for applications to access data, business l
 		- Only public APIs
 	- Web Socket API: persistent connections for real time use cases such as chat application or dashboard
 
-Difference between REST and HTTP API Gateway:
-![[Pasted image 20241003100632.png]]
-![[Pasted image 20241003100745.png]]
-**REST API Components:**
-![[Pasted image 20241003101019.png]]
+-  Rate Limiting (throttle requests) - returns **429 Too Many Requests**
+-  Cache API responses
+-  **Can be integrated with any HTTP endpoint in the backend or any AWS API**
 
-**HTTP API Components:**
-![[Pasted image 20241003101213.png]]
+### IAM Policy
+
+- Create an IAM policy and attach to User or Role to allow it to call an API
+- Good to provide **access within your own AWS account**
+- Leverages **Sig v4** where lAM credential are in the request headers
+## Endpoint Types
+
+- **Edge-Optimized** (default)
+    - For global clients
+    - Requests are routed through the [CloudFront](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudFront) edge locations (improves latency)
+    - The API Gateway lives in only one region but it is accessible efficiently through edge locations
+- **Regional**
+    - For clients within the same region
+    - Could manually combine with your own CloudFront distribution for global deployment (this way you will have more control over the caching strategies and the distribution)
+- **Private**
+    - Can only be accessed within your VPC using an **Interface VPC endpoint** (ENI)
+    - Use resource policy to define access
+
+
 
 ## ECR
-Private Docker Registry on AWS, similar to docker hub. Makes it easier for developers to store, manage, and deploy Docker container images.
-Lets you to store Docker and Open Container Initiative (OCI) Images.
-
-You can 
-- controll acces via Register Policy:
-	- ReplicateImage
-	- BatchImportUpstreamImage
-- Controll access via Repo Policy:
-	- DescribeImages
-	- DescribeReposiory
-
-You must  remotely lognt using docker in you environmetn
-
-Image tag mutability feature prevent images tags from being overwritten
-ECR Lifecyle policy: can be used to expire old images based on specific criteria
-
+Private Docker Registry on AWS, similar to **docker hub**. Makes it easier for developers to store, manage, and deploy Docker container images. Lets you to store Docker and Open Container Initiative (OCI) Images.
+- You can controll acces via **Register Policy** or  **Repo Policy**
+- You must  remotely login using docker
+- Image tag mutability feature prevent images tags from being overwritten
+- **ECR Lifecyle policy**: can be used to expire old images based on specific criteria
 ## ECS
  Amazon Elastic Container Service (Amazon ECS) is a fully managed container orchestration service that helps you easily deploy, manage, and scale containerized applications. Compare to fargate you need to build the infrastructure on your own (EC2 instances).
- - **Cluster**
- - **Task definition**
- - **Task**
- - **Service**
- - **Conatiner Agent**
- - **ECS Controller / Scheduler**
 
-**ECS Fargate**
+- **ECS Task Lifecycle:**
+	![[Pasted image 20241003143946.png]]
+
+#### With Load Balancer
+- For every container, the container port is mapped to a random free port on the hots (instance). So the application running inside that container will be reached by the ALB on that random port.
+- **Dynamic Host Port Mapping** - Once the ALB is registered to a service in the ECS cluster, it will automatically find the right port on the EC2 Instances. This only works with ALB, not CLB.
+- You **must allow on the EC2 instance’s security group any port from the ALB security group** because it may attach on any port
+### ECS Fargate
 AWS Fargate is a technology that you can use with Amazon ECS to run [containers](https://aws.amazon.com/what-are-containers) without having to manage servers or clusters of Amazon EC2 instances. With AWS Fargate, you no longer have to provision, configure, or scale clusters of virtual machines to run containers. 
 
 - You can create an **empty** ECS cluster (no EC2's provisioned) and then launch Tasks as Fargate
 - You **no longer have to provision, configure, and scale clusters** of EC2 instances to run containers
 - You are charged for **at least one minute**, then it's by the second, and you pay per duration.
 - When using ELB to point to Fargate you have to use IP addresses since Fargate tasks do not have -a hostname
-- You can apply a security group to a task
-- You can apply an IAM role to the Task
-### Components
-- **Execution role**: used to prepare or manage the contianer
-- **Task role:** is the role that is used by the running compute of the container (when the container is running)
-- **ECS capacity providers** manage the scaling of the infracture for tasks in your clusters.
 
-- **ECS Task Lifecycle:**
-	![[Pasted image 20241003143946.png]]
-- **Task Definition:**
-	- Family, Execution role, Task role, Network Mode, CPU and Memory, Requires compatibilities, Container definition
-	- Container Definition
-		- Name, Dockerhub, Essential, Health Chekcs, port mapping, log configuration, environment, secrets
-- **ECS Exec**: allows you to direct interact with containers without needing to first interact with the host conatiner operating system, open inbound ports, or manage SSH Keys. cannot be used with AWS console.
-- **Log configuration**: You can set log driver that tells where the container should log. There are other third-party log driver. AWS log is blocked by default you need to configure it to enable it.
-- **ECS Service Connect**: makes it easy to setup a service mesh for service-to-service communication. Evolution of AppMesh.
-	- Service Connect will deploy a sidecar proxy container. You can use the service discovery name to easily talk to other service
-- **ECS Optimized AMIs** are preconfigured with the requirements and reccomnadations to run your container, they are used by default.
-- **ECS Anywhere**: allows you to register external VMS residing from you on-premises network to your cluster
-	- $0.01025 per hour for each managed ECS Anywhere on-premises instance
-	- You can register an external instance to a single cluster
-	- External instances require an IAM role that allows them to communicate with AWS APIs
-	- Service load balancing isn't supported.
-	- EFS volumes aren't supported
+#### With Load Balancer
+- **Each task has a unique IP but the same container port**
+- The ALB connects to each task directly on its IP and container port since these containers are not run on a defined host (instance).
+- You **must allow on the ENI’s security group the task port from the ALB security group**
+
+### Scaling ECS Tasks using EventBridge
+- You can use EventBridge (CloudWatch Events) to run Amazon ECS tasks when certain AWS events occur.
+- Ex: set up a CloudWatch Events rule that runs an Amazon ECS task whenever a file is uploaded to an S3 bucket. You can also declare a reduced number of ECS tasks whenever a file is deleted from the S3 bucket.
 ## EKS
-Amazon Elastic Kubernetis Service is a managed service that eliminates the need to install, operate, and maintain your own kubernetes control panel
+Amazon **Elastic Kubernetis Service** is a managed service that  simplifies the process of building, securing, operating, and maintaining Kubernetes clusters on AWS
 ![[Pasted image 20241003151405.png]]
  EKS can use different type of compute nodes: 
  - EC2 instances 
  - Fargate Instances
  - External instances
 
- EKS Connector: if you want to connect your own kubernetis cluster
- EKS CTL: is CLI tool for waily setting up kubernetis clusters on AWS.
- 
+ **EKS Connector**: if you want to connect your own kubernetis cluster
+ **EKS CTL**: is CLI tool for waily setting up kubernetis clusters on AWS.
  **EKS Distro**: is a Kubernetis distribution based on and used by EKS to create reliable and secure kubernetis clusters.
  
 **Use Cases:**
@@ -1533,43 +1574,43 @@ Amazon Prometheus: Is a Prometheus compatible monitoring service for container i
  AWS Cloud9 is an integrated development environment, or _IDE_.
 # Database
 ## RDS
-It’s a managed DB service for DB use SQL as a query language. It allows you to create databases in the cloud that are managed by AWS. (puoi decidere di usa un db relazionale anche senza rds sulle ec2 ma te lo devi gestire tu). 
+Amazon Relational Database Service (Amazon RDS) is a web service that makes it easier to set up, operate, and scale a relational database in the AWS Cloud. It provides cost-efficient, resizable capacity for an industry-standard relational database and manages common database administration tasks.
 ![[Pasted image 20241009092943.png]]
 
 **DB instances:** is an isolated database environment running in the cloud
-- DB instance can contain one or multiple user created database
+- DB instance **can contain one or multiple user** created database
 - Each database has user defined database identifier which forms part of the DNS hostname
-- DB instance Class: just like ec2 instance class determine available compute memory or a db instance
+- **DB instance Class:** just like ec2 instance class determine available compute memory or a db instance
 - DB instance use Elastic Block Storage (EBS) volumes for database and log storage
-- Maximum storage of 64TB
+- **Maximum storage of 64TB**
 
 ### Encryption
 - Encryption in transit: enabled by default
 - Encryption at rest: can be enabled 
-- Encrypt also automated backups, snapshot and read replica
-- Can be enabled only during creation
+- Encrypt alsoare automatically enabled on Automated backups, snapshot and read replicas
+- **Can be enabled only during creation**
 
 ### RDS Backup
 - Types
-	- Automated backup: choose retention period between 0 and 35 days
+	- **Automated backup:** choose retention period between 0 and 35 days
 		- enabled by default
 		- stored in s3
-		- no ccharge for additional data in automated backups
-	- Manual Snapshot
+		- no charge for additional data in automated backups
+	- **Manual Snapshot**
 		- taken manually
 		- additional storage charge 
-- Restoring a backup: creates a new RDS instance and restores data in that instance 
+- **Restoring a backup:** creates a new RDS instance and restores data in that instance 
 		- Restoring a manual snapshot
 		- Restoring Point in time (PITR): similar but provide restore time
-- Take long time to restore database: is not immidiate.
+- Take long time to restore database: is not imidiate.
 
 #### Scelte architetturali
 #### Read Replicas: 
-- **Disaster recovery** solution if the primary DB instance fails  
+- **Disaster recovery solution** if the primary DB instance fails  
 - Improve **read contention** which means improve performance latency. 
 	- Read contention: when multiple proccesses or instances competing for access to the same index or data block at the same time.
 - You must have **automatic backups enabled**. 
-- Type of replicaion: asyncronous replication
+- **Type of replication:** asyncronous replication
 - Maximum of 5 replicas of a database
 - Replica techniques:
 	- **Standard**

@@ -103,3 +103,37 @@ Event Pattern: are used to filter what events should be used to pass along to a 
 - **Conditions:**
 	![[Pasted image 20241004123829.png]]
 - CloudWatch are alarms that watch other alarms. Using composite alarms can help you reduce alarm noise.
+
+### VPC Lattice 
+Is a fully managed application networking service that you use to connect, secure, and monitor the services for your application -> Turn your AWS resources into services for a micro services architecture
+
+- Traffic Mirroring: sends a copy network traffic from a source ENI to target ENI, or UDP-enabled NLB or GWLB
+- Route 53 Resolver DNS Firewall: Firewall that protect against DNS exfiltration of your data
+	- **DNS exfiltration**: DNS data exifiltration is a method used by hackers to steal data from an IT system or network by exploiting the DNS protocol by hiding malicious code within DNS packets.
+ ![[Pasted image 20241001111926.png]]
+- AWS Network firewall: is a stateful, managed, network firewall and IDS/IPS for VPCs (use open source Suricata )
+## Audit Manager
+Continually audit your AWS usage to simplify risk and compliance assessment. 
+AWS Audit Manager contains: Framework Library, Control Library.
+You can create assesments to review the evidence collected and generate an assesment report.
+
+## AWS ECS
+### Components
+- **Execution role**: used to prepare or manage the contianer
+- **Task role:** is the role that is used by the running compute of the container (when the container is running)
+- **ECS capacity providers** manage the scaling of the infracture for tasks in your clusters.
+- **Task Definition:**
+	- Family, Execution role, Task role, Network Mode, CPU and Memory, Requires compatibilities, Container definition
+	- Container Definition
+		- Name, Dockerhub, Essential, Health Chekcs, port mapping, log configuration, environment, secrets
+- **ECS Exec**: allows you to direct interact with containers without needing to first interact with the host conatiner operating system, open inbound ports, or manage SSH Keys. cannot be used with AWS console.
+- **Log configuration**: You can set log driver that tells where the container should log. There are other third-party log driver. AWS log is blocked by default you need to configure it to enable it.
+- **ECS Service Connect**: makes it easy to setup a service mesh for service-to-service communication. Evolution of AppMesh.
+	- Service Connect will deploy a sidecar proxy container. You can use the service discovery name to easily talk to other service
+- **ECS Optimized AMIs** are preconfigured with the requirements and reccomnadations to run your container, they are used by default.
+- **ECS Anywhere**: allows you to register external VMS residing from you on-premises network to your cluster
+	- $0.01025 per hour for each managed ECS Anywhere on-premises instance
+	- You can register an external instance to a single cluster
+	- External instances require an IAM role that allows them to communicate with AWS APIs
+	- Service load balancing isn't supported.
+	- EFS volumes aren't supported
