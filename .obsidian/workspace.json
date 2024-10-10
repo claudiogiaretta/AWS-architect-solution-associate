@@ -31,8 +31,7 @@
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -98,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Extra.md",
+                "file": "AWS Cloud Solution Architect Associate.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +114,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Extra.md",
+                "file": "AWS Cloud Solution Architect Associate.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +137,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Extra.md"
+                "file": "AWS Cloud Solution Architect Associate.md"
               }
             }
           }
@@ -159,12 +158,15 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "eeddb0682ea1d13e",
+  "active": "d4ad88daa11096ea",
   "lastOpenFiles": [
-    "images/Pasted image 20241002101956.png",
+    "images/Pasted image 20241001101531.png",
+    "images/Pasted image 20240902145817.png",
     "AWS Cloud Solution Architect Associate.md",
-    "Pasted image 20241009172903.png",
     "Appunti_aws.md",
+    "Extra.md",
+    "images/Pasted image 20241002101956.png",
+    "Pasted image 20241009172903.png",
     "Untitled.md",
     "images/Pasted image 20241008092903.png",
     "images/Pasted image 20241007172433.png",
@@ -173,8 +175,6 @@
     "images/Pasted image 20241007142942.png",
     "images/Pasted image 20241009101827.png",
     "images/Pasted image 20241009101802.png",
-    "images/Pasted image 20241009101756.png",
-    "Extra.md",
     "images",
     "Nuova cartella",
     "Progetti.md",

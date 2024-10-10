@@ -554,7 +554,6 @@ Amazon Elastic Compute Cloud (Amazon EC2) provides on-demand, scalable computing
 	- EC2 Serial console: establishes a serial connection giving you direc access
 - **EC2 Amazon Linux:** AWS's managed Linux distribution is based off CentOS and Fedora which in turn is based off Red Hat Linux. Reccomended to use Amazon Linux AL2023 e non AL2
 	- Amazon Linux extra: is a feature of AL2 that provides a way for users to install additional software packages.
-- **Elastic Network Interfaces (ENIs):** Are **virtual network interfaces** that provide networking capabilities to Amazon EC2 instances. An **ENI** functions as a virtual network card, enabling instances to connect to networks and communicate with other resources within the AWS environment.
 ### Type of instances
 
 ![[Pasted image 20241001122001.png]]
@@ -690,7 +689,7 @@ Example of use:
 	- Code is delivered as a zip archive
 ## Step functions
 With AWS Step Functions, you can create workflows, also called [State machines](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-statemachines.html), to build distributed applications, automate processes, orchestrate microservices, and create data and machine learning pipelines.
-**State machines (think of it asflow chart)**
+**State machines (think of it as flow chart)**
 
 - 2 types State Machines:
 	- **Standard**: general purpose -> reccomended for Long Workload
@@ -699,97 +698,111 @@ With AWS Step Functions, you can create workflows, also called [State machines]
 	- Manage a Batch job , if job fails send message with SNS
 	- Manage a Fargate Container
 	- Transfer Data Records
-	- **Per altri use cases andare a cercare step function use cases nella guida ufficiale di amazon**
-- Step Functions states: Allows us to pass input and output without any work. Useful when constructing state machines
-	- Structure of state
-		- Parameters
-		- Result
-		- ResulthPath
-	- Task State
-		- ...
-		- Activites: Enables you to have a task in your state machine where the work is performed by a worker that can be hosted on anywhere eg: EC2, ECS, mobile phones
+	- **Other use cases can be found on the official web page**
+- **Step Functions states**: Allows us to pass input and output without any work. Useful when constructing state machines
+	- Pass State: passes its input and output, without performing work (dummy/mock). Pass states are useful when constructing and debugging state machines.
+	- Task State: represent a single unit of work performed by state machine
+		- Enables you to have a task in your state machine where the work is performed by a worker that can be hosted on anywhere eg: EC2, ECS, mobile phones
 	- Wait State: delays state machine from coninuing for a specificng time
 	- Succed State: stop an execution succesfully
 	- Fail State: stops eh executiion of a state machine and set failure
 	- Parallel States: can be used to create parallel branches of execution in your state machine The state machine does not move forward until both states complete
 
 ## AWS Compute Optimizer
-Analyzes the current configuration of your AWS Compute resources, and their utilization metrics from Amazon CloudWatch over a period of the last 14 days. 
-It will reccomend specific configuration changes
-
-![[Pasted image 20241004120413.png]]
-
-**Schedule Expression**
-You can create EventBridge Rules that trigger on a schedule. You can think of it as Serverless Cron Jobs. Use UTC time zone. **support cron and rate expression**:
-- Cron expression: Very fine Grain control
-- Rate expression: Easy to set, not as fine grained
-
-**CloudTrail Event**:
-Event Pattern: are used to filter what events should be used to pass along to a target. You can filter events by providing the same fields and values
-
-**EventBridge Event Pattern**: Prefix Matching, Anything-but matching, Numeric matching, IP address matching, exists matching, empty value matching.
-
-**EventBridge Rules:** Up to 5 target, you may have additional fields to select target, you can specify what gets passed along with Configure Input.
-
-**EventBridge Partner:** A list of third pary service providers can be integrated
-
-**Schema registry:** allows you to create, discover and manage OpenAPI Schema for events on EventBridge. You can set schema in order to see if the sctructure of the events have changed over time
-
-**Amazon CloudWatch Alarms:** Alarms are used to trigger notifications for any metric 
-- Use example:
-	- **Auto Scaling**: increase or decrease EC2 instances “desired” count 
-	- **EC2 Actions**: stop, terminate, reboot or recover an EC2 instance 
-	- **SNS notifications**: send a notification into an SNS topic 
-		- You can create a billing alarm • **Billing data metric is stored in CloudWatch us-east-1** Billing data are for overall worldwide AWS costs • It’s for actual cost, not for projected costs
-- **Conditions:**
-	![[Pasted image 20241004123829.png]]
-- CloudWatch are alarms that watch other alarms. Using composite alarms can help you reduce alarm noise.
+AWS Compute Optimizer is a service that analyzes your AWS resources' configuration and utilization metrics to provide you with rightsizing recommendations. 
+It reports whether your resources are optimal, and generates optimization recommendations to reduce the cost and improve the performance of your workloads.
 ## AWS Batch
- AWS Batch helps you to run batch computing workloads on the AWS Cloud. Batch computing is a common way for developers, scientists, and engineers to access large amounts of compute resources. Rispetto alle Lambda: **No time limit** • • Batch jobs are defined as Docker images and run on ECS • **Rely on EBS and EC2 / instance store for disk space**.
+ AWS Batch helps you to run batch computing workloads on the AWS Cloud. Batch computing is a common way for developers, scientists, and engineers to access large amounts of compute resources. 
+ - compared to Lambdas they have **no time limit**
+ - Batch jobs are defined as Docker images and run on ECS 
+ - **Rely on EBS and EC2 / instance store for disk space**.
 
 
 # Network & Security
+**Elastic Network Interfaces (ENIs):** Are **virtual network interfaces** that provide networking capabilities to Amazon EC2 instances. An **ENI** functions as a virtual network card, enabling instances to connect to networks and communicate with other resources within the AWS environment.
 ## AWS VPC
-- Logically isolated network, Region specific. 5 VPC per region. 200 subnet per VPC
-- AWS has default VPC per region 
-- You can share a VPC trough the same account using **AWS Resources Acess Manager**
-- **NACL**: (vedi l'altro foglio di appunti). Rispetto a security group puoi bloccare anche un singolo ip.
-- **Security groups:** Rules that controls traffic to and from an **EC2 Instance** • Can have only **ALLOW** rules. Limiti: 10000 security groups per region, 60 in/outbound rules per secGroup, 16 secGroups per Elastic Network Interface
+With Amazon Virtual Private Cloud (Amazon VPC), you can launch AWS resources in a logically isolated virtual network. They are Region Specific
+
+- Max 5 VPC per region. Max 200 subnet per VPC
+- AWS has **default VPC per region** 
+- **NACL**: **Network access control lists** is a firewall which controls traffic **from and to subnet**. It is free: 
+	- Can have **ALLOW and DENY** rules 
+	- Are **attached at the Subnet level** 
+	- Rules only include IP addresses. 
+- **Security groups:** Rules that controls traffic to and from an **EC2 Instance** 
+	- Can have only **ALLOW** rules. 
+	- Limits: 10000 security groups per region, 60 in/outbound rules per security group, 16 security group per Elastic Network Interface.
 - **NACL vs Security group:**
-	- ![[Pasted image 20240902145817.png]]
+
+| Security Group                                                                                                                                               | Network ACL                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Operates at the instance level                                                                                                                               | Operates at the subnet level                                                                                                                          |
+| Supports allow rules only                                                                                                                                    | Supports allow rules and deny rules                                                                                                                   |
+| Is **stateful**: Return traffic is automatically allowed, regardless of any rules                                                                            | Is **stateless**: Return traffic must be explicitly allowed by rules                                                                                  |
+| We evaluate all rules before deciding whether to allow traffic                                                                                               | We process rules in number order when deciding whether to allow traffic                                                                               |
+| Applies to an instance only if someone specifies the security group when launching the instance, or associates the security group with the instance later on | Automatically applies to all instances in the subnets it's associated with (therefore, you don't have to rely on users to specify the security group) |
+
 - **Route tables:** where network traffic are directed.
 	- different types:
-		- main route tables: created with VPC cannot be deleted
-		- custom route table: toute table that you can create
-### Internet Gateway
+		- Main route tables: created with VPC cannot be deleted
+		- Custom route table: toute table that you can create
+- You can share a VPC trough the same account using **AWS Resources Acess Manager**
+### Internet Gateway 
+Used to **connect public resources to the internet** (use NAT gateway for private resources since they need network address translation)
 - Work both with IPV4 and IPV6, and perform network translation for instances that have been assigned public IPV4 addresses.
-	![[Pasted image 20241001091723.png]]
-### Egress-only (EO-IGW)
+#### Egress-only (EO-IGW)
 Specifically for IPV6 when you want to allow outbound traffic to the internet but prevent inbound from the internet:
-	![[Pasted image 20241001092144.png]]
 ### Elastic IP
 Addresses in AWS that always stay the same **(different from that of the EC2 instances)**
 	- IPV6 are already unique so they don't need it
-	- are charge 1$ for each allocated
+	- **are charge 1$ for each allocated**
 	- You can associate, allocate, disassociate, deallocate, reassociate, recover, customize (with your IPV6 ip)
 - **AWS ipv6 support**: provide a solution for the eventual exhaustion of all IPV4 address
 - Is it possible to migrate from ipv4 and ipv6 following some rules. (It isn't always possible).
 
 ### VPC Peering
-Connect two VPC, privately using AWS’ network • Make them behave as if they were in the same network • VPC Peering connection **is not transitive** (2 way)
-### VPC Endpoints: (vedi appunti AWS):
-Endpoints allow you to connect to AWS Services using a private network instead of the public www network • This gives you enhanced security and lower latency to access AWS services.
-
+Connect two VPC, privately using AWS’ network 
+- VPC peering can be between IPv4 or IPv6
+- Make them behave as if they were in the same network 
+- VPC Peering connection **is not transitive** (2 way)
+- Must have **non-overlapping CIDR**
+- Data transfer cross AZ or cross Region incurs charges
+### VPC Endpoints: (vedi appunti AWS)
+Endpoints allow you to connect to AWS Services **using a private network** instead of the public network 
+- This gives you enhanced security and lower latency to access AWS services.
 - Do not require public IPV4 and doesn't leave the AWS network
-- Eliminates the need for Internet Gateway, NAT Device, VPN connection, AWS Direct Connect
+- Eliminates the need for Internet Gateway, NAT Device, VPN connection, AWS Direct
+- **Bound to a region**
 ![[Pasted image 20241007170821.png]]
-#### Types of endpoint
-- **Interface endpoint:** it is a Elastic Network Interfaces (ENI) with a private IP addess. they serve as an entry point for traffic going to a supported service. **(Does not include S3 and DynamoDB)**
-- **Gateway Endpoint**: Like interface endpoint used by S3 and DynamoDB 
-- **VPC Endpoints Comparison**
-	 ![[Pasted image 20241001101531.png]]
-***Extra***: 
-**Gateway Load Balancer**: Powered by PrivateLink allows you to distribute traffic  to a fleet ofnetwork virtual appliances
+#### Type of Endpoint
+##### Interface Endpoint
+ It is a Elastic Network Interfaces (ENI) with a private IP addess. they serve as an entry point for traffic going to a supported service. **(Does not include S3 and DynamoDB)**
+- **Use Case**: Private connection to AWS services, partner services, and other VPCs without public IPs.
+- **Service Integration**: AWS PrivateLink
+- **Supported Services**: Many AWS Services
+- **Pricing**: 
+  - Per hour when provisioned
+  - Data processed
+- **Routing Mechanism**: DNS interception and routing
+- **Traffic Direction**: Bidirectional
+
+##### Gateway Endpoint
+Like interface endpoint used by S3 and DynamoDB 
+- **Use Case**: Private connections to S3 and DynamoDB from VPC
+- **Supported Services**: S3 and DynamoDB 
+- **Pricing**: Free
+- **Routing Mechanism**: Route table entries for specific destinations
+- **Traffic Direction**: Unidirectional
+
+##### GWLB Endpoint
+Powered by PrivateLink allows you to distribute traffic  to a fleet ofnetwork virtual appliances
+- **Use Case**: Route traffic to third-party virtual appliances like firewalls in another VPC.
+- **Supported Services**: Third-party virtual applications
+- **Pricing**: 
+  - Endpoint hours
+  - Data processed
+- **Routing Mechanism**: Integrates with GWLB
+- **Traffic Direction**: Usually Unidirectional
 ### AWS Direct Connect
 	![[Pasted image 20241001093756.png]]
 - 2 types:
@@ -798,6 +811,15 @@ Endpoints allow you to connect to AWS Services using a private network instead o
 - Your network is co-located with an existing AWS Direct Connect location
 - You work with a AWS Partner Network member
 - Support IPV4 and IPv6 
+-  **Data in transit is not-encrypted** but the connection is private (secure)
+- Time to setup > 1 month
+#### Connection Types
+- **Dedicated Connection**
+    - **1 Gbps and 10 Gbps** (fixed capacity)
+    - Physical ethernet port dedicated to a customer
+- **Hosted Connection**
+    - **50Mbps, 500 Mbps, up to 10 Gbps**
+    - **On-demand capacity scaling** (more flexible than dedicated connection)
 #### Pricing
 - **Capacity**
 - **Port hours:**

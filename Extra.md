@@ -72,4 +72,34 @@ Amazon MSK:
 			- Use the output and add or have it replace an existing key in the input and have that as the output
 		- OutputPath:
 	- JSONPath is a query languafe for JSON, similar to Xpath for XML
-		
+## AWS Compute Optimizer
+Analyzes the current configuration of your AWS Compute resources, and their utilization metrics from Amazon CloudWatch over a period of the last 14 days. 
+It will reccomend specific configuration changes
+
+![[Pasted image 20241004120413.png]]
+
+**Schedule Expression**
+You can create EventBridge Rules that trigger on a schedule. You can think of it as Serverless Cron Jobs. Use UTC time zone. **support cron and rate expression**:
+- Cron expression: Very fine Grain control
+- Rate expression: Easy to set, not as fine grained
+
+**CloudTrail Event**:
+Event Pattern: are used to filter what events should be used to pass along to a target. You can filter events by providing the same fields and values
+
+**EventBridge Event Pattern**: Prefix Matching, Anything-but matching, Numeric matching, IP address matching, exists matching, empty value matching.
+
+**EventBridge Rules:** Up to 5 target, you may have additional fields to select target, you can specify what gets passed along with Configure Input.
+
+**EventBridge Partner:** A list of third pary service providers can be integrated
+
+**Schema registry:** allows you to create, discover and manage OpenAPI Schema for events on EventBridge. You can set schema in order to see if the sctructure of the events have changed over time
+
+**Amazon CloudWatch Alarms:** Alarms are used to trigger notifications for any metric 
+- Use example:
+	- **Auto Scaling**: increase or decrease EC2 instances “desired” count 
+	- **EC2 Actions**: stop, terminate, reboot or recover an EC2 instance 
+	- **SNS notifications**: send a notification into an SNS topic 
+		- You can create a billing alarm • **Billing data metric is stored in CloudWatch us-east-1** Billing data are for overall worldwide AWS costs • It’s for actual cost, not for projected costs
+- **Conditions:**
+	![[Pasted image 20241004123829.png]]
+- CloudWatch are alarms that watch other alarms. Using composite alarms can help you reduce alarm noise.
