@@ -317,7 +317,9 @@ like gp2 but:
     - Improve data availability by mirroring data in multiple volumes
     - For critical applications
 ## EFS
-Managed NFS (network file system) that can be mounted on 100s of EC2 • EFS works with **Linux** EC2 instances in multi-AZ • **Highly available, scalable, expensive** (3x gp2), pay per use, no capacity planning 
+Managed NFS (network file system) that can be mounted on 100s of EC2.
+- EFS works with **Linux** EC2 instances in multi-AZ 
+- **Highly available, scalable, expensive** (3x gp2)
 - AWS managed Network File System (NFS)
 - Can be mounted to multiple EC2 instances **across AZs**
 - **Pay per use** (no capacity provisioning)
@@ -687,6 +689,8 @@ Example of use:
 - **Runtimes**: preconfigure environment to run specific programming languages. It doesn' require you to configure or set OS.
 	- they are published continuesly, so you had to keep it updated and not retain older version
 	- Code is delivered as a zip archive
+
+N.B to improve performance of lambda function use SnapStart.
 ## Step functions
 With AWS Step Functions, you can create workflows, also called [State machines](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-statemachines.html), to build distributed applications, automate processes, orchestrate microservices, and create data and machine learning pipelines.
 **State machines (think of it as flow chart)**
@@ -804,7 +808,7 @@ Powered by PrivateLink allows you to distribute traffic  to a fleet ofnetwork vi
 - **Routing Mechanism**: Integrates with GWLB
 - **Traffic Direction**: Usually Unidirectional
 ### AWS Direct Connect
-	![[Pasted image 20241001093756.png]]
+	![[Pasted image 20241014175942.png]]
 - 2 types:
 	- **Lower Bandwith** 50Mbps -500Mbps
 	- **Higher Bandwith** 1Gbps, 10Gbps, 100Gbps
@@ -1115,12 +1119,18 @@ Cannot access KMS keys without a key policy
     - Define who can administer the key
     - Useful for cross-account access of your KMS key
 ## AWS Certificate Manager
- Let’s you easily provision, manage, and deploy SSL/TLS Certificates. 2 types of certificate **Public, Private**. ACM can be attached to the following AWS resources: **Elastic Load Balancer,CloudFront, API Gateway, Elastic Beanstalk.**
+ Let’s you easily provision, manage, and deploy SSL/TLS Certificates. 
+ - Is it possible to perform 3 actions:
+	 - **Create Public** certificate
+	 - **Create Private** certificate
+	 - **Import third party certificate** certificate
+- Is it possible to import third part certificate from external sources
+ - ACM can be attached to the following AWS resources: **Elastic Load Balancer,CloudFront, API Gateway, Elastic Beanstalk.**
+![[Pasted image 20241014153547.png]]
  
  - **Terminating SSL at the Load Balancer.** All traffic in-transit beyond the ALB is unencrypted. You can add as many as EC2 instances that you want
- ![[Pasted image 20241003163140.png]]
  - **Terminating SSL End-to-End**: Traffic is encrypted in-transit all the way to the application
- ![[Pasted image 20241003163241.png]]
+
 #### Certificate Renewal
 There are 2 ways to renew your certificates:
 - **Automatically** using DNS validation
@@ -1309,6 +1319,7 @@ Allows you to group multiple subscriptions together.
 - **SNS Dead Letter Queue (DLQ)** will send fail message attempts to an SQS queue. Topic and Queue type need to match.
 ![[Pasted image 20241008100115.png]]
 ## SQS
+![[Pasted image 20241014155049.png]]
 ### Concept
 
 **Messaging System**: Used to provide asynchronous communication and decouple processes via messages/events from a sender and receiver (producer and consumer)
@@ -1439,6 +1450,7 @@ Used for running background job
 
 ## DeviceFarm
 Device Farm is an app testing service that you can use to test and interact with your Android, iOS, and web apps on real, physical phones and tablets that are hosted by Amazon Web Services (AWS).
+Let you simulate the launch of your app i different devices and browser.
 
 Used for:
 - Automated app testing
@@ -1448,8 +1460,6 @@ A set of tools and services that helps you develop and deploy scalable full stac
 
 Support a set of famous framework (Angular, React, Flutter ecc...)
 ## Amazon API Gateway
-
-**Open API**: is a specification, defines a standard, language agnostic interface to RESTFUL api. Represented as either JSON or YAML.
 
 **Amazon API Gateway** is an AWS service for creating, publishing, maintaining, monitoring, and securing REST, HTTP, and WebSocket APIs at any scale. API developers can create APIs that access AWS or other web services, as well as data stored in the **AWS Cloud**.
 ![[Pasted image 20241008142105.png]]
@@ -1466,11 +1476,11 @@ Support a set of famous framework (Angular, React, Flutter ecc...)
 -  Cache API responses
 -  **Can be integrated with any HTTP endpoint in the backend or any AWS API**
 
+
 ### IAM Policy
 
 - Create an IAM policy and attach to User or Role to allow it to call an API
 - Good to provide **access within your own AWS account**
-- Leverages **Sig v4** where lAM credential are in the request headers
 ## Endpoint Types
 
 - **Edge-Optimized** (default)
@@ -1483,14 +1493,13 @@ Support a set of famous framework (Angular, React, Flutter ecc...)
 - **Private**
     - Can only be accessed within your VPC using an **Interface VPC endpoint** (ENI)
     - Use resource policy to define access
-
-
-
 ## ECR
 Private Docker Registry on AWS, similar to **docker hub**. Makes it easier for developers to store, manage, and deploy Docker container images. Lets you to store Docker and Open Container Initiative (OCI) Images.
-- You can controll acces via **Register Policy** or  **Repo Policy**
+- You can controll repo acces  **Repo Policy**
+- You can control private register access via **Register Policy**
 - You must  remotely login using docker
-- Image tag mutability feature prevent images tags from being overwritten
+- **Pay per use**
+- **Encryption at rest** for repo images
 - **ECR Lifecyle policy**: can be used to expire old images based on specific criteria
 ## ECS
  Amazon Elastic Container Service (Amazon ECS) is a fully managed container orchestration service that helps you easily deploy, manage, and scale containerized applications. Compare to fargate you need to build the infrastructure on your own (EC2 instances).
@@ -1499,7 +1508,7 @@ Private Docker Registry on AWS, similar to **docker hub**. Makes it easier for d
 	![[Pasted image 20241003143946.png]]
 
 #### With Load Balancer
-- For every container, the container port is mapped to a random free port on the hots (instance). So the application running inside that container will be reached by the ALB on that random port.
+- For every container, the container port is mapped to a random free port on the host (instance). So the application running inside that container will be reached by the ALB on that random port.
 - **Dynamic Host Port Mapping** - Once the ALB is registered to a service in the ECS cluster, it will automatically find the right port on the EC2 Instances. This only works with ALB, not CLB.
 - You **must allow on the EC2 instance’s security group any port from the ALB security group** because it may attach on any port
 ### ECS Fargate
@@ -1507,8 +1516,8 @@ AWS Fargate is a technology that you can use with Amazon ECS to run [containers
 
 - You can create an **empty** ECS cluster (no EC2's provisioned) and then launch Tasks as Fargate
 - You **no longer have to provision, configure, and scale clusters** of EC2 instances to run containers
-- You are charged for **at least one minute**, then it's by the second, and you pay per duration.
-- When using ELB to point to Fargate you have to use IP addresses since Fargate tasks do not have -a hostname
+- You are charged by seconds but for **at least one minute**.
+- When using ELB to point to Fargate you have to use IP addresses since Fargate tasks do not have a hostname
 
 #### With Load Balancer
 - **Each task has a unique IP but the same container port**
@@ -1527,7 +1536,7 @@ Amazon **Elastic Kubernetis Service** is a managed service that  simplifies the
  - External instances
 
  **EKS Connector**: if you want to connect your own kubernetis cluster
- **EKS CTL**: is CLI tool for waily setting up kubernetis clusters on AWS.
+ **EKS CTL**: is CLI tool for easily setting up kubernetis clusters on AWS.
  **EKS Distro**: is a Kubernetis distribution based on and used by EKS to create reliable and secure kubernetis clusters.
  
 **Use Cases:**
@@ -1536,42 +1545,41 @@ Amazon **Elastic Kubernetis Service** is a managed service that  simplifies the
 - AWS Services Extension - AWS integration to on-premises setups
 
 - **EKS anywhere(EKS-A)**: is a deployment option for Amazon EKS to easily create and operate **kubernetis(k8s)** clusters on premises with your own Vms or bare metal hosts. EKS anywhere uses **EKS Distro** as the **kubernetis** cluster distribution.
-- **Traces and Spans:** 
-	- Trace is a data/execution path through the system, and can be thought of as a directed acyclic graph (DAG) of spans
-	- Span: represents a logical unit of work in Jaeger that has an operation name, the start time of the operation, and the duration. Spans may be nested and ordered to model causal relationships
-- AWS Distro for Open Telemetry is a secure, production ready, AWS supported distribution of the Open Telemetry project 
 ## Amazon managed service for Prometheus (AMP) 	
- **Prometheus**: Open soruce monitoring and alerting toolkit originally built at SounCLoud. Is a timeseries database (Collect and stores itrs metrics as time series data). 
+ **Prometheus**: Open source monitoring and alerting toolkit originally built at SoundCLoud. **Is a timeseries database** (Collect and stores its metrics as time series data). 
 
-Amazon Prometheus: Is a Prometheus compatible monitoring service for container infraswtructure and application metrics
+**Amazon managed service for Prometheus**: Is a Prometheus compatible monitoring service for container infrastructure and application metrics
 ## Amazon managed service for Graphana
-**Graphana**: is an open source analytics web application. is used with timeseries database like Prometheus
+**Graphana**: is an open source analytics web application. It is used with timeseries database like Prometheus.
 
-**Amazon Graphana**: Fully managed and secure data visualization service that you can use to instanly query, correlate, and visualize operational metrics , logs, and traces from multiple sources.
-
-
+**Amazon managed service for Graphana**: Fully managed and secure data visualization service that you can use to instanly query, correlate, and visualize operational metrics , logs, and traces from multiple sources.
 ## Lake Formation 
-**Data Lakes**: A data lake is a centralized data repository for unstructured and semi structured data. Contain vast amount of data. Data lakes generally use object(blob) or file as its storage type.
+**Data Lakes**: A data lake is a centralized data **repository** for unstructured and semi structured data. Contain vast amount of data. Data lakes generally use object(blob) or file as its storage type. Often used for analytics
 
-**AWS Lake Formation:** is a data lake to centrally govern secure and globally share data for analytics and machine learning.
+**AWS Lake Formation:** It is a data lake to centrally govern secure and globally share data for analytics and machine learning.
 
 
 ![[Pasted image 20241003093952.png]]
 
 ## AWS CodeDeploy
  CodeDeploy is a deployment service that automates application deployments to Amazon EC2 instances, works with On-Premises Servers • Hybrid service
-## AWS CodeCommit
- is a version control service hosted by Amazon Web Services that you can use to privately store and manage assets. Non più supportato
+![[Pasted image 20241014110813.png]]
+
 ## AWS CodeBuild
- AWS CodeBuild is a fully managed build service in the cloud. CodeBuild compiles your source code, runs unit tests, and produces artifacts that are ready to deploy. Pay-as-you-go
+ AWS CodeBuild is a fully managed build service in the cloud. CodeBuild compiles your source code, runs unit tests, and produces artifacts that are ready to deploy. **Pay-as-you-go**
+ ![[Pasted image 20241014111131.png]]
 ## AWS CodePipeline
  Orchestrate the different steps to have the code automatically pushed to production, Code => Build => Test => Provision => Deploy, Basis for CICD (Continuous Integration & Continuous Delivery)
+ ![[Pasted image 20241014111207.png]]
 ## AWS CodeArtifact
- AWS CodeArtifact is a secure, highly scalable, managed artifact repository service that helps organizations to store and share software packages for application development. Dependencies management
-## AWS CodeStar
- (non più supportato). Unified UI to easily manage software development activities in one place
+It is a secure, highly scalable, managed artifact repository service that helps organizations to store and share software packages for application development. **Dependencies management**
+ ![[Pasted image 20241014111235.png]]
 ## AWS Cloud9
  AWS Cloud9 is an integrated development environment, or _IDE_.
+## AWS CodeStar (Non più supportato)
+Unified UI to easily manage software development activities in one place
+## AWS CodeCommit (Non più supportato)
+ Is a version control service hosted by Amazon Web Services that you can use to privately store and manage assets. 
 # Database
 ## RDS
 Amazon Relational Database Service (Amazon RDS) is a web service that makes it easier to set up, operate, and scale a relational database in the AWS Cloud. It provides cost-efficient, resizable capacity for an industry-standard relational database and manages common database administration tasks.
@@ -1581,9 +1589,12 @@ Amazon Relational Database Service (Amazon RDS) is a web service that makes it e
 - DB instance **can contain one or multiple user** created database
 - Each database has user defined database identifier which forms part of the DNS hostname
 - **DB instance Class:** just like ec2 instance class determine available compute memory or a db instance
-- DB instance use Elastic Block Storage (EBS) volumes for database and log storage
+- DB instance **use Elastic Block Storage (EBS) volumes** for database and **log storage**
 - **Maximum storage of 64TB**
+- We don't have access to the underlying instance
 
+### RDS Storage Auto Scaling 
+Automatically scales storage capacity in response to growing database workloads, with zero downtime. (only storage capacity)
 ### Encryption
 - Encryption in transit: enabled by default
 - Encryption at rest: can be enabled 
@@ -1593,8 +1604,9 @@ Amazon Relational Database Service (Amazon RDS) is a web service that makes it e
 ### RDS Backup
 - Types
 	- **Automated backup:** choose retention period between 0 and 35 days
-		- enabled by default
+		- **enabled by default**
 		- stored in s3
+		- Log backed up every 5minutes
 		- no charge for additional data in automated backups
 	- **Manual Snapshot**
 		- taken manually
@@ -1608,21 +1620,28 @@ Amazon Relational Database Service (Amazon RDS) is a web service that makes it e
 #### Read Replicas: 
 - **Disaster recovery solution** if the primary DB instance fails  
 - Improve **read contention** which means improve performance latency. 
-	- Read contention: when multiple proccesses or instances competing for access to the same index or data block at the same time.
+	- **Read contention:** when multiple proccesses or instances competing for access to the same index or data block at the same time.
 - You must have **automatic backups enabled**. 
 - **Type of replication:** asyncronous replication
-- Maximum of 5 replicas of a database
+- Maximum of **5 replicas** of a database
 - Replica techniques:
 	- **Standard**
 	- **Multi-az**
 	- **Cross-region**
 #### Multi AZ vs Read Replicas
-	![[Pasted image 20241003104808.png]]
 
+| Multi-AZ Deployments                                      | Read Replicas                                                       |
+| --------------------------------------------------------- | ------------------------------------------------------------------- |
+| Synchronous replication – highly durable                  | Asynchronous replication – highly scalable                          |
+| Only database engine on primary instance is active        | All read replicas are accessible and can be used for read scaling   |
+| Automated backups are taken from standby                  | No backups configured by default                                    |
+| Always span two Availability Zones within a single Region | Can be within an Availability Zone, Cross-AZ, or Cross-Region       |
+| Database engine version upgrades happen on primary        | Database engine version upgrade is independent from source instance |
+| Automatic failover to standby when a problem is detected  | Can be manually promoted to a standalone database instance          |
 ### Subnet Group
 
 **DB Subnet Group**: collection of subnet that you create in a VPC and that you then designate for your DB instances.
-- Each DB subnet group should have subnets in at least two Availability Zones in a given AWS Region.
+- Each DB should have subnets in at least two Availability Zones in a given AWS Region.
 - RDS will choose a subnet from your subnet group to deploy your RDS Instance
 - Subnets in a DB subnet group are either public or private
 - For a DB instance to be publicly accessible, all of the subnets in its DB subnet group must be public
@@ -1636,7 +1655,7 @@ Amazon Relational Database Service (Amazon RDS) is a web service that makes it e
 	- You have to create a policy and attach to user
 	- You have to create db user 
 	- You need to generate auth token to be used for password authentication
-- **Master User Account:** is the initial databse account that's created when you provision a new Db instance. Has full privilages. Pass and username set at creation time.
+- **Master User Account:** is the initial databse account that's created when you provision a new Db instance. Has full privileges. Pass and username set at creation time.
 - **Public Accessibility:** is an option that changes if the DNS Endpoint resolve to the private IP address from traffic from outside the VPC
 
 ### Extra
@@ -1647,86 +1666,103 @@ Amazon Relational Database Service (Amazon RDS) is a web service that makes it e
 - **RDS Extended Support:** allows you to run your database on a major engine version past the RDS end of standard support date for an additional cost.
 
 ## Aurora
-***Serverless***,• Automated database instantiation and auto -scaling based on actual usage • PostgreSQL and MySQL are both supported as Aurora Serverless DB. **Aurora costs more than RDS (20% more).
+**Serverless**, Automated database instantiation and auto-scaling based on actual usage.
+- **Aurora costs more than RDS (20% more).
+- Supports only MySQL & PostgreSQL
+- **Asynchronous Replication** (milliseconds)
+- Up to 15 read replicas
 
-- **Aurora Global Database:** is a database spanning multiple regions for global low latency  and high availabilty. Primary cluster is in a separate region
+- **Aurora Global Database:** It is a database spanning multiple regions for global low latency  and high availabilty. Primary cluster is in a separate region
 - **RDS Data API:** allows you to use HTTP to securely query an Aurora database. Unlimited max request per seconds. Unlimited max request per seconds. Must be enabled 
 ### Durability and Fault Tolerance
-- Aurora Backup and Failover are handled automatically 
+- **Aurora Backup and Failover are handled automatically** 
 - Snapshots of data can be shared with other AWS accounts
 - Storage is self-healing, in that data blocks and disks are continuously scanned for errors and repaired automatically.
 ### Availability
-- Aurora deploys in a minimum of 3 availability zones each contain 2 copies of your data at all times.
-- That means there are 6 copies
+- **Aurora deploys in a minimum of 3 availability zones each contain 2 copies of your data** at all times.
+- Maintain 6 copies
 - Lose up to 2 copies of your data without affecting write availability.
 - Lose up to 3 copies of your data without affecting read availability.
 ### Storage
-- A cluster starts with 10GB of storage and scale in 10GB increments up to 64TB or 128 TB depending on DB engine version. Storage is autoscaling.
+- A cluster **starts with 10GB** of storage and scale in 10GB increments **up to 64TB or 128 TB** depending on DB engine version. Storage is autoscaling.
 - Computing resources can scale up to 32 vCPUs and 244GB of memory.
 ### Security
-- TLS/SSL certificate can be applied to encrypt security connections so termination occurs at the database
+- Encryption at rest using KMS (same as RDS)
+- Encryption in flight using SSL (same as RDS)
+- You can’t SSH into Aurora instances (same as RDS)
+- Network Security is managed using Security Groups (same as RDS)
 ### Type
 #### Aurora Serverless Provisioned
 Default compute configuration for Aurora. primary db that perform read and writes and up to 15 Replica. primary DB instance is not created by default
-- **Reader vs Writer Instances:** 
-	![[Pasted image 20241003115330.png]]
 #### Aurora Serverless V2
 fully manages the autoscaling configuration for Amazon Aurora
 	- Capacity is adjusted automatically based on application demand
 	- charge only for resources used
-	- use case: Highly variable workloads
-	- Does not scale to zeero, must mantain at least 0.5 ACU(unit mesurement of Aurora to determine cost vs capacity)
+	- use case: **Highly variable workloads**
+	- Does not scale to zero, must mantain at least 0.5 ACU(unit mesurement of Aurora to determine cost vs capacity)
 #### Aurora Serverless V2 vs Provisioned
-	![[Pasted image 20241003120332.png]]
+|                        | Aurora Serverless V2                                       | Aurora Provisioned                                       |
+| ---------------------- | ---------------------------------------------------------- | -------------------------------------------------------- |
+| **Scaling**            | Fine-grained, almost instant scaling.                      | Manual scaling; requires planning and downtime.          |
+| **Capacity Range**     | 0.5-128 ACUs, **more flexible**.                           | **Fixed**, based on instance size chosen.                |
+| **Scaling Speed**      | Seconds                                                    | N/A (manual intervention required).                      |
+| **Read/Write Scaling** | Independently                                              | Depends on instance type and read replica configuration. |
+| **Compatibility**      | Broader version support.                                   | Wide version support, depending on instance type.        |
+| **Use Cases**          | Highly variable workloads needing immediate scaling.       | Stable workloads with predictable performance needs.     |
+| **Billing**            | ACUs per second, more granular, + storage.                 | Instance hours + storage.                                |
+| **Start/Stop**         | Responsive start/stop, cost-saving for intermittent loads. | Manual start/stop.                                       |
+| **Maintenance**        | Minimal downtime, more seamless.                           | Scheduled maintenance windows.                           |
 
-## DocumentDB
-NOSQL, document database that is based on MongoDB MongoDB: 
-- Cluster types:
-	- **Instance based Cluster**: manage your instances directly choosing instance type
-	- **Elastic Cluster**: clusters automatically scale, you choose vCPU and number of instances per shard
-- Compatible with MongoDB 4.0 and 5.0
-- DocumentDB does not support all functionality for MongoDB eg. Writable Retries is not support
-- DocumentDB storage volume grows in increments of 10 GB, up to a maximum of 128 TB.
-- Create up-to 15 replicas
-- Amazon DocumentDB continuously monitors the health of your cluster and automatically restart failed instances Failover automatically will occur to upto 15 replicas in other AZS
-- Backup is turned on by default (can't be turned off) with a **max retention period of 35 days**
-- Supports **point-in-time recovery**
-- Clusters are deployed into a customer's VPC
-- Performance Insights feature to determine bottlenecks for reads and writes
-- In-transit and at-rest encryption. You must connect using TLS connect.
 ## DynamoDB
 Amazon DynamoDB is a ***serverless***, NoSQL (key/value), fully managed database with single-digit millisecond performance at any scale.  
-- **Highly available** with replication across 3 AZ.
+- **Highly available** with replication **across 3 AZ**.
 - **Multi-Region**
 - **Single digit millisecond** response time at any scale
 - **Maximum size of an item: 400 KB**
 - Max 100 table
-- DyanmoDB creates partitions for you as your data grow. creates a partition every 10 GB or when you exceed.... 
+- DyanmoDB creates partitions for you as your data grow. Creates a partition every 10 GB or when you exceed.
 ### Capacity
 - **Provisioned Mode** (default)
     - Provision read & write capacity
-    - Pay for the provisioned capacity
+    - **Pay for the provisioned capacity**
     - Auto-scaling option (eg. set RCU and WCU to 80% and the capacities will be scaled automatically based on the workload)
 - **On-demand Mode**
     - Capacity auto-scaling based on the workload
-    - Pay for what you use (more expensive)
+    - **Pay for what you use (more expensive)**
     - Great for unpredictable workloads
-
 ### Read Consistency 
-When data needs to be updated in all of its copy and keep data consistent.
+When data needs to be updated in all of its copy and keep data consistent
 there are different types of read consistency:
-		![[Pasted image 20241003123002.png]]
 
+| Eventual Consistent Reads (DEFAULT)                                                                | Strongly Consistent Reads                                                                                            |
+| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| When copies are being updated, it is possible for you to read and be returned an inconsistent copy | When copies are being updated, and you attempt to read, it will not return a result until all copies are consistent. |
+| Reads are fast, but there is **no guarantee of consistent**                                        | You have a **guarantee of consistency**, but the trade-off is **higher latency (slower reads)**.                     |
+| All copies of data eventually **become generally consistent within a second**                      | All copies of data **will be consistent within a second**                                                            |
 ### Primary Keys 
-- **Simple Primary Key:** a primary key with ony a Partition key to choose which partition
-- **Composite Primary Key:** a primary key with both a Partition and a sort key to choose partition
+- **Simple Primary Key:** a primary key with ony a **partition key** to choose which partition
+- **Composite Primary Key:** a primary key with both a **partition key** and a **sort key** to choose partition
 - **Query:** 
 	![[Pasted image 20241003124503.png]]
 - **Scan:** scan through all items return one or more items. (much less efficient then query - not said by amazon)
 
-
+## DocumentDB
+NOSQL, document database that is based on MongoDB: 
+- Cluster types:
+	- **Instance based Cluster**: manage your instances directly choosing instance type
+	- **Elastic Cluster**: clusters automatically scale, you choose vCPU and number of instances per shard
+- Compatible with MongoDB 4.0 and 5.0
+- DocumentDB does not support all functionality for MongoDB.
+- **DocumentDB storage volume grows in increments of 10 GB, up to a maximum of 128 TB.**
+- Create up-to **15 replicas**
+- Automatically recover from instance failover
+- Backup is turned on by default (can't be turned off) with a **max retention period of 35 days**
+- Supports **point-in-time recovery**.
+- Clusters are deployed into a customer's VPC.
+- Performance Insights feature to determine bottlenecks for reads and writes.
+- In-transit and at-rest encryption. You must connect using TLS connect.
 ## Amazon Keyspace
-Amazon Keyspaces is a fully managed Apache Cassandra database. Cassandra is an open-source NoSQL key/value database similar to DynamoDB in that is columnar store database but has some additional functionality. When you want to use Apache Casandra.
+Amazon Keyspaces is a fully managed Apache Cassandra database. Cassandra is an open-source NoSQL key/value database similar to DynamoDB. It is a  columnar store database but has some additional functionality.
 
 - **Cluster** - a collection of nodes 
 - **Nodes** - holds 2 - 4 TB of data
@@ -1738,17 +1774,17 @@ Amazon Keyspaces is a fully managed Apache Cassandra database. Cassandra is an o
 - **Table** - tabular data of columns and rows with a primary key
 ## Neptune
 Amazon Neptune is a fast, reliable, fully managed graph database service that makes it easy to build and run applications that work with highly connected datasets.
-
+- Highly available across **3 AZ** with up to **15 read replicas**
 - **Netpune Database**: **2 types**
 	- **Provisioned**: you choose an instance type
-	- **Serverless**: set a min and max Nepune Capacity units
+	- **Serverless**: set a min and max Neptune Capacity units
 - **Neptune Analyses**:  provide capabilites to run large-scale graph analytics algorithms efficiently
-- Highly available across **3 AZ** with up to **15 read replicas**
 ## ElastiCache
 Amazon ElastiCache is a web service that makes it easy to set up, manage, and scale a distributed in-memory data store or cache environment in the cloud
 
- - Can only accessible by resources in the same VPC (to ensure low latency)
-- It can be cross region if enabled
+ - **Can only accessible by resources in the same VPC** (to ensure low latency)
+- It can be **cross region** if enabled
+- **Using ElastiCache requires heavy application code changes**
 - Deployment Options:
 
 |            | Serverless                                                     | Standard                                                                       |
@@ -1764,14 +1800,30 @@ Can perform many different kind of operations on your data. It is very good for 
 #### MemCached
 Is an open-source distributed memory object caching system. It's a caching layer for web-applications. Key/value store.
 
-Is generally preferred for caching HTML fragments. Memcached is a simple key/value store. The trade off to being simple is taht it is very fast 
-**Command**: Set, get, delete, incr, decr, add, replace, flush_all, appened, prepend, stats
+#### Redis vs Memcache
+
+| Redis                                                          | Memcached                                            |
+| -------------------------------------------------------------- | ---------------------------------------------------- |
+| In-memory data store                                           | **Distributed** memory object cache                  |
+| Read Replicas (for scaling reads & HA)                         | No replication                                       |
+| Backup & restore                                               | No backup & restore                                  |
+| **Single-threaded**                                            | **Multi-threaded**                                   |
+| **HIPAA compliant**                                            | **Not HIPAA compliant**                              |
+| Data is stored in an in-memory DB which is replicated          | Data is partitioned across multiple nodes (sharding) |
+| **Redis Sorted Sets** are used in realtime Gaming Leaderboards |                                                      |
+| Good for auto-completion                                       |                                                      |
+| Multi-AZ support with automatic failover (disaster recovery)   |                                                      |
 
 ## MemoryDB
 Is a Redis-compatible in-memory database for ultra-fast performance
-Suitable to be primary database. Slower writes but better performance in general.
+Suitable to be primary database. **Slower writes** but better performance in general.
 ## Amazon Redshift
- **Serverless,** Is an enterprise-class relational database based on postgresql. Is thinked for data warehouse and for **OLAP(analytics and data warehousing)**. Storage is done by **column** and not by row. **Pay as you go based**
+ **Serverless,** Is an enterprise-class relational database based on postgresql. Is thinked for data warehouse and for **OLAP(analytics and data warehousing)**. 
+ 
+ - Storage is done by **column** and not by row. 
+ - **Pay as you go based**
+ -  **Based on postgresql**
+ -  **No multi-AZ support** (all the nodes will be in the same AZ)
 
 **Datawerehouse**: Built to store large quantities of historical data and enable fast, complex queries across all the data.
 
@@ -1799,27 +1851,26 @@ Suitable to be primary database. Slower writes but better performance in general
 	- enabled by default, 1 day retention, up to 35
 	- always attempt to keep 3 copies of your data
 - **Billing**
-	- total number hours
-	- 1 unit per node
+	- Total number hours
 	- not charged for leader node hours only compute nodes incur changes
 - **Security**
-	- Dat in transit: SSL
-	- Data at rest: AES 256
-	- Encryption applied using KMS, CloudHSM
+	- Dat in transit: **SSL**
+	- Data at rest: **AES 256**
+	- **Encryption applied using KMS, CloudHSM**
 - **Availability**
 	- Redshift is Single AZ. In order to reach high availability you need to run multiple redshift cluster in different AZ. Anapshot can be restored o a different AZ 
 
 ![[Pasted image 20241002165058.png]]
 
 ## Athena
-**Serverless** query service to analyze data stored in Amazon S3 that uses standard SQL language to query the files and their content.
+**Serverless** is a query service to analyze data stored in Amazon S3. It uses standard SQL language to query the files and their content.
 Athena can do 2 things:
 - Lets you run SQL queries on S3 Buckets
 - Interactively, run data analytics, using Apache Spark
 
 - Athena SQL
 	- Component
-		- workgroup: saved queries which you grant permissions to other user to access
+		- Workgroup: saved queries which you grant permissions to other user to access
 		- Data source: a group database 
 		- Database: a group of tables
 		- Table: data organized as group
@@ -1832,7 +1883,6 @@ Athena can do 2 things:
 Used to review history of all the changes made to your **application data** over time, serverless. **Difference with Amazon Managed Blockchain**: no decentralization component
 
 **Features:**
-
 - **Immutable Logs**: Data cannot be altered or deleted after entry, ensuring permanent records.
 - **Cryptographic Verification**: Utilizes SHA-256 hashing for secure, verifiable transaction histories.
 - **Fully Managed**: Automated management of infrastructure allows users to focus on application development without worrying about underlying hardware.
@@ -1848,58 +1898,85 @@ Used to review history of all the changes made to your **application data** over
 ## Cloud Trail
 Is a service that enables governance compliance operational auditing of your AWS account
 
-Very useful to monitor API calls and made Actions made on an AWS account.
-Easily identify which users on an AWS account made the call.
+- **Global Service** 
+- Active by default
+- Collect logs for 90 days via Event History. If you need more than 90 days you need to create a Trail.
+- Very useful to monitor API calls and made Actions made on an AWS account. Easily identify which users on an AWS account made call.
 
-Is Active by default and will collect logs for 90 days via Event History. If you need more than 90 days you need to create a Trail.
 **To analyze a Trail you'd have to use Amazon Athena**
 ## CloudWatch
-- **Amazon CloudWatch**: **High Availability**, Amazon CloudWatch monitors your Amazon Web Services (AWS) resources and the applications you run on AWS in real time. **Amazon CloudWatch is basically a metrics and logs repository. An AWS service puts metrics into the repository, and you retrieve statistics based on those metrics
-	- **Amazon CloudWatch Alarms:(like budget but less powerful)** Alarms are used to trigger notifications for any metric • **Auto Scaling**: increase or decrease EC2 instances “desired” count • **EC2 Actions**: stop, terminate, reboot or recover an EC2 instance • **SNS notifications**: send a notification into an SNS topic 
-		- You can create a billing alarm • **Billing data metric is stored in CloudWatch us-east-1** Billing data are for overall worldwide AWS costs • It’s for actual cost, not for projected costs
-	- **Amazon CloudWatch Logs:** Is used to store, manage and access your log files. Is a centralized log management server
-		 - CloudWatch Logs can collect log from:
-			 - **EC2 machines or on-premises servers** • Elastic **Beanstalk**: collection of logs from application • **ECS:** collection from containers • **AWS Lambda**: collection from function logs • **CloudTrail** based on filter • **Route53**: Log DNS queries
-		- **CloudWatch log groups**: a collection of log streams ex: /exampro/prod/app
-		- **CloudWatch streams**: represent a sequence of events from an application or instance being monitored. Is created automatically but you can create your own.
-		- **CloudWatch log events**: Represent a single event in a log files:
-			![[Pasted image 20241004114212.png]]
-		- **CloudWatch Insights:** enables you to interactively search and analyze your CloudWatch log data
-			- CloudWatch discover fields, when reads a logs 
-		- **CloudWatch Metrics:** time order set of data points, its a variable that monitored over time. You can provide you customize Metrics using CLI/SDK
-		- **CloudWatch Agent**: Some metrics need to install CloudWatch agent to been tracked.
-			- Host Level Metrics
-				- These are what you get without installing the Agent
-					- CPU usage
-					- Network Usage
-					- Disk Usage
-					- Status Check
-						- Underlying Hypervisor status
-						- Underlying EC2 instance status
-			- **Agent Level Metrics**
-				- These are what you get when installing the Agent
-					- **Memory utilization**
-					- Disk Swap utilization
-					- **Disk Space utilization**
-					- Page file utilization
-					- Log collection
+Amazon CloudWatch monitors your Amazon Web Services (AWS) resources and the applications you run on AWS in real time. **Amazon CloudWatch is basically a metrics and logs repository. An AWS service puts metrics into the repository, and you retrieve statistics based on those metrics
+
+- **High Availability**
+- **Serverless**
+![[Pasted image 20241014155339.png]]
+### Amazon CloudWatch Alarms
+(like budget but less powerful) Alarms are used to trigger notifications for any metric.
+
+- You can create a billing alarm 
+-  **Billing data metric is stored in CloudWatch us-east-1**
+- **Alarm States:**
+    - OK
+    - INSUFFICIENT_DATA
+    - ALARM
+- **Period:**
+    - Length of time in seconds to evaluate the metric before triggering the alarm
+    - High resolution custom metrics: **10 sec**, 30 sec or multiples of 60 sec
+- **Target/Action**:
+	- **Auto Scaling Group**, increase or decrease EC2 instances “desired” count  
+	- **EC2 Actions**: stop, terminate, reboot or recover an EC2 instance 
+	-  **SNS notifications**: send a notification into an SNS topic 
+### Amazon CloudWatch Logs
+- It is used to store, manage and access your log files. Is a centralized log management server
+ - CloudWatch Logs can collect log from:
+	 - **EC2 machines or on-premises servers** 
+	 - **Elastic Beanstalk**: collection of logs from application 
+	 - **ECS:** collection from containers 
+	 - **AWS Lambda**: collection from function logs 
+	 - **CloudTrail** based on filter 
+	 - **Route53**: Log DNS queries
+- **CloudWatch log groups**: a collection of log streams ex: /exampro/prod/app
+- **CloudWatch streams**: represent a sequence of events from an application or instance being monitored. Is created automatically but you can create your own.
+- **CloudWatch log events**: Represent a single event in a log files:
+	![[Pasted image 20241004114212.png]]
+- **CloudWatch Insights:** enables you to interactively search and analyze your CloudWatch log data
+	- CloudWatch discover fields, when reads a logs 
+- **CloudWatch Metrics:** time order set of data points, its a variable that monitored over time. You can provide you customize Metrics using CLI/SDK
+- **CloudWatch Agent**: Some metrics need to install CloudWatch agent to been tracked.
+	- Host Level Metrics
+		- These are what you get without installing the Agent
+			- CPU usage
+			- Network Usage
+			- Disk Usage
+			- Status Check
+				- Underlying Hypervisor status
+				- Underlying EC2 instance status
+	- **Agent Level Metrics**
+		- These are what you get when installing the Agent
+			- **Memory utilization**
+			- Disk Swap utilization
+			- **Disk Space utilization**
+			- Page file utilization
+			- Log collection
 ## Amazon EventBridge
 **Event Bus**: An event bus receives events from a source and routates events to a target based on rules. 
 **EventBridge** is a serverless event bus service that is used for application integration by streaming real-time data to your applications.
-
+![[Pasted image 20241014143558.png]]
 ## Health Dashboard
 - **Service Health Dashboard:** Show General status of the service in various region.
 - **Personal Health Dashboard:** AWS Personal Health Dashboard provides alerts and guidance for AWS events that might affect your environment.
 
 ## Config
+AWS Config provides a detailed view of the configuration of AWS resources in your AWS account. This includes how the resources are related to one another and how they were configured in the past so that you can see how the configurations and relationships change over time.
+
 - Regional service
 - Can be aggregated across regions and accounts
 - Record configurations changes over time
 - **Evaluate compliance of resources using config rules**
 - **Does not prevent non-compliant actions** from happening (no deny)
 - Evaluate config rules
-    - for each config change (ex. configuration of EBS volume is changed)
-    - at regular time intervals (ex. every 2 hours)
+    - For each config change (ex. configuration of EBS volume is changed)
+    - At regular time intervals (ex. every 2 hours)
 - Can make custom config rules (must be defined in Lambda functions) such as:
     - Check if each EBS disk is of type gp2
     - Check if each EC2 instance is t2.micro
@@ -2016,6 +2093,13 @@ Portal that provides customers with on-demand access to AWS compliance documenta
 - Integrated with **Microsoft Active Directory
 
 # Pricing
+## Cost allocation tag
+
+- As a best practice, reactivate your cost allocation tags when moving organizations. When an account moves to another organization as a member, previously activated cost allocation tags for that account lose their "active" status and need to be activated again by the new management account.
+    
+- As a best practice, do not include sensitive information in tags.
+    
+- Only a management account in an organization and single accounts that aren't members of an organization have access to the **cost allocation tags** manager in the Billing and Cost Management console.
 ## CostExplorer
 
 - Visualize and manage your costs and service usage over time
