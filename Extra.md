@@ -17,7 +17,8 @@
 - **Can build/test entirely within CloudFront**: Yes
 - **Function logging and metrics**: Yes
 - **Pricing**: Free tier available; charged per request
-## Lambda Edge
+## Lambda
+### Lambda Edge
 - **Programming languages**: Node.js and Python
 - **Event sources**:
     - Viewer request/response
@@ -39,6 +40,13 @@
 - **Pricing**: No free tier; charged per request, function duration
 Note:CloudFront uses **Edge Locations**. Lambda edge uses **Edge Locations** and **Regional Edge Caches**. 
 
+### Lambda structure
+- **Function Version**: You can use the version to manage the deployment of your AWS Lambda Function
+- **Aliasis**: provide name to reference Lambda function
+- **Lambda Layer**: Pull in additional code and content in the form of layer. Layer is a zip archive that **contains libraries, a custom runtime, or other dependencies**. You can use libraries in your function without needing to include them in your deployment package. 
+- **Runtimes**: preconfigure environment to run specific programming languages. It doesn' require you to configure or set OS.
+	- they are published continuesly, so you had to keep it updated and not retain older version
+	- Code is delivered as a zip archive
 ## EBS
 ![[Pasted image 20241001174016.png]]
 
@@ -137,3 +145,17 @@ You can create assesments to review the evidence collected and generate an asses
 	- External instances require an IAM role that allows them to communicate with AWS APIs
 	- Service load balancing isn't supported.
 	- EFS volumes aren't supported
+
+## EC2
+### AMI
+- Provides the information required to launch an instance. You can turn your EC2 instances into AMI's so **you can create copies of your servers**.
+	- Help you keep incremental changes to your OS, application code, and system packages.
+	- AMI Id is different per region. You need to be carefull when you buy one
+	- AMI has two types of boot model:
+		- Unified Extensible Firmware Interface (UEFI): Modern
+		- BIOS: Legacy (to avoid)
+	- **Elastic Network Adapter** supports network speeds of up to 100 GBps for supported instance types.
+	- AMI Settings:
+		- Public:
+		- Explicit: Specific to certain AWS accounts
+		- Implicit: The owner can launch the AMI
