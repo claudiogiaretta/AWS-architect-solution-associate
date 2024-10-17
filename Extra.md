@@ -159,3 +159,48 @@ You can create assesments to review the evidence collected and generate an asses
 		- Public:
 		- Explicit: Specific to certain AWS accounts
 		- Implicit: The owner can launch the AMI
+
+## AWS API
+- Smithy: is AWS open source interface definition language for web services. It is used to define service
+- **STS:** Temporary limited credential. global service that go through a single endpoint
+- **Signing API:** when you send API request, you sign the requests so that AWS can identify who sent them
+- **Service Enpoints**: Is the URL of the entry point for an AWS web services
+	types:
+	- **Global Endpoints**
+	- **Private Endpoints** 
+	- **FIPS Endpoints**
+	- **Dualstack Endpoints**
+	example:
+		![[Pasted image 20240930165811.png]]
+- AWS CLI input flag: we can populate parameters if the --cli-input flag is available for a subcommand
+- Configuration Files: 
+	- ![[Pasted image 20240930170425.png]]
+- Named Profiles: AWS config files support the ability to have multiple profiles. Profiles allow you to switch different configurations quickly for different environment.
+- AWS Configure Commands:
+- AWS CLI environment variable: watch the video to check all the diffeerent options
+- AWS Autocompletion Options: AWS Completer (not used old version), AWS Shell Shell (Not recommended by the people), AWS CLI Auto prompt.
+- AWS CLI Autoprompt 
+
+
+## IAM
+- Anatomy of IAM policy
+	- **Version policy language** version. 2012-10-17 is the latest version.
+	- **Statement container** for the policy element you are allowed to have multiples
+	- **Sid (optional)** a way of labeling your statements.
+	- **Effect Set** whether the policy will Allow or Deny
+	- **Action list** of actions that the policy allows or denies
+	- **Principal** account, user, role, or federated user to which you would like to allow or deny access
+	- **Resource** the resource to which the action(s) applies
+	- **Condition (optional)** circumstances under which the policy grants permission
+
+## RDS
+### Extra
+- **RDS Custom:** automates database administration tasks and operation. Allows customers to directly manage aspects of RDS instead of AWS, for company that needs third party applications for their databse.
+- **Optimized Reads and Writes:** allow database operations to maximize perfrmance efficency and throughtput. Use NVMe based SSD block storage instead
+- **RDS Security Groups:** In order to establish connection for both public and private you need to open the port
+- **RDS Blue Green Deployments:** copies a production database environment in a separate, synchronized staging environment
+- **RDS Extended Support:** allows you to run your database on a major engine version past the RDS end of standard support date for an additional cost.
+- **RDS Performance Insights:** helps you easily identify bottlenecks and performance issues. Is default by default and provides 1 week of performing data. For additional cost you can change the retention period to 2 years.
+- **RDS Proxy:** create a connection pooler so that short lived AWS Lambda functions connecting to RDS does not quick exahaust all connection. Reuse existing connection to do this.
+- **Master User Account:** is the initial databse account that's created when you provision a new Db instance. Has full privileges. Pass and username set at creation time.
+- **Public Accessibility:** is an option that changes if the DNS Endpoint resolve to the private IP address from traffic from outside the VPC

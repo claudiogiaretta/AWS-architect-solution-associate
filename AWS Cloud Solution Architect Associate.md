@@ -1151,17 +1151,17 @@ Is a Customer identity and access management system. It provides authentication,
 - **Cognito Sync**: Sync user data accross all devices
 ## Amazon Detective
 Amazon Detective analyzes, investigates, and quickly identifies the root cause of security issues or suspicious activities (using ML and graphs). More powerful than **GuardDuty, Macie, and Security Hub.**
-## Directory Service
+## Directory Services
 A directory service  that maps the names of network resources to their network addresses.
 A directory service is shared information infrastructure for locating, managing, administering and organizing resources.
 
 **Well known services:**
 - Domain Name Service (DNS), Microsoft Active Directory, Apache Directory Server, Oracle Internet Directory, Open LDAP, CLoud Identity, JumpCloud
-**AWS Directory service**: provides multiple ways to use Microsoft Active Directory. 
-- Simple AD: Not available for all the regions.  powered by Sambda.
-- AD Connector: a proxy service to connect your existing on-premise AD Directory
-- AWS Managed Microsoft AD: A full feature managed version of MS active directory
-- Amazon Cognito
+
+**AWS Directory service**s: provides multiple ways to use Microsoft Active Directory. 
+- **AWS Managed Microsoft AD**: A full feature managed version of MS active directory
+- **Simple AD**: Not available for all the regions.  powered by Sambda.
+- **AD Connector**: a proxy service to connect your existing on-premise AD Directory
 ## Secret Manager
 Store and rotate automatically database credentials. Enforce encryption at rest by using KMS. It as a cost. For credential access monitor you can use Cloud Trail.
 
@@ -1172,7 +1172,7 @@ You can setup automatic rotation, is not enabled by default.
 ***Serverless*** machine learning-powered business intelligence service to create interactive dashboards
 ## Elastic Map Reduce (EMR)
 
-Amazon EMR (previously called Amazon Elastic MapReduce) is a managed cluster platform that simplifies running big data frameworks, such as **Apache Hadoop** and **Apache Spark**. Is used to create **Big Data clusters** to **analyze and process** vast amounts of data.
+Amazon EMR is the industry-leading cloud big data solution for petabyte-scale data processing, interactive analytics, and machine learning using open-source frameworks such as Apache Spark, Apache Hive, and Presto
 
 - Uses **Hadoop**, an open-source framework, to distribute your data and processing across a **cluster of 100s of EC2 instances**.
 - Supports open-source tools such as **Apache Spark**, **HBase**, **Presto**, **Flink**, etc.
@@ -1190,17 +1190,15 @@ Amazon EMR (previously called Amazon Elastic MapReduce) is a managed cluster pla
 ### Strategies
 ![[Pasted image 20241016095358.png]]
 #### Backup & Restore
-
 - High RPO (hours)
 - Need to spin up instances and restore volumes from snapshots in case of disaster => High RTO
 - Cheapest & easiest to manage
 
 #### Pilot Light
-
 - **Critical parts of the app are always running** in the cloud (eg. continuous replication of data to another region)
 - Low RPO (minutes)
 - Critical systems are already up => Low RTO
-- Ideal when RPO should be in minutes and the solution should be inexpensive
+- **Ideal when RPO should be in minutes and the solution should be inexpensive**
 - DB is critical so it is replicated continuously but EC2 instance is spin up only when a disaster strikes
 
 #### Warm Standby
@@ -1217,7 +1215,6 @@ Amazon EMR (previously called Amazon Elastic MapReduce) is a managed cluster pla
 - Very Expensive
 
 ## CloudFormation
-
 - **Infrastructure as Code (IaC)** allows us to write our infrastructure as a config file which can be easily replicated & versioned using Git
 - **Declarative** way of outlining your AWS Infrastructure (no need to specify ordering and orchestration)
 - Resources within a stack is tagged with an identifier (easy to track cost of each stack)
@@ -1225,8 +1222,8 @@ Amazon EMR (previously called Amazon Elastic MapReduce) is a managed cluster pla
 - Deleting a stack deletes every single artifact that was created by CloudFormation (clean way of deleting resources)
 
 ### CloudFormation Templates
+An AWS CloudFormation template is a YAML file that defines the AWS resources you want to create, update, or delete as part of a stack.
 
-- YAML file that defines a CloudFormation Stack
 - **Templates have to be uploaded in S3** and then referenced in CloudFormation
 - To update a template, upload a new version of the template
 - Template components:
@@ -1256,37 +1253,19 @@ Amazon EMR (previously called Amazon Elastic MapReduce) is a managed cluster pla
     - **Change Sets**
         - You can preview the changes CloudFormation will make to your stack, and then decide whether to apply those changes.
 
+## Security Token Service (STS)
+Is a web service that enables you to request temporary, limited-privilege credentials for users. 
 
-## AWS API
-- Smithy: is AWS open source interface definition language for web services. It is used to define service
-- STS: Temporary limited credential. global service that go through a singlel endpoint
-- Signing API: when you send API request, you sign the requests so that AWS can identify who sent them
-- **Service Enpoints**: Is the URL of the entry point for an AWS web services
-	types:
-	- **Global Endpoints**
-	- **Private Endpoints** 
-	- **FIPS Endpoints**
-	- **Dualstack Endpoints**
-	example:
-		![[Pasted image 20240930165811.png]]
-- AWS CLI input flag: we can populate parameters if the --cli-input flag is available for a subcommand
-- Configuration Files: 
-	- ![[Pasted image 20240930170425.png]]
-- Named Profiles: AWS config files support the ability to have multiple profiles. Profiles allow you to switch different configurations quickly for different environment.
-- AWS Configure Commands:
-- AWS CLI environment variable: watch the video to check all the diffeerent options
-- AWS Autocompletion Options: AWS Completer (not used old version), AWS Shell Shell (Not recommended by the people), AWS CLI Auto prompt.
-- AWS CLI Autoprompt 
+## AppSync
+AWS AppSync creates serverless GraphQL and Pub/Sub APIs that simplify application development through a single endpoint to securely query, update, or publish data.
 
-
-
-
-## GraphSQL and AppSync
-
-- **GraphQL**: is an open-source agnostic query adaptor that allows you to query data from different data sources. GraphQL is used to build APIs where clients will send a query for nested data. GraphQL mitigates the issue of versioned or rapidly changing APIs compared to REST API because you can request the data you want
-- **AppSync**: Store and sync data across mobile and web apps in real-time. Makes use of GraphQL.
-	![[Pasted image 20241002104051.png]]
-
+ **GraphQL**: is an open-source agnostic query adaptor that allows you to query data from different data sources. GraphQL is used to build APIs where clients will send a query for nested data. 
+ 
+Can create 2 types of API
+**API Types:**
+- **GraphQL APIs:** single API from multiple data sources
+- **Merged APIs:** a collection of GraphQL APIs that act as one API.
+	- Useful when you have multiple teams that manage their own API
 ## OpenSearch Service
 Is a managed full-text search service that makes it easy to deploy operate and scale OpenSearch and ElasticSearch, a popular open-source search and analytics engine.
 
@@ -1301,7 +1280,7 @@ Elastic Transcoder is video-transcoding server, used to convert media files stor
 		- Choose source and destination bucket
 ## SNS
 ### Concept:
-**Publish Subscribe pattern:** Common message pattern, the sender send their message to an event bus that categorized message in groups and than the receiver subscribe o these groups. Whenever new messages appear within their subscription the messages are immediatly delivered to them. 
+**Publish Subscribe pattern:** Common message pattern, the sender send their message to an event bus that categorized message in groups and than the receiver subscribes to these groups. Whenever new messages appear within their subscription the messages are immediatly delivered to them. 
 ![[Pasted image 20241008111643.png]]
 ### SNS
  Amazon Simple Notification Service (Amazon SNS) is a managed service that provides message delivery from publishers to subscribers (also known as _producers_ and _consumers_). In this way is possible to send one message to many receivers. Used to decouple microvservices.
@@ -1323,7 +1302,7 @@ Allows you to group multiple subscriptions together.
 
 - **Messages:** Is it possible to programmatically publish messages to SNS Topic. **Maximum limit** of message dimension: 256KB. **Message bigger than 256KB can be publish using Amazon SNS Extended Client library (Max: 2GB).** 
 - **Subscription:** A subscription can only subscribe to one protocol and one topic: HTTP/S, Email, Amazon SQS, AWS Lambda, SMS, Platform application endpoint
-- **Filter policy:** allows you to filter a subset a messages only to be delivery.
+- **Filter policy:** allows you to filter a subset a messages only to be delivery. JSON policy used to filter messages
 - **Message Data Protection**: Message data protection safeguards the data that's published to your Amazon SNS Topic. 
 - **Delivery Policy**: defined how SNS **retries** the delivery of messages when **server-side errors** occur. Each delivery protocol has its own delivery policy.
 - **SNS Dead Letter Queue (DLQ)** will send fail message attempts to an SQS queue. Topic and Queue type need to match.
@@ -1345,7 +1324,7 @@ Allows you to group multiple subscriptions together.
 SQS Queue types:
 
 - 2 types of queue: 
-	- **Standard:** allows you to send nearly unlimited number of transactions per second, but message are out of order. I has low latency
+	- **Standard:** allows you to send nearly unlimited number of transactions per second, but message are out of order. It has low latency
 	- **FIFO:** guarantees the order of messages when being consumed. 
 		- 300 transaction
 		- no duplicates
@@ -1360,13 +1339,14 @@ SQS Queue types:
 
 #### Configurations
 
-- **ABAC**: Is an authorization process that defines permissions based on tags that are attached to users aqnd AWS resources. Use tag and aliases.
+
 - **Access Policy:** Allows you to grant other principals permission to the SQS Queue.
 - **Message Metadata:** allows you to attach metadata to messages
-- **Message Visibility Timeout:** is a period of time message will be invisible after they are read/consumed by an application to avoid being read and processed by other applications. Default is 30 second
+- **Message Visibility Timeout:** is a period of time message will be invisible after they are read/consumed by an application to avoid being read and processed by other applications. **Default is 30 second**
 - **Delay Queues:** let you postpone the delivery of new messages to consumers for a number of second when your app needs more time. Message remain invisible to consumers for the duration of the delay period.
 - **Message Timers:** let you specify an initial invisibility period for an individual message when sending to the queue
 - **Temporary Queues:** Let you specify an initial invisibility period for an individual message when sending to the queue. Don't support timers on individual message
+- **ABAC**: Is an authorization process that defines permissions based on tags that are attached to users aqnd AWS resources. Use tag and aliases.
 - **Short vs Long Polling:** Polling is the method by which we retrive messages from the queues
 
 |                 | **Short Polling (default)**                                                    | **Long Polling**                                                        |
@@ -1384,13 +1364,16 @@ SQS Queue types:
 https://www.youtube.com/watch?v=mXk0MNjlO7A&ab_channel=BeABetterDev
 https://www.youtube.com/watch?v=RoKAEzdcr7k&ab_channel=BeABetterDev
 ## Amazon MQ 
-Is a managed message broker service for the opensource Apache ActiveMQ (Apache message broker) and RabbitMQ :
+Amazon MQ is a managed message broker service for [Apache ActiveMQ](https://activemq.apache.org/) and [RabbitMQ](https://www.rabbitmq.com/). A **_message broker_** enables software applications and components to communicate using various programming languages, operating systems, and formal messaging protocols through either topic or queue event destinations.
+
 - Supporta vari tipi di protocolli: **AMQP,MQTT,STOMP**
 ## Amazon Kinesis
-AWS fully managed solution, not serverless, for collecting processing, and analyzing streaming real-time data in the cloud.
+AWS fully managed solution, not serverless, for collecting processing, and analyzing streaming **real-time data** in the cloud.
 ### Types
-#### Kineses Data Streams:
-is a real time data streaming service. **Most flexible option**.
+#### Kineses Data Streams
+Amazon Kinesis Data Streams is a serverless streaming data service that makes it easy to capture, process, and store data streams at any scale.
+![[Pasted image 20241016175823.png]]
+
 **Has 2 capacity mode:**
 
 |                | **On Demand**                                                                                                                                                                                                                                  | **Provisioned**                                                                                                                                                                      |
@@ -1407,29 +1390,30 @@ is a real time data streaming service. **Most flexible option**.
 	- When an application puts data into a stream, it must specify a partition key.
 - **Sequence Number**
 	- Each data record has a sequence number that is unique per partition-key within its shard
-	- Sequence numbers for the same partition key generally increase over time
-		- The longer the time period between write requests, the larger the sequence numbers become
-- **Data Streams CLI:** 
-	- Using the AWS CLI the PutRecord alow us to send data to the stream. Note that data has to be based64 encoded
-	- Using the AWS CLI the getRecords we can retrive data
 - **EFO(Enhance Fan Out)**: allows up to 20 consumers to retrive records from a stream throughput of up to 2 MB of data per second per shard
 - **Producers** use SDK, Kinesis Producer Library (KPL) or **Kinesis Agent** to publish records
-	- **Kinesis Producer Library(KPL)** is a managed library by AWS to let you publish data to a Kineses data stream. Is a Java library
+	- **Kinesis Producer Library(KPL)** is a managed library by AWS to let you publish data to a **Kineses data stream**. Is a Java library
 - **Consumers** use SDK or KCL: 
 	- **Kineses Client Library** is a java library that makes it easy for developers to easily consume data for kineses. via the Multi-Daemon other programming languages can be used
+#### Kinesis Data Analytics (KDA)
+Amazon Data Firehose is a fully managed service for **delivering real-time streaming data** to various destinations. Simple version of Kineses data stream.
+
+- Perform **real-time analytics on Kinesis streams using SQL**
+- **Cannot ingest data directly from source** (ingests data from KDS or KDF)
+- **Auto-scaling**
+- **Serverless**
 #### Amazon Data FireHose
-**Serverless**, simple version of data streams. allows for simple transformation and delivery of data.
-- Usage
-	- You choose one consumer from a predefined list
-	- Data immediatly disappears once it's consumed
+Simple version of data streams. Allows for simple transformation and delivery of data.
+- **Serverless**
+- **Auto-scaling**
+- Pay for data going through Firehose (no provisioning)
 - **Sources (Producers)**: In firehose allows easily to configure a source
 - **Destination (Consumer)**: Data Firehose can send to:
 	- (**S3, Redshift**, OpenSearch)
 	- Splunk, MongoDB, DataDog, NewRelic, etc.
 	- HTTP endpoint.
 - **Data Transformation:** before data is sent to a destination it can be tranformed with AWS Lambda
-- **Dynamic Partitioning**: enables you to continuosly streaming data by using keys within data and then deliver the data grouped by these keys into Amazon S3 Prefixes. Makes easier to run anlalytics. Once enabled it cnnot be disabled.
-- **Convert record format**: Data firehose can convert JSON data into different file formats before being delivered to S3
+- **Convert record format**: Data firehose can convert **JSON** data into different file formats before being delivered to S3
 #### Kineses Data Analytics
 **Serverless**, AWS service, to stream live video from devices to tha AWS cloud, or build applications for real time video processing or batch oriented analytics.
 #### Kinesis video streams
@@ -1438,21 +1422,20 @@ allows you to run queries agains that is flowing through your real time stream s
 
 
 ## AWS Data Exchange
-Is a catalogue of third-party datasets. You can download for free subscribe or purchase datasets.
+AWS Data Exchange is a service that makes it easy for AWS customers to securely exchange file-based **datasets** in the AWS Cloud.
 
 You can download dataset and upload your own dataset. Data grants is the tool that allow you to control access to your datasets.
-
 ## AWS Glue
+**ETL** = Extract, transform, and load
+
 AWS Glue is serverless data integration that makes it easy for **analytics** users to discover, prepare, move and integrate data from multiple sources. Visually create, run, monitor, extract and load ETL pipelines to load data into your data lakes. A pipeline is composed of more jobs
 
 - Search and catalog using, Athena, EMR and Redshift
 - **AWS Glue Studio**, feature that allows you to visually build ETL jobs and pipelines
 - **AWS Glue ETL jobs are charged based on the number of data processing units (DPUs)**
 - **AWS Glue Data Catalog:** is a fully manage Apache Hive Metastore-compatible catalog service that makes it easy for customer to store, anntoate and share metadata about their data
-
-
 ## AWS Instance Scheduler
-The Instance Scheduler on AWS solution automates the starting and stopping of various AWS services including [Amazon Elastic Compute Cloud](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html) (Amazon EC2) and [Amazon Relational Database Service](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html) (Amazon RDS) instances.
+The Instance Scheduler on AWS solution automates the starting and stopping of various AWS services including **Amazon EC2** and **Amazon RDS** instances.
 
 You are responsible for the cost of the AWS services used while running Instance Scheduler on AWS. As of the latest revision, the cost for running this solution a small deployment in two accounts and two Regions is approximately **$13.15 per month.**
 # Develop
@@ -1626,29 +1609,29 @@ Amazon Relational Database Service (Amazon RDS) is a web service that makes it e
 ### RDS Storage Auto Scaling 
 Automatically scales storage capacity in response to growing database workloads, with zero downtime. (only storage capacity)
 ### Encryption
-- Encryption in transit: enabled by default
-- Encryption at rest: can be enabled 
-- Encrypt alsoare automatically enabled on Automated backups, snapshot and read replicas
 - **Can be enabled only during creation**
+- **Encryption in transit:** enabled by default
+- **Encryption at rest:** can be enabled 
+- Encrypt are automatically enabled on Automated backups, snapshot and read replicas
+
 
 ### RDS Backup
 - Types
 	- **Automated backup:** choose retention period between 0 and 35 days
 		- **enabled by default**
 		- stored in s3
-		- Log backed up every 5minutes
+		- Log backed up every 5 minutes
 		- no charge for additional data in automated backups
 	- **Manual Snapshot**
-		- taken manually
-		- additional storage charge 
+		- Taken manually
+		- Additional storage charge 
 - **Restoring a backup:** creates a new RDS instance and restores data in that instance 
-		- Restoring a manual snapshot
-		- Restoring Point in time (PITR): similar but provide restore time
+	- Restoring a manual snapshot
+	- Restoring Point in time (PITR): similar but provide restore time
 - Take long time to restore database: is not imidiate.
-
 #### Scelte architetturali
-#### Read Replicas: 
-- **Disaster recovery solution** if the primary DB instance fails  
+#### Read Replicas
+- **Disaster recovery solution** if the primary DB instance fails
 - Improve **read contention** which means improve performance latency. 
 	- **Read contention:** when multiple proccesses or instances competing for access to the same index or data block at the same time.
 - You must have **automatic backups enabled**. 
@@ -1671,6 +1654,19 @@ Automatically scales storage capacity in response to growing database workloads,
 | Always span two Availability Zones within a single Region | Can be within an Availability Zone, Cross-AZ, or Cross-Region       |
 | Database engine version upgrades happen on primary        | Database engine version upgrade is independent from source instance |
 | Automatic failover to standby when a problem is detected  | Can be manually promoted to a standalone database instance          |
+#### Multi-Az Cluster vs Multi-Az instance
+- **Multi-AZ Cluster**: A setup with multiple nodes (primary and read replicas) distributed across different Availability Zones, offering better performance, faster failover, and higher scalability, especially for read-heavy workloads.
+- **Multi-AZ Instance**: A configuration with one primary and one standby instance in separate Availability Zones, focused on providing high availability and automatic failover without additional read scaling.
+
+| Feature          | Multi-AZ Cluster                                           | Multi-AZ Instance                           |
+| ---------------- | ---------------------------------------------------------- | ------------------------------------------- |
+| **Architecture** | Multiple nodes, distributed across AZs                     | One primary, one standby                    |
+| **Availability** | Higher fault tolerance, high availability, faster failover | High availability, slightly slower failover |
+| **Performance**  | Better for read-heavy workloads                            | Suitable for write-heavy workloads          |
+| **Scalability**  | Horizontal scaling (via read replicas)                     | Limited scaling (one active instance)       |
+| **Use Case**     | High-read workloads, high availability                     | Basic high availability                     |
+| **Cost**         | Higher                                                     | Lower                                       |
+
 ### Subnet Group
 
 **DB Subnet Group**: collection of subnet that you create in a VPC and that you then designate for your DB instances.
@@ -1680,27 +1676,26 @@ Automatically scales storage capacity in response to growing database workloads,
 - For a DB instance to be publicly accessible, all of the subnets in its DB subnet group must be public
 ![[Pasted image 20241003103052.png]]
 
+### Amazon RDS monitoring
+-  **CloudWatch metrics for Amazon RDS**: You can use the Amazon CloudWatch service to monitor the performance and health of a DB instance.
+- **RDS DB instance status and recommendations**: View details about the current status of your instance by using the Amazon RDS console, AWS CLI, or RDS API.
+- **RDS Performance Insights and operating-system monitoring**: Performance Insights assesses the load on your database, and determine when and where to take action
+- **AWS services**: mazon RDS is integrated with Amazon EventBridge, Amazon CloudWatch Logs, and Amazon DevOps Guru.
 ### Other feature
-- **RDS Performance Insights:** helps you easily identify bottlenecks and performance issues. Is default by default and provides  1 week of performing data. For additional cost you can change the retention period to 2 years.
-- **RDS Proxy:** create a connection pooler so that short lived AWS Lambda functions connecting to RDS does not quick exahaust all connection. Reuse existing connection to do this.
-- **IAM Authentication:** allows you to authenticate with an IAM authentication token to an RDS instance's database insteas of using a password.
+
+### Access Management
+- Username and Password can be used to login into the database
+- EC2 instances & [Lambda](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Lambda) functions should access the DB using **IAM DB Authentication** (**AWSAuthenticationPlugin** with **IAM**) - token based access
 	- Each token has a lifetime of 15 minutes
 	- You have to create a policy and attach to user
 	- You have to create db user 
 	- You need to generate auth token to be used for password authentication
-- **Master User Account:** is the initial databse account that's created when you provision a new Db instance. Has full privileges. Pass and username set at creation time.
-- **Public Accessibility:** is an option that changes if the DNS Endpoint resolve to the private IP address from traffic from outside the VPC
+	- Only works with **MySQL** and **PostgreSQL**
 
-### Extra
-- **RDS Custom:** automates database administration tasks and operation. Allows customers to directly manage aspects of RDS instead of AWS, for company that needs third party applications for their databse.
-- **Optimized Reads and Writes:** allow database operations to maximize perfrmance efficency and throughtput. Use NVMe based SSD block storage instead
-- **RDS Security Groups:** In order to establish connection for both public and private you need to open the port
-- **RDS Blue Green Deployments:** copies a production database environment in a separate, synchronized staging environment
-- **RDS Extended Support:** allows you to run your database on a major engine version past the RDS end of standard support date for an additional cost.
 
 ## Aurora
 **Serverless**, Automated database instantiation and auto-scaling based on actual usage.
-- **Aurora costs more than RDS (20% more).
+- **Aurora costs more than RDS (20% more)**.
 - Supports only MySQL & PostgreSQL
 - **Asynchronous Replication** (milliseconds)
 - Up to 15 read replicas
@@ -1936,9 +1931,12 @@ Is a service that enables governance compliance operational auditing of your AWS
 - Collect logs for 90 days via Event History. If you need more than 90 days you need to create a Trail.
 - Very useful to monitor API calls and made Actions made on an AWS account. Easily identify which users on an AWS account made call.
 
-**To analyze a Trail you'd have to use Amazon Athena**
+**CloudTrail provides three ways to record events:**
+- **Event history** – The **Event history** provides a viewable, searchable, downloadable, and immutable record of the past 90 days of management events in an AWS Region.
+- **CloudTrail Lake** – **AWS CloudTrail Lake** is a managed data lake for capturing, storing, accessing, and analyzing user and API activity on AWS for audit and security purposes.
+- **Trails** – _Trails_ capture a record of AWS activities, delivering and storing these events in an Amazon S3 bucket, with optional delivery to **CloudWatch Logs** and **Amazon EventBridge**.
 ## CloudWatch
-Amazon CloudWatch monitors your Amazon Web Services (AWS) resources and the applications you run on AWS in real time. **Amazon CloudWatch is basically a metrics and logs repository. An AWS service puts metrics into the repository, and you retrieve statistics based on those metrics
+Amazon CloudWatch monitors your Amazon Web Services (AWS) resources and the applications you run on AWS in real time. **Amazon CloudWatch is basically a metrics and logs repository. An AWS service puts metrics into the repository, and you retrieve statistics based on those metrics**
 
 - **High Availability**
 - **Serverless**
@@ -1946,8 +1944,10 @@ Amazon CloudWatch monitors your Amazon Web Services (AWS) resources and the appl
 ### Amazon CloudWatch Alarms
 (like budget but less powerful) Alarms are used to trigger notifications for any metric.
 
-- You can create a billing alarm 
--  **Billing data metric is stored in CloudWatch us-east-1**
+2 types: 
+- Metric Alarm: A _metric alarm_ watches a single CloudWatch metric or the result of a math expression based on CloudWatch metrics.
+- Composite Alarm: A _composite alarm_ includes a rule expression that takes into account the alarm states of other alarms that you have created.
+
 - **Alarm States:**
     - OK
     - INSUFFICIENT_DATA
@@ -1955,46 +1955,42 @@ Amazon CloudWatch monitors your Amazon Web Services (AWS) resources and the appl
 - **Period:**
     - Length of time in seconds to evaluate the metric before triggering the alarm
     - High resolution custom metrics: **10 sec**, 30 sec or multiples of 60 sec
-- **Target/Action**:
+- **Action**:
 	- **Auto Scaling Group**, increase or decrease EC2 instances “desired” count  
 	- **EC2 Actions**: stop, terminate, reboot or recover an EC2 instance 
-	-  **SNS notifications**: send a notification into an SNS topic 
-### Amazon CloudWatch Logs
-- It is used to store, manage and access your log files. Is a centralized log management server
- - CloudWatch Logs can collect log from:
-	 - **EC2 machines or on-premises servers** 
-	 - **Elastic Beanstalk**: collection of logs from application 
-	 - **ECS:** collection from containers 
-	 - **AWS Lambda**: collection from function logs 
-	 - **CloudTrail** based on filter 
-	 - **Route53**: Log DNS queries
-- **CloudWatch log groups**: a collection of log streams ex: /exampro/prod/app
-- **CloudWatch streams**: represent a sequence of events from an application or instance being monitored. Is created automatically but you can create your own.
-- **CloudWatch log events**: Represent a single event in a log files:
-	![[Pasted image 20241004114212.png]]
-- **CloudWatch Insights:** enables you to interactively search and analyze your CloudWatch log data
-	- CloudWatch discover fields, when reads a logs 
-- **CloudWatch Metrics:** time order set of data points, its a variable that monitored over time. You can provide you customize Metrics using CLI/SDK
-- **CloudWatch Agent**: Some metrics need to install CloudWatch agent to been tracked.
-	- Host Level Metrics
-		- These are what you get without installing the Agent
-			- CPU usage
-			- Network Usage
-			- Disk Usage
-			- Status Check
-				- Underlying Hypervisor status
-				- Underlying EC2 instance status
-	- **Agent Level Metrics**
-		- These are what you get when installing the Agent
-			- **Memory utilization**
-			- Disk Swap utilization
-			- **Disk Space utilization**
-			- Page file utilization
-			- Log collection
+	- **SNS notifications**: send a notification into an SNS topic 
+	- **Invoke a Lambda function
+	-  You can create a billing alarm
+		- **Billing data metric is stored in CloudWatch us-east-1**
+### Logs
+You can use Amazon CloudWatch Logs to monitor, store, and access your log files from Amazon Elastic Compute Cloud (Amazon EC2) instances, AWS CloudTrail, Route 53, and other sources.
+
+Actions:
+- **Two log classes for flexibility**: CloudWatch Logs offers two log classes so that you can have a cost-effective option for logs that you access infrequently.
+- **Query your log data**: You can use CloudWatch Logs Insights to interactively search and analyze your log data.
+- **Detect and debug using Live Tail**: You can use Live Tail to quickly troubleshoot incidents by viewing a streaming list of new log events as they are ingested.
+- **Monitor logs from Amazon EC2 instances**: You can use CloudWatch Logs to monitor applications and systems using log data.
+- **Monitor AWS CloudTrail logged events**: You can create alarms in CloudWatch and receive notifications of particular API activity as captured by CloudTrail.
+- **Audit and mask sensitive data**: If you have sensitive data in your logs, you can help safeguard it with data protection policies.
+- **Log retention**: By default, logs are kept indefinitely and never expire.
+- **Archive log data**: You can use CloudWatch Logs to store your log data in highly durable storage.
+- **Log Route 53 DNS queries**: You can use CloudWatch Logs to log information about the DNS queries that Route 53 receives.
+
+You can use Cloudwatch logs alongside with : **CloudTrail, IAM, Kinesis Data Stream, Lambda**
 ## Amazon EventBridge
-**Event Bus**: An event bus receives events from a source and routates events to a target based on rules. 
-**EventBridge** is a serverless event bus service that is used for application integration by streaming real-time data to your applications.
+
+
+**EventBridge** is a serverless event bus service that is used for application integration by streaming real-time data to your applications. EventBridge was formerly called Amazon **CloudWatch Events.**
 ![[Pasted image 20241014143558.png]]
+#### Event Bus
+An event bus receives events from a source and rotates events to a target based on rules. 
+![[Pasted image 20241017110927.png]]
+- Event buses types:
+    - **Default event bus**: events from AWS services are sent to this
+    - **Partner event bus**: receive events from external SaaS applications
+    - **Custom Event bus**: for your own applications
+#### Rules
+ A rule specifies which events to send to which [targets](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-targets.html) for processing. A single rule can send an event to multiple targets, which then run in parallel.
 ## Health Dashboard
 - **Service Health Dashboard:** Show General status of the service in various region.
 - **Personal Health Dashboard:** AWS Personal Health Dashboard provides alerts and guidance for AWS events that might affect your environment.
@@ -2007,26 +2003,19 @@ AWS Config provides a detailed view of the configuration of AWS resources in you
 - Record configurations changes over time
 - **Evaluate compliance of resources using config rules**
 - **Does not prevent non-compliant actions** from happening (no deny)
-- Evaluate config rules
-    - For each config change (ex. configuration of EBS volume is changed)
-    - At regular time intervals (ex. every 2 hours)
 - Can make custom config rules (must be defined in Lambda functions) such as:
     - Check if each EBS disk is of type gp2
     - Check if each EC2 instance is t2.micro
 - **Can be used along with CloudTrail** to get a timeline of changes in configuration and compliance overtime.
 - **Integrates with EventBridge or SNS** to trigger notifications when AWS resources are non-compliant
 
-### Remediation
-
-- Automate remediation of non-compliant resources using **SSM Automation Documents**
-    - AWS-Managed Automation Documents
-    - **Custom Automation Documents**
-        - to invoke a Lambda function for automation
-- You can set Remediation Retries if the resource is still non-compliant after auto remediation
-- Ex. if IAM access key expires (non-compliant), trigger an auto-remediation action to revoke unused IAM user credentials.
-
-
+- Action
+	- **Resource Administration**: You can use AWS Config rules to evaluate the configuration settings of your AWS resources
+	- **Auditing and Compliance**: You might be working with data that requires frequent audits to ensure compliance with internal policies and best practices
+	- **Managing and Troubleshooting Configuration Changes**: you can view how the resource you intend to modify is related to other resources and assess the impact of your change.
+	- **Security Analysis**: you can use AWS Config to view the IAM policy that was assigned to a user, group, or role at any time in which AWS Config was recording
 ## X-Ray
+AWS X-Ray receives data from services as _segments_. X-Ray then groups segments that have a common request into _traces_. X-Ray processes the traces to generate a _service graph_ that provides a visual representation of your application.
 
 - Provides an **end-to-end view of requests as they travel through your application**, and shows a map of your application’s underlying components.
 - AWS X-Ray helps developers analyze and debug production, distributed applications, such as those built using a **micro-services architecture**.
@@ -2034,46 +2023,74 @@ AWS Config provides a detailed view of the configuration of AWS resources in you
 - Can collect data across AWS Accounts. The **X-Ray agent** can **assume a role** to publish data into an account different from the one in which it is running. This enables you to publish data from various components of your application into a **central account**.
 # Management
 ## (IAM) Identity Access Manager
-- Anatomy of IAM policy
-	- **Version policy language** version. 2012-10-17 is the latest version.
-	- **Statement container** for the policy element you are allowed to have multiples
-	- **Sid (optional)** a way of labeling your statements.
-	- **Effect Set** whether the policy will Allow or Deny
-	- **Action list** of actions that the policy allows or denies
-	- **Principal** account, user, role, or federated user to which you would like to allow or deny access
-	- **Resource** the resource to which the action(s) applies
-	- **Condition (optional)** circumstances under which the policy grants permission
+AWS Identity and Access Management (IAM) is a web service that helps you securely control access to AWS resources.
+
+- **Root User** has full access to the account
+- **IAM User** has limited permission to the account
 - **Principle of Least Privilege:**
 	- Just Enough Access: Permitting only the exact actions  for the identity to perform task
 	- Just In Time: Permitting the smallest length of duration a identity can use permissions
 - **Password policy**: you can set expires date for user password in rder to rotate them
 - **Access Key**: you can have a maximum of 2 access key per account
-- **MFA**: (vedi appunti aws)
+- **Multi-factor-autentichation**: Virtual MFA device, Universal 2nd Factor (U2F) Security Key, Hardware MFA devices (MFA devices options in AWS, Hardware Key Fob MFA Device for AWS GovCloud (US)).
 - **Temporary Security Credentials**: Generated dynamically, every time you use a roles a you a temporary security cred are created automatically
 - **IAM Identity federetion**: the means of linking a person to eletronic identity and attribute. When you connect using facebook or google you're using identity fed
-- **STS**: (vedi appunti AWS)
-- **Cross Account Role:** You can grant users from different AWS account access to resources in your account through a Cross-Account Role. This allows you to not to have to create them a user account within your systems
-	- ![[Pasted image 20241001115206.png]]
 - **IAM AssumeRoleWithWebIdentity**: Returns a set of temporary security credentials for users who have been authenticated in a mobile or web application with web identity provider
-	- You always authenticate with the web identity first
-## Service Catalog
+- **Cross Account Role:** You can grant users from different AWS account access to resources in your account through a Cross-Account Role. This allows you to not to have to create them a user account within your systems
+### Policies
+- Policies are JSON documents that outline permissions for users, groups or roles
+- Two types
+    - **User based policies**
+        - IAM policies define which API calls should be allowed for a specific user
+    - **Resource based policies**
+        - Control access to an AWS resource
+        - Grant the specified principal permission to perform actions on the resource and define under what conditions this applies
+#### Anatomy of Policy
+- **Version policy language** version. 2012-10-17 is the latest version.
+- **Statement container** for the policy element you are allowed to have multiples
+- **Sid (optional)** a way of labeling your statements.
+- **Effect Set** whether the policy will Allow or Deny
+- **Action list** of actions that the policy allows or denies
+- **Principal** account, user, role, or federated user to which you would like to allow or deny access
+- **Resource** the resource to which the action(s) applies
+- **Condition (optional)** circumstances under which the policy grants permission
+## Guidelines
+- Use root account only for account setup
+- 1 physical user = 1 IAM user
+- Enforce MFA for both root and IAM users
+- Never share lAM credentials & Access Keys
+### Reporting Tools
+- **Credentials Report**
+    - lists all the users and the status of their credentials (MFA, password rotation, etc.)
+    - **account level** - used to audit security for all the users
+- **Access Advisor**
+    - shows the service permissions granted to a user and when those services were last accessed
+    - **user-level**
+    - used to revise policies for a specific user
+### Permission Boundaries
+- Set the maximum permissions an IAM entity can get
+- **Can be applied to users and roles (not groups)**
+- Used to ensure some users can’t escalate their privileges (make themselves admin)
+## Amazon Service Catalog
 
 AWS Service Catalog enables organizations to create and manage catalogs of products that are approved for use on AWS to achive consistent governance and meet compliance requirements.
 Alternative to granting direct access to AWS resources via the AWS console
 ## AWS Resource Access Manager (AWS RAM)
-  Share AWS resources that you own with other AWS accounts. **Avoid resource duplication**. Supported resources includes: Aurora, VPC Subnets, Transit Gateway, Route 53, EC2 Dedicated Hosts, License Manager Configurations
+AWS Resource Access Manager (AWS RAM) helps you securely share your resources across AWS accounts, within your organization or organizational units (OUs), and with AWS Identity and Access Management (IAM) roles and users for supported resource types.
 
-## AWS IAM Identity Center: 
+## AWS IAM Identity Center 
+**AWS Identity Center (formerly AWS Single Sign-On)** is a service that provides centralized management of user and group access to AWS resources. 
+
 **Single sign-on** for multi account in aws.
-
-**AWS Identity Center (formerly AWS Single Sign-On)** is a service that provides centralized management of user and group access to AWS resources. It enables authentication and authorization, integrating with identity providers like Active Directory or other SAML-compliant IdPs.
 ## OpsWorks
+AWS OpsWorks is a configuration management service that helps you configure and operate applications in a cloud enterprise by using Puppet or Chef
 
 - **Chef & Puppet** are two open-source softwares that help you perform **server configuration** automatically, or repetitive actions
-- AWS OpsWorks is nothing but **AWS Managed Chef & Puppet**
-- They work great with EC2 & On Premise VM
 - It’s an **alternative to AWS SSM**
-- Exam tip: **Chef & Puppet ⇒ AWS OpsWorks**
+
+> [!NOTE]
+> Exam tip: **Chef & Puppet ⇒ AWS OpsWorks**
+
 ## AWS Organizations
 
 - **Global service**
@@ -2086,13 +2103,12 @@ Alternative to granting direct access to AWS resources via the AWS console
 - API to automate AWS account creation (on demand account creation)
 - Establish Cross Account Roles for Admin purposes where the master account can assume an admin role in any of the children accounts
 
-> Organization API can only create member accounts. They cannot configure anything within those accounts (use [CloudFormation](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudFormation) for that).
+> [!NOTE]
+>  Organization API can only create member accounts. They cannot configure anything within those accounts (use [CloudFormation](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudFormation) for that).
 
 ### Organizational Units (OU)[¶](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/aws%20organizations/#organizational-units-ou "Permanent link")
 - Folders for grouping AWS accounts of an organization
 - Can be nested
-    - ![attachments/Pasted image 20220511200502.jpg](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/attachments/Pasted%20image%2020220511200502.jpg)
-
 ### Service Control Policies (SCP)
 
 - **Whitelist or blacklist IAM actions at the OU or Account level**
