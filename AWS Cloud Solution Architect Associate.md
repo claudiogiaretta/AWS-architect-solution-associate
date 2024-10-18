@@ -430,8 +430,9 @@ It can manage and make reccomandations for the following scaling resources: **AS
 - **Predictive Scaling**: analyze historical load, generate a forecast and scale based on that forecast
 - **Dynamic Scaling**: when a metric changes so does the capacity.
 ## Storage Gateway
-**AWS Storage Gateway**: is a hybrid storage service that allows your on-premises applications to seamlessly use Amazon S3 (Bridge between on-premise data and cloud data in s3). Use example: backups to the cloud, using on-premises file shares backed by cloud storage, and providing low-latency access to data in AWS for on-premises applications.
+**AWS Storage Gateway**: is a hybrid storage service that allows your on-premises applications to seamlessly use Amazon S3 (Bridge between on-premise data and cloud data in s3). Use example: backups to the cloud, **using on-premises file shares backed by cloud storage**, and providing low-latency access to data in AWS for on-premises applications. 
 
+**N.B: Only one that support local caching**
 ### Types of Storage
 
 #### S3 File Gateway
@@ -1603,7 +1604,7 @@ Unified UI to easily manage software development activities in one place
  Is a version control service hosted by Amazon Web Services that you can use to privately store and manage assets. 
 # Database
 ## RDS
-Amazon Relational Database Service (Amazon RDS) is a web service that makes it easier to set up, operate, and scale a relational database in the AWS Cloud. It provides cost-efficient, resizable capacity for an industry-standard relational database and manages common database administration tasks.
+Amazon Relational Database Service (Amazon RDS) is a web service that makes it easier to set up, operate, and scale a relational database in the AWS Cloud. It provides cost-efficient, resizable capacity for an industry-standard **relational database** and manages common database administration tasks.
 ![[Pasted image 20241009092943.png]]
 
 **DB instances:** is an isolated database environment running in the cloud
@@ -1642,7 +1643,7 @@ Automatically scales storage capacity in response to growing database workloads,
 - **Disaster recovery solution** if the primary DB instance fails
 - Improve **read contention** which means improve performance latency. 
 	- **Read contention:** when multiple proccesses or instances competing for access to the same index or data block at the same time.
-- You must have **automatic backups enabled**. 
+- You must have **automatic backups enabled**.
 - **Type of replication:** asyncronous replication
 - Maximum of **5 replicas** of a database
 - Replica techniques:
@@ -1652,7 +1653,7 @@ Automatically scales storage capacity in response to growing database workloads,
 
 #### Multi AZ deploment
 
-#### Multi AZ vs Read Replicas
+##### Multi AZ vs Read Replicas
 
 | Multi-AZ Deployments                                      | Read Replicas                                                       |
 | --------------------------------------------------------- | ------------------------------------------------------------------- |
@@ -1662,7 +1663,7 @@ Automatically scales storage capacity in response to growing database workloads,
 | Always span two Availability Zones within a single Region | Can be within an Availability Zone, Cross-AZ, or Cross-Region       |
 | Database engine version upgrades happen on primary        | Database engine version upgrade is independent from source instance |
 | Automatic failover to standby when a problem is detected  | Can be manually promoted to a standalone database instance          |
-#### Multi-Az Cluster vs Multi-Az instance
+##### Multi-Az Cluster vs Multi-Az instance
 - **Multi-AZ Cluster**: A setup with multiple nodes (primary and read replicas) distributed across different Availability Zones, offering better performance, faster failover, and higher scalability, especially for read-heavy workloads.
 - **Multi-AZ Instance**: A configuration with one primary and one standby instance in separate Availability Zones, focused on providing high availability and automatic failover without additional read scaling.
 
@@ -1688,8 +1689,7 @@ Automatically scales storage capacity in response to growing database workloads,
 -  **CloudWatch metrics for Amazon RDS**: You can use the Amazon CloudWatch service to monitor the performance and health of a DB instance.
 - **RDS DB instance status and recommendations**: View details about the current status of your instance by using the Amazon RDS console, AWS CLI, or RDS API.
 - **RDS Performance Insights and operating-system monitoring**: Performance Insights assesses the load on your database, and determine when and where to take action
-- **AWS services**: mazon RDS is integrated with Amazon EventBridge, Amazon CloudWatch Logs, and Amazon DevOps Guru.
-### Other feature
+- **AWS services**: Amazon RDS is integrated with Amazon EventBridge, Amazon CloudWatch Logs, and Amazon DevOps Guru.
 
 ### Access Management
 - Username and Password can be used to login into the database
@@ -1709,7 +1709,7 @@ Automatically scales storage capacity in response to growing database workloads,
 - Up to 15 read replicas
 
 - **Aurora Global Database:** It is a database spanning multiple regions for global low latency  and high availabilty. Primary cluster is in a separate region
-- **RDS Data API:** allows you to use HTTP to securely query an Aurora database. Unlimited max request per seconds. Unlimited max request per seconds. Must be enabled 
+- **RDS Data API:** allows you to use HTTP to securely query an Aurora database. Unlimited max request per seconds. Must be enabled 
 ### Durability and Fault Tolerance
 - **Aurora Backup and Failover are handled automatically** 
 - Snapshots of data can be shared with other AWS accounts
@@ -1729,7 +1729,7 @@ Automatically scales storage capacity in response to growing database workloads,
 - Network Security is managed using Security Groups (same as RDS)
 ### Type
 #### Aurora Provisioned
-Default compute configuration for Aurora. Primary db that perform read and writes and up to 15 Replica. primary DB instance is not created by default
+You choose the DB instance class for the writer and reader instances based on your expected workload. Aurora provisioned has several options
 #### Aurora Serverless V2
 Fully manages the autoscaling configuration for Amazon Aurora
 	- Capacity is adjusted automatically based on application demand
@@ -1766,7 +1766,8 @@ DynamoDB offers two table classes designed to help you optimize for cost.
 - **Provisioned Mode** (default)
     - Provision read & write capacity
     - **Pay for the provisioned capacity**
-    - Auto-scaling option (eg. set RCU and WCU to 80% and the capacities will be scaled automatically based on the workload)
+	- Auto-scaling option 
+		- eg. set RCU and WCU(measures the number of reads and writes) to 80% and the capacities will be scaled automatically based on the workload
 - **On-demand Mode**
     - Capacity auto-scaling based on the workload
     - **Pay for what you use (more expensive)**
@@ -1837,7 +1838,7 @@ Can perform many different kind of operations on your data. It is very good for 
 #### MemCached
 Is an open-source distributed memory object caching system. It's a caching layer for web-applications. Key/value store.
 ![[Pasted image 20241016101616.png]]
-#### Redis vs Memcache
+#### Redis vs Memcached
 
 | Redis                                                          | Memcached                                            |
 | -------------------------------------------------------------- | ---------------------------------------------------- |
@@ -1856,6 +1857,7 @@ Amazon MemoryDB is a durable, in-memory database service that delivers ultra-fas
 
 - Redis-compatible
 - **Slower writes** but better performance in general.
+- very expensive
 ## Amazon Redshift
  **Serverless,** Is an enterprise-class relational database based on postgresql. Is thinked for data warehouse and for **OLAP(analytics and data warehousing)**. 
  
@@ -1902,36 +1904,29 @@ Amazon MemoryDB is a durable, in-memory database service that delivers ultra-fas
 ![[Pasted image 20241002165058.png]]
 
 ## Athena
-**Serverless** is a query service to analyze data stored in Amazon S3. It uses standard SQL language to query the files and their content.
+**Serverless**, is a query service to analyze data stored in Amazon S3. It uses standard SQL language to query the files and their content.
 Athena can do 2 things:
 - Lets you run SQL queries on S3 Buckets
 - Interactively, run data analytics, using Apache Spark
 
 - Athena SQL
 	- Component
-		- Workgroup: saved queries which you grant permissions to other user to access
-		- Data source: a group database 
-		- Database: a group of tables
-		- Table: data organized as group
-		- dataset: raw data of table
-	- Table
-		- You can create using SQL and AWS Glue Wizard
+		- **Workgroup**: saved queries which you grant permissions to other user to access
+		- **Data source**: a group database 
+		- **Database**: a group of tables
+		- **Dataset**: raw data of table
+		- **Table**: data organized as group
 	- **SerDe**: is a serialization and deserialization libraries for parsing data form different format
 		- Can override the DDL configuration that you specify in Athena when you create your table
 ## Quantum Ledger Database
 Used to review history of all the changes made to your **application data** over time, serverless. **Difference with Amazon Managed Blockchain**: no decentralization component
 
-**Features:**
-- **Immutable Logs**: Data cannot be altered or deleted after entry, ensuring permanent records.
-- **Cryptographic Verification**: Utilizes SHA-256 hashing for secure, verifiable transaction histories.
-- **Fully Managed**: Automated management of infrastructure allows users to focus on application development without worrying about underlying hardware.
-- **Serverless**: Scales automatically with application demands, enhancing efficiency.
-- **SQL-like Queries**: Supports PartiQL for flexible, SQL-compatible data querying.
-- **Central Governance**: Managed under a central trusted authority, ideal for applications needing a reliable transaction log.
-- **High Throughput and Scalability**: Designed for rapid and frequent updates with minimal latency.
-- **AWS Integration**: Works seamlessly with other AWS services for improved functionality and simpler management.
-- **ACID Transactions**: Ensures database integrity with transactions that are atomic, consistent, isolated, and durable.
-- **Journal Storage**: Records changes sequentially in a document-oriented format for structured data handling.
+- **Fully Managed**
+- **Serverless**
+- **Immutable Logs**
+- Utilizes SHA-256 hashing for secure, verifiable transaction histories.
+- Pay only for what you use
+- It keeps a full record of all changes to your data that can't be modified or overwritten.
 
 # Monitoring
 ## Cloud Trail
