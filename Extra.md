@@ -201,6 +201,5 @@ You can create assesments to review the evidence collected and generate an asses
 - **RDS Blue Green Deployments:** copies a production database environment in a separate, synchronized staging environment
 - **RDS Extended Support:** allows you to run your database on a major engine version past the RDS end of standard support date for an additional cost.
 - **RDS Performance Insights:** helps you easily identify bottlenecks and performance issues. Is default by default and provides 1 week of performing data. For additional cost you can change the retention period to 2 years.
-- **RDS Proxy:** create a connection pooler so that short lived AWS Lambda functions connecting to RDS does not quick exahaust all connection. Reuse existing connection to do this.
 - **Master User Account:** is the initial databse account that's created when you provision a new Db instance. Has full privileges. Pass and username set at creation time.
 - **Public Accessibility:** is an option that changes if the DNS Endpoint resolve to the private IP address from traffic from outside the VPC

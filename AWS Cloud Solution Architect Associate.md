@@ -372,7 +372,7 @@ Snowcone can send data in 2 ways:
 - **Phisically shipping** the device which runs on the device's compute
 - **AWS DataSync** which runs on the device's compute
 ## AWS transfer family
-Offers fully managed support for the transfer files over SFTP, AS2,FTPS and FTP directly into and out of Amazon S3.
+Offers fully managed support for the transfer files over **SFTP, AS2,FTPS and FTP** directly into and out of **Amazon S3 and EFS**.
 
 - Supported Protocols
     - **FTP** (File Transfer Protocol) - unencrypted network protocol
@@ -681,6 +681,9 @@ Usage example:
 
 #### Lambda SnapStart
 Tool for Java that can improve startup performance for latency-sensitive applications by up to 10x at no extra cost, typically with no changes to your function code.
+
+### Lambda function URL 
+Your Amazon EventBridge **event bus** created by an AWS CloudFormation template to receive **events** from supported SaaS providers.
 ## Step functions
 With AWS Step Functions, you can create workflows, also called [State machines](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-statemachines.html), to build distributed applications, automate processes, orchestrate microservices, and create data and machine learning pipelines.
 ![[Pasted image 20241015165154.png]]
@@ -769,7 +772,7 @@ Connect two VPC, privately using AWS’ network
 - VPC Peering connection **is not transitive** (2 way)
 - Must have **non-overlapping CIDR**
 - Data transfer cross AZ or cross Region incurs charges
-### VPC Endpoints: (vedi appunti AWS)
+### VPC Endpoints: 
 Endpoints is the URL that allow you to connect to AWS Services **using a private network** instead of the public network 
 - This gives you enhanced security and lower latency to access AWS services.
 - Do not require public IPV4 and doesn't leave the AWS network
@@ -778,7 +781,7 @@ Endpoints is the URL that allow you to connect to AWS Services **using a private
 ![[Pasted image 20241007170821.png]]
 #### Type of VPC Endpoint
 ##### Interface Endpoint
- It is a Elastic Network Interfaces (ENI) with a private IP addess. they serve as an entry point for traffic going to a supported service. It is used by **AWS PrivateLink** **(Does not include S3 and DynamoDB)**
+ It is a Elastic Network Interfaces (ENI) with a private IP addess. They serve as an entry point for traffic going to a supported service. It is used by **AWS PrivateLink** **(Does not include S3 and DynamoDB)**
 - **Use Case**: Private connection to AWS services, partner services, and other VPCs without public IPs.
 - **Service Integration**: AWS PrivateLink
 - **Supported Services**: Many AWS Services
@@ -797,7 +800,7 @@ Like interface endpoint used by S3 and DynamoDB
 - **Traffic Direction**: Unidirectional
 
 ##### GWLB Endpoint
-A Gateway Load Balancer endpoint is a VPC endpoint that provides private connectivity between virtual appliances in the service provider VPC.
+Elastic Load Balancing automatically distributes your incoming traffic across multiple targets, in one or more Availability Zones.
 - **Use Case**: Route traffic to third-party virtual appliances like firewalls in another VPC.
 - **Supported Services**: Third-party virtual applications
 - **Pricing**: 
@@ -806,7 +809,7 @@ A Gateway Load Balancer endpoint is a VPC endpoint that provides private connect
 - **Routing Mechanism**: Integrates with GWLB
 - **Traffic Direction**: Usually Unidirectional
 ### AWS Direct Connect
-	![[Pasted image 20241014175942.png]]
+![[Pasted image 20241014175942.png]]
 - 2 types:
 	- **Lower Bandwith** 50Mbps -500Mbps
 	- **Higher Bandwith** 1Gbps, 10Gbps, 100Gbps
@@ -816,7 +819,7 @@ A Gateway Load Balancer endpoint is a VPC endpoint that provides private connect
 - Your network is co-located with an existing AWS Direct Connect location
 - You work with a AWS Partner Network member
 - Support IPV4 and IPv6 
-- Time to setup > 1 month
+- **Time to setup > 1 month**
 #### Connection Types
 - **Dedicated Connection**
     - **1 Gbps and 10 Gbps** (fixed capacity)
@@ -1021,8 +1024,12 @@ An origin group includes two origins (a primary origin and a second origin to fa
 ### Field-level Encryption
 Field-level encryption allows you to enable your users to securely upload sensitive information to your web servers. The sensitive information provided by your users is encrypted at the edge, close to the user
 ### Lambda Edge
-Lambda@Edge is a feature of [Amazon CloudFront](https://aws.amazon.com/cloudfront/) that lets you run code closer to users of your application, which improves performance and reduces latency.
+Lambda@Edge is a feature of Amazon CloudFront that lets you run code closer to users of your application, **which improves performance and reduces latency.**
 ![[Pasted image 20241015164459.png]]
+**Use cases:**
+- Dynamic Web Application at the Edge
+- Search Engine Optimization (SEO)
+- Real-time Image Transformation
 
 ### CloudFront Functions
 Lightweight edge functions for high-scale, latency-sensitive CDN customizations. CloudFront Functions are cheaper, faster, but more limited than Lambda edge functions.
@@ -1396,14 +1403,14 @@ Amazon Kinesis Data Streams is a serverless streaming data service that makes it
 - **Consumers** use SDK or KCL: 
 	- **Kineses Client Library** is a java library that makes it easy for developers to easily consume data for kineses. via the Multi-Daemon other programming languages can be used
 #### Kinesis Data Analytics (KDA)
-Amazon Data Firehose is a fully managed service for **delivering real-time streaming data** to various destinations. Simple version of Kineses data stream.
+**Serverless.** Amazon Kinesis cost-effectively processes and analyzes streaming data at any scale as a fully managed service. Simple version of Kineses data stream.
 
 - Perform **real-time analytics on Kinesis streams using SQL**
 - **Cannot ingest data directly from source** (ingests data from KDS or KDF)
 - **Auto-scaling**
 - **Serverless**
 #### Amazon Data FireHose
-Simple version of data streams. Allows for simple transformation and delivery of data.
+Amazon Data Firehose is a fully managed service for delivering real-time streaming data to various destination **(see below).**
 - **Serverless**
 - **Auto-scaling**
 - Pay for data going through Firehose (no provisioning)
@@ -1414,12 +1421,8 @@ Simple version of data streams. Allows for simple transformation and delivery of
 	- HTTP endpoint.
 - **Data Transformation:** before data is sent to a destination it can be tranformed with AWS Lambda
 - **Convert record format**: Data firehose can convert **JSON** data into different file formats before being delivered to S3
-#### Kineses Data Analytics
-**Serverless**, AWS service, to stream live video from devices to tha AWS cloud, or build applications for real time video processing or batch oriented analytics.
 #### Kinesis video streams
 allows you to run queries agains that is flowing through your real time stream so you can create and analysis on emerging data.
-
-
 
 ## AWS Data Exchange
 AWS Data Exchange is a service that makes it easy for AWS customers to securely exchange file-based **datasets** in the AWS Cloud.
@@ -1542,22 +1545,27 @@ AWS Fargate is a technology that you can use with Amazon ECS to run [containers
 - Ex: set up a CloudWatch Events rule that runs an Amazon ECS task whenever a file is uploaded to an S3 bucket. You can also declare a reduced number of ECS tasks whenever a file is deleted from the S3 bucket.
 ## EKS
 Amazon **Elastic Kubernetis Service** is a managed service that  simplifies the process of building, securing, operating, and maintaining Kubernetes clusters on AWS
+**Use Cases:**
+- Hybrid Deployments - consistency between AWS and on-prem
+- Development and Testing - identical prod and dev environment
+- AWS Services Extension - AWS integration to on-premises setups
 ![[Pasted image 20241015171619.png]]
  EKS can use different type of compute nodes: 
  - EC2 instances 
  - Fargate Instances
  - External instances
 
- **EKS Connector**: if you want to connect your own kubernetis cluster
- **EKS CTL**: is CLI tool for easily setting up kubernetis clusters on AWS.
- **EKS Distro**: is a Kubernetis distribution based on and used by EKS to create reliable and secure kubernetis clusters.
- 
-**Use Cases:**
-- Hybrid Deployments - consistency between AWS and on-prem
-- Development and Testing - identical prod and dev environment
-- AWS Services Extension - AWS integration to on-premises setups
+ - **EKS Connector**: if you want to connect your own kubernetis cluster
+ - **EKS CTL**: is CLI tool for easily setting up kubernetis clusters on AWS.
+ - **EKS Distro**: is a Kubernetis distribution based on and used by EKS to create reliable and secure kubernetis clusters.
+ - **Kubernetes Metrics Server** è un aggregatore di dati sull'utilizzo delle risorse nel cluster e non viene distribuito per impostazione predefinita nei cluster Amazon.
 
 - **EKS anywhere(EKS-A)**: is a deployment option for Amazon EKS to easily create and operate **kubernetis(k8s)** clusters on premises with your own Vms or bare metal hosts. EKS anywhere uses **EKS Distro** as the **kubernetis** cluster distribution.
+### Autoscaling in EKS
+Autoscaling is a function that automatically scales your resources out and in to meet changing demands.
+- **Karpenter**: is a flexible, high-performance Kubernetes cluster autoscaler that helps improve application availability and cluster efficiency.
+- **Cluster Autoscaler**: automatically adjusts the number of nodes in your cluster when pods fail or are rescheduled onto other nodes.
+
 ## Amazon managed service for Prometheus (AMP) 	
  **Prometheus**: Open source monitoring and alerting toolkit originally built at SoundCLoud. **Is a timeseries database** (Collect and stores its metrics as time series data). 
 
@@ -1605,7 +1613,7 @@ Amazon Relational Database Service (Amazon RDS) is a web service that makes it e
 - DB instance **use Elastic Block Storage (EBS) volumes** for database and **log storage**
 - **Maximum storage of 64TB**
 - We don't have access to the underlying instance
-
+- **RDS Proxy:** is a fully managed, highly available database proxy for **Amazon RDS** that makes applications **more scalable, more resilient to database failures, and more secure**.
 ### RDS Storage Auto Scaling 
 Automatically scales storage capacity in response to growing database workloads, with zero downtime. (only storage capacity)
 ### Encryption
@@ -1721,25 +1729,25 @@ Automatically scales storage capacity in response to growing database workloads,
 - Network Security is managed using Security Groups (same as RDS)
 ### Type
 #### Aurora Provisioned
-Default compute configuration for Aurora. primary db that perform read and writes and up to 15 Replica. primary DB instance is not created by default
+Default compute configuration for Aurora. Primary db that perform read and writes and up to 15 Replica. primary DB instance is not created by default
 #### Aurora Serverless V2
-fully manages the autoscaling configuration for Amazon Aurora
+Fully manages the autoscaling configuration for Amazon Aurora
 	- Capacity is adjusted automatically based on application demand
 	- charge only for resources used
 	- use case: **Highly variable workloads**
 	- Does not scale to zero, must mantain at least 0.5 ACU(unit mesurement of Aurora to determine cost vs capacity)
-#### Aurora Serverless V2 vs Provisioned
-|                        | Aurora Serverless V2                                       | Aurora Provisioned                                       |
-| ---------------------- | ---------------------------------------------------------- | -------------------------------------------------------- |
-| **Scaling**            | Fine-grained, almost instant scaling.                      | Manual scaling; requires planning and downtime.          |
-| **Capacity Range**     | 0.5-128 ACUs, **more flexible**.                           | **Fixed**, based on instance size chosen.                |
-| **Scaling Speed**      | Seconds                                                    | N/A (manual intervention required).                      |
-| **Read/Write Scaling** | Independently                                              | Depends on instance type and read replica configuration. |
-| **Compatibility**      | Broader version support.                                   | Wide version support, depending on instance type.        |
-| **Use Cases**          | Highly variable workloads needing immediate scaling.       | Stable workloads with predictable performance needs.     |
-| **Billing**            | ACUs per second, more granular, + storage.                 | Instance hours + storage.                                |
-| **Start/Stop**         | Responsive start/stop, cost-saving for intermittent loads. | Manual start/stop.                                       |
-| **Maintenance**        | Minimal downtime, more seamless.                           | Scheduled maintenance windows.                           |
+#### Aurora Serverless V2(On-demand) vs Provisioned
+|                        | Aurora Serverless V2                                       | Aurora Provisioned                                                          |
+| ---------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------- |
+| **Scaling**            | Fine-grained, almost instant scaling.                      | Manual scaling; requires planning and downtime.                             |
+| **Capacity Range**     | 0.5-128 ACUs, **more flexible**.                           | **Fixed**, based on instance size chosen. Pay also when databse is not used |
+| **Scaling Speed**      | Seconds                                                    | N/A (manual intervention required).                                         |
+| **Read/Write Scaling** | Independently                                              | Depends on instance type and read replica configuration.                    |
+| **Compatibility**      | Broader version support.                                   | Wide version support, depending on instance type.                           |
+| **Use Cases**          | Highly variable workloads needing immediate scaling.       | Stable workloads with predictable performance needs.                        |
+| **Billing**            | ACUs per second, more granular, + storage.                 | Instance hours + storage.                                                   |
+| **Start/Stop**         | Responsive start/stop, cost-saving for intermittent loads. | Manual start/stop.                                                          |
+| **Maintenance**        | Minimal downtime, more seamless.                           | Scheduled maintenance windows.                                              |
 
 ## DynamoDB
 Amazon DynamoDB is a ***serverless***, NoSQL (key/value), fully managed database with single-digit millisecond performance at any scale.  
@@ -1749,6 +1757,11 @@ Amazon DynamoDB is a ***serverless***, NoSQL (key/value), fully managed database
 - **Maximum size of an item: 400 KB**
 - Max 100 table
 - DyanmoDB creates partitions for you as your data grow. Creates a partition every 10 GB or when you exceed.
+### Table classes
+DynamoDB offers two table classes designed to help you optimize for cost.
+-  **DynamoDB Standard table**: is the default, and is recommended for the vast majority of workloads.
+- **DynamoDB Standard-Infrequent Access**: table class is optimized for tables where storage is the dominant cost. **Not recommended for high throughtput**
+	- **Use cases:** tables that store infrequently accessed data, such as application logs, old social media posts, e-commerce order history, and past gaming achievements
 ### Capacity
 - **Provisioned Mode** (default)
     - Provision read & write capacity
@@ -1779,7 +1792,6 @@ NOSQL, document database that is based on MongoDB:
 - Cluster types:
 	- **Instance based Cluster**: manage your instances directly choosing instance type
 	- **Elastic Cluster**: clusters automatically scale, you choose vCPU and number of instances per shard
-- Compatible with MongoDB 4.0 and 5.0
 - DocumentDB does not support all functionality for MongoDB.
 - **DocumentDB storage volume grows in increments of 10 GB, up to a maximum of 128 TB.**
 - Create up-to **15 replicas**
@@ -1791,15 +1803,12 @@ NOSQL, document database that is based on MongoDB:
 - In-transit and at-rest encryption. You must connect using TLS connect.
 ## Amazon Keyspace
 Amazon Keyspaces is a fully managed Apache Cassandra database. Cassandra is an open-source NoSQL key/value database similar to DynamoDB. It is a  columnar store database but has some additional functionality.
+- **Serverless**
+- Use cases: 
+	- **Build applications that require low latency**
+	- **Build applications using open-source technologies**
+	- **Move your Cassandra workloads to the cloud**
 
-- **Cluster** - a collection of nodes 
-- **Nodes** - holds 2 - 4 TB of data
-	- All nodes read and write
-	- Nodes represent smallest unit of a database
-	- Data is replicated on multiple nodes
-- **Ring** - Nodes are arranged in a ring where all nodes connect to each other
-- **Keyspace** - a namespace that specifies data replication on nodes
-- **Table** - tabular data of columns and rows with a primary key
 ## Neptune
 Amazon Neptune is a fast, reliable, fully managed graph database service that makes it easy to build and run applications that work with highly connected datasets.
 - Highly available across **3 AZ** with up to **15 read replicas**
@@ -1810,7 +1819,7 @@ Amazon Neptune is a fast, reliable, fully managed graph database service that ma
 ## ElastiCache
 Amazon ElastiCache is a web service that makes it easy to set up, manage, and scale a distributed in-memory data store or cache environment in the cloud
 
- - **Can only accessible by resources in the same VPC** (to ensure low latency)
+ - **Can only be accessible by resources in the same VPC** (to ensure low latency)
 - It can be **cross region** if enabled
 - **Using ElastiCache requires heavy application code changes**
 - Deployment Options:
@@ -1843,8 +1852,10 @@ Is an open-source distributed memory object caching system. It's a caching layer
 | Multi-AZ support with automatic failover (disaster recovery)   |                                                      |
 
 ## MemoryDB
-Is a Redis-compatible in-memory database for ultra-fast performance
-Suitable to be primary database. **Slower writes** but better performance in general.
+Amazon MemoryDB is a durable, in-memory database service that delivers ultra-fast performance. It is purpose-built for modern applications with microservices architectures.
+
+- Redis-compatible
+- **Slower writes** but better performance in general.
 ## Amazon Redshift
  **Serverless,** Is an enterprise-class relational database based on postgresql. Is thinked for data warehouse and for **OLAP(analytics and data warehousing)**. 
  
@@ -2169,93 +2180,110 @@ Savings Plans are a flexible pricing model that offer low prices on Amazon EC2, 
 
 # Machine Learning 
 ## CodeGuru
-![[Pasted image 20241002171037.png]]
+CodeGuru is machine learning code analysis service. CodeGuru performs code-reviews and will suggest changes to improve the quality of code.
+### Type of service:
+- **Amazon CodeGuru Security:** Amazon CodeGuru Security is a static application security tool that uses machine learning to detect security policy violations and vulnerabilities
+- **CodeGuru Profiler:** Amazon CodeGuru Profiler collects runtime performance data from your live applications, and provides recommendations that can help you fine-tune your application performance
+- **CodeGuru Reviewer**: Amazon CodeGuru Reviewer is a service that uses program analysis and machine learning to detect potential defects that are difficult for developers to find and offers suggestions for improving your Java and Python code.
 ## Comprehend
-Fully managed and **serverless** service for Natural Language Processing. Uses machine learning to find and analyse insights and relationships in text. use cases: analyze customer interactions (emails) to find what leads to a positive or negative experience.
-
-Analyze Text and extract: Entities, Key phrases, language,PII (personal information), Sentiment (feeling of the sentence), Targeted sentiment (specific word ), syntex, custom models
+Fully managed and **serverless** service for Natural Language Processing. Uses machine learning to **find and analyse insights and relationships in text**. 
+- Use cases: analyze customer interactions (emails) to find what leads to a positive or negative experience.
 
 ## Rekognition:
 Amazon Rekognition is image and video reognition service. Analyze images and videos to detect and labels objects, people, clebrities.
 
-Find objects, people, text, scenes in images and videos using ML • Facial analysis and facial search to do user verification, people counting
+Find objects, people, text, scenes in images and videos using ML
+Facial analysis and facial search to do user verification, people counting
 
-![[Pasted image 20241002175456.png]]
 ## Transcribe:
-**Automatically convert speech to text** • Uses a deep learning process called automatic speech recognition (ASR) to convert speech to text quickly and accurately • Automatically remove Personally Identifiable Information (PII) using Redaction • Supports Automatic Language Identification for multi-lingual audio
-
+**Automatically convert speech to text** 
+- Uses a deep learning process called automatic speech recognition (ASR) to convert speech to text quickly and accurately 
+- **Automatically remove Personally Identifiable Information (PII)** using Redaction 
+- Supports **Automatic Language Identification** for multi-lingual audio
 ## Polly:
-Is a Text-to-speech service • Allowing you to create applications that talk
-Engine Types (from less expensive to most expensive):
-- Standard - 
-- Long Form -
-- Neural -
-Lexicon - for specialized pronuciation
-Speech Marks - metadata that describes speech
+Is a Text-to-speech service 
+- Allowing you to create applications that talk
+- Engine Types (from less expensive to most expensive):
+	- Standard -
+	- Long Form 
+	- Neural 
+
+> [!NOTE]
+> **Lexicon:** for specialized pronuciation
+> **Speech Marks:** metadata that describes speech
 
 Use an xml based language: **Speech Synthesis Markup Language (SSML)**
-
-## Translate:
+## Translate
 Natural and accurate language translation
 
-## SageMaker:
-Fully managed service for developers / data scientists to build ML models
+## SageMaker
+Amazon SageMaker is a **fully managed** machine learning (ML) service. With SageMaker, data scientists and developers can quickly and confidently **build, train, and deploy ML models**
 
 ## Forecast:
-Fully managed service that uses ML to deliver highly accurate forecasts • example: predict the future sales of a raincoat
+Amazon Forecast is a fully managed service that uses statistical and machine learning algorithms to deliver highly accurate time-series forecasts. 
+- Example: predict the future sales of a raincoat
 
-Amazon Forecast Workflow: 
-![[Pasted image 20241002172257.png]]
 
-## Fraud Detection
-Fully managed fraud detection service. Identify potentially illegal online activities such as online payment fraud and the creation of fake accounts
+### Amazon Forecast Workflow: 
+- **Importing Datasets** – _Datasets_ are collections of your input data. Dataset groups are collections of datasets that contain complimentary information. Forecast algorithms use your dataset groups to train custom forecasting models, called predictors.
+- **Training Predictors** – _Predictors_ are custom models trained on your data. You can train a predictor by choosing a prebuilt algorithm,or by choosing the AutoML option to have Amazon Forecast pick the best algorithm for you.
+- **Generating Forecasts** – You can generate forecasts for your time-series data, query them using the QueryForecast API, or visualize them in the console.
 
-Predefined Model:
-- Online Fraud Detection
-- Transactional Fraud Detection 
-- Account Takeover insight
-You can also **create you custom model detection**
-
-- Components:
-	![[Pasted image 20241002172935.png]]
-- In order to create your model you need to define event, we need defines **Lables, Entities and Variables**
-## Kendra:
+## Kendra
 Fully managed **document search** service powered by Machine Learning. Use keyword based search with semantic contextual understanding capabilites.
 
-Components:
-![[Pasted image 20241002173433.png]]
-Two version: Developer and Enterprise
-![[Pasted image 20241002173605.png]]
-You need to create Index
+#### Components
+- An **index** that holds your documents and makes them searchable.
+- A **data source** that stores your documents and Amazon Kendra connects to. You can automatically synchronize a data source with an Amazon Kendra index so that your index stays updated with your source repository.
+- A **document addition API** that adds documents directly to an index.
 
+**Two version:**
+
+| Edition            | Developer Edition                            | Enterprise Edition                          |
+| ------------------ | -------------------------------------------- | ------------------------------------------- |
+| Indexes            | 5 indexes with up to 5 data sources each     | 5 indexes with up to 50 data sources each   |
+| Documents          | 10,000 documents or 3 GB of extracted text   | 10,000 documents or 3 GB of extracted text  |
+| Queries            | 4,000 queries per day or 0.05 queries/second | 8,000 queries per day or 0.1 queries/second |
+| Availability Zones | Runs in 1 AZ                                 | Runs in 3 AZs                               |
+
+> [!NOTE]
+> Developer Edition has a free tier with 750 hours for the first 30 days.
 ## Lex
-is a conversion interface service. With Lex you can build conversational **voice and text chatbots**. 
-
-Components:
-![[Pasted image 20241002174306.png]]
+Is a conversion interface service. With Lex you can build conversational **voice and text chatbots**. 
+- Same conversational engine that powers Amazon Alexa
 ## Personalize:
-Fully managed ML-service to build apps with real-time personalized recommendations 
+Amazon Personalize is a fully managed machine learning service that uses your data to generate item recommendations for your users. It can also generate user segments based on the users' affinity for certain items or item metadata.
 
-![[Pasted image 20241002174520.png]]
+**Use cases:** 
+- Personalizing a video streaming app
+- Adding product recommendations to an ecommerce app
+- Personalizing search results
 
-Data:
-	![[Pasted image 20241002174606.png]]
-
-
+**Workflow:** 
+- Match your use case to Amazon Personalize resources
+- Prepare your training data
+- Create schema JSON files for your data
+- Create a dataset group
+- Create schemas and datasets
+- Import training data into datasets
+- Train and deploy a model
+- Get recommendations
+- Record real-time events
 ## Textract:
-Automatically extracts text, handwriting, and data from any scanned documents using AI and ML.
+Amazon Textract helps you add document text detection and analysis to your applications using ML.
+Some action that Textract can perform:
+- Detect typed and handwritten text
+- Extract text, forms, and tables from documents with structured data
+- Process invoices and receipts with the AnalyzeExpense API.
 
-![[Pasted image 20241002175758.png]]
 
-## AI Dev Tools
-#### Amazon Q
-Is an AI chatboat using multiple LLm models via Bedrock Ask Amazon Q a question similar to chatGPT or other generative AI. 
-#### Amazon Q Business
-connect it to company data, information, and systems, made simple with more than 40 built-in connectors.
-#### Amazon Q Developer
- coding, testing and upgrading to troubleshooting and optimizing your AWS resources.
- Integrated into the AWS Managed Console, VSCode via the AWS Toolkit, Cloud9, AWS Lambda Code Editor, Slack and other places
-#### Amazon Q for Amazon QuickSight
+## Amazon Q
+Amazon Q Business is a generative artificial intelligence (generative AI)-powered assistant that you can tailor to your business needs. Amazon Q Developer is an AWS generative AI assistant that helps you understand, build, extend, and operate applications and workloads on AWS.
+### Amazon Q Business
+Amazon Q Business is a fully managed, **generative-AI powered assistant** that you can configure to answer questions, provide summaries, generate content, and complete tasks based on your enterprise data
+### Amazon Q Developer
+Amazon Q Developer is a generative artificial intelligence (AI) powered conversational assistant that can help you understand, build, extend, and operate AWS applications
+### Amazon Q for Amazon QuickSight
 Ask questions about your BI data within QuickSight
 Generative BI capabilities to quickly build compelling visuals, summarize insights,
 answer data questions, and build data stories using natural language.
@@ -2263,13 +2291,8 @@ answer data questions, and build data stories using natural language.
 real-time conversation with the customer along with relevant company content 
 #### Amazon Q for AWS Supply Chain
 get intelligent answers about what is happening in their supply chain
-#### Amazon CodeWhisper
-Is a realt-time AI coding companion. Genaretes suggested code while you're writing code.
-![[Pasted image 20241003174535.png]]
-
-## Connect:
+## Amazon Connect:
 Amazon Connect is an AI-powered application that provides one seamless experience for your contact center customers and users. It's comprised of a full suite of features across communication channels.
 
-
-
-
+# Concept
+- **Throughput**: is a measure of how many units of information a system can process in a given amount of time.
