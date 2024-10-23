@@ -77,7 +77,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 287.5
+    "width": 287.5,
+    "collapsed": true
   },
   "right": {
     "id": "d0535d271d38e0c2",
@@ -164,6 +165,13 @@
   },
   "active": "0a13faf052e20576",
   "lastOpenFiles": [
+    "Pasted image 20241019174040.png",
+    "Pasted image 20241019161910.png",
+    "Pasted image 20241019161838.png",
+    "Pasted image 20241019161810.png",
+    "Pasted image 20241019161726.png",
+    "Pasted image 20241019155345.png",
+    "Pasted image 20241019155301.png",
     "Pasted image 20241015165154.png",
     "AWS Cloud Solution Architect Associate.md",
     "images/Pasted image 20241002173605.png",
@@ -171,12 +179,6 @@
     "Appunti_aws.md",
     "Pasted image 20241017110927.png",
     "Pasted image 20241016175823.png",
-    "Pasted image 20241016101616.png",
-    "Pasted image 20241016101547.png",
-    "Pasted image 20241016095521.png",
-    "Pasted image 20241016095358.png",
-    "Pasted image 20241015171619.png",
-    "Pasted image 20241015164459.png",
     "Untitled.md",
     "images",
     "Nuova cartella",

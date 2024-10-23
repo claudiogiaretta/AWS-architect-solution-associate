@@ -310,6 +310,7 @@ Same as general purpose SSD volume but:
     - For critical applications
 ## EFS
 Managed NFS (network file system) that can be mounted on 100s of EC2.
+- **Serverless**
 - EFS works with **Linux** EC2 instances in multi-AZ 
 - **Highly available, scalable, expensive** (3x gp2)
 - AWS managed Network File System (NFS)
@@ -320,6 +321,10 @@ Managed NFS (network file system) that can be mounted on 100s of EC2.
 - Uses **security group** to control access to EFS
 - Lifecycle management feature to move files to **EFS-IA** after N days
 - Creates multiple **mount targets**
+
+#### Mount target
+  is essentially a network endpoint in your **VPC** that provides access to your **EFS file system**. EC2 instances in the same VPC (or in a peered VPC) can use this mount target to connect to the file system via the **NFS (Network File System)** protocol.
+  - **One per Availability Zone**
 
 #### EFS Client
 - Is an open-source collection of Amazon EFS tools.
@@ -333,7 +338,7 @@ Allows you to deploy scale feature-rich, high performance file systems in the cl
 	- **Amazon FSX for NetApp ONTAP**: Property enterprise storage platform known for **handling petabytes** of data
 	- **Amazon Fsx for OpenZFS**: Open-source storage platform originally developer by Sun Microsystem
 	- **Amazon FSX for Windows File Server (WFS)**: File storage on a Windows server supporting native window features for Windows developer
-	- **Amazon FSX for Lustre**: Open-source file system for parallel computing (several processors work simultaneously)
+	- **Amazon FSX for Lustre**: Open-source file system for parallel computing (several processors work simultaneously). Used for High-performance computing (HPC), machine learning, big data analytics.
 
 - File Cache: high speed cache for datasets stored anywhere, accelerate bursting workloads
 ### FSx for Windows
@@ -436,7 +441,7 @@ It can manage and make reccomandations for the following scaling resources: **AS
 ### Types of Storage
 
 #### S3 File Gateway
- Amazon S3 File Gateway supports a file interface into s3 and combines a service and a virtual software appliance. By using this combination, you can store and retrieve objects in Amazon S3 using industry-standard file protocols such as **Network File System (NFS)** and **Server Message Block (SMB)**.
+ Amazon S3 File Gateway supports a file interface into s3 and combines a service and a virtual software appliance. you can store and retrieve objects in Amazon S3 using file protocols such as **Network File System (NFS)** and **Server Message Block (SMB)**.
 - **Data is cached at the file gateway** for low latency access
 - Integrated with **Active Directory (AD)** for user authentication
 ![[Pasted image 20241007125534.png]]
@@ -760,7 +765,7 @@ Used to **connect public resources to the internet** (use NAT gateway for priv
 Specifically for IPV6 when you want to allow outbound traffic to the internet but prevent inbound from the internet:
 ### Elastic IP
 Addresses in AWS that always stay the same **(different from that of the EC2 instances)**
-	- IPV6 are already unique so they don't need it
+	- **IPV6 are already unique so they don't need it**
 	- **are charge 1$ for each allocated**
 	- You can associate, allocate, disassociate, deallocate, reassociate, recover, customize (with your IPV6 ip)
 - **AWS ipv6 support**: provide a solution for the eventual exhaustion of all IPV4 address
@@ -781,6 +786,8 @@ Endpoints is the URL that allow you to connect to AWS Services **using a private
 - **Bound to a region**
 ![[Pasted image 20241007170821.png]]
 #### Type of VPC Endpoint
+- **Route table is updated automatically**
+- **Bound to a region** (do not support inter-region communication)
 ##### Interface Endpoint
  It is a Elastic Network Interfaces (ENI) with a private IP addess. They serve as an entry point for traffic going to a supported service. It is used by **AWS PrivateLink** **(Does not include S3 and DynamoDB)**
 - **Use Case**: Private connection to AWS services, partner services, and other VPCs without public IPs.
@@ -789,7 +796,6 @@ Endpoints is the URL that allow you to connect to AWS Services **using a private
 - **Pricing**: 
   - Per hour when provisioned
   - Data processed
-- **Routing Mechanism**: DNS interception and routing
 - **Traffic Direction**: Bidirectional
 
 ##### Gateway Endpoint
@@ -801,7 +807,7 @@ Like interface endpoint used by S3 and DynamoDB
 - **Traffic Direction**: Unidirectional
 
 ##### GWLB Endpoint
-Elastic Load Balancing automatically distributes your incoming traffic across multiple targets, in one or more Availability Zones.
+The **Gateway Load Balancer Endpoint** in AWS is a type of **VPC endpoint** that enables you to privately and securely route traffic to and from a **Gateway Load Balancer** (GWLB) without traversing the public internet.
 - **Use Case**: Route traffic to third-party virtual appliances like firewalls in another VPC.
 - **Supported Services**: Third-party virtual applications
 - **Pricing**: 
@@ -831,7 +837,7 @@ Elastic Load Balancing automatically distributes your incoming traffic across mu
 #### Pricing
 - **Capacity**
 - **Port hours:**
-	- Dedicated: Billed per hour
+	Z- Dedicated: Billed per hour
 	- Hosted Billed subject to the AWS direct connect Delivery partner
 - **DTO (Data Transfer Out)**
 	- Charged based on outbound traffic sent through Direct Connect to destinations outside of AWS
@@ -1180,7 +1186,7 @@ You can setup automatic rotation, is not enabled by default.
 ***Serverless*** machine learning-powered business intelligence service to create interactive dashboards
 ## Elastic Map Reduce (EMR)
 
-Amazon EMR is the industry-leading cloud big data solution for petabyte-scale data processing, interactive analytics, and machine learning using open-source frameworks such as Apache Spark, Apache Hive, and Presto
+Amazon EMR is the industry-leading cloud big data solution for Big Data (petabyte-scale) processing , interactive analytics, and machine learning using open-source frameworks such as Apache Spark, Apache Hive, and Presto
 
 - Uses **Hadoop**, an open-source framework, to distribute your data and processing across a **cluster of 100s of EC2 instances**.
 - Supports open-source tools such as **Apache Spark**, **HBase**, **Presto**, **Flink**, etc.
@@ -1313,7 +1319,6 @@ Allows you to group multiple subscriptions together.
 - **Filter policy:** allows you to filter a subset a messages only to be delivery. JSON policy used to filter messages
 - **Message Data Protection**: Message data protection safeguards the data that's published to your Amazon SNS Topic. 
 - **Delivery Policy**: defined how SNS **retries** the delivery of messages when **server-side errors** occur. Each delivery protocol has its own delivery policy.
-- **SNS Dead Letter Queue (DLQ)** will send fail message attempts to an SQS queue. Topic and Queue type need to match.
 ## SQS
 ![[Pasted image 20241014155049.png]]
 **Messaging System**: Used to provide asynchronous communication and decouple processes via messages/events from a sender and receiver (producer and consumer)
@@ -1321,23 +1326,22 @@ Allows you to group multiple subscriptions together.
 ### SQS
 **Simple Queueing Service (SQS)**: Fully managed queuing service that enables you to decouple and scale microservices, distributed systems, and serverless applications
 
+**Use Case**: You need to queue up transaction emails to be sent e.g. Signup, Reset Password.
+SQS Queue.
+
 - The consumer polls the queue for messages. Once a consumer processes a message, it deletes it from the queue using **DeleteMessage** API.
 -  **Max message size: 256KB**. Bigger message needs Amazon SQS Extended Client library (Max: 2GB).
 - **Default message retention: 4 days (max: 14 days)**
 - **Consumers could be EC2 instances or Lambda functions**
 - Message are grouped by ID
 - Is possible to attach an ASG to the consumer instances
-
-**Use Case**: You need to queue up transaction emails to be sent e.g. Signup, Reset Password.
-SQS Queue types:
-
-- 2 types of queue: 
-	- **Standard:** allows you to send nearly unlimited number of transactions per second, but message are out of order. It has low latency
-	- **FIFO:** guarantees the order of messages when being consumed. 
-		- 300 transaction
-		- no duplicates
-		- order by id
-		- 10 message read a time. doesn't accept duplicates.
+#### Types of Queue
+- **Standard:** allows you to send nearly unlimited number of transactions per second, but message are out of order. It has low latency
+- **FIFO:** guarantees the order of messages when being consumed. 
+	- 300 transaction
+	- no duplicates
+	- order by id
+	- 10 message read a time. doesn't accept duplicates.
 #### Encryption
 - In-flight encryption using HTTPS API
 - At-rest server-side encryption:
@@ -1345,6 +1349,9 @@ SQS Queue types:
     - **SSE-KMS**: keys managed by KMS
 - Client-side encryption
 
+#### SQS Dead letter Queue
+A **Dead Letter Queue (DLQ)** in Amazon **SQS (Simple Queue Service)** is a specialized type of queue used to store messages that have failed to be processed successfully after a certain number of attempts. It is essentially a mechanism for handling and isolating problematic messages that cannot be processed by the consumer for some reason.
+![[Pasted image 20241019174040.png]]
 #### Configurations
 
 
@@ -1410,21 +1417,31 @@ Amazon Kinesis Data Streams is a serverless streaming data service that makes it
 - **Cannot ingest data directly from source** (ingests data from KDS or KDF)
 - **Auto-scaling**
 - **Serverless**
-#### Amazon Data FireHose
-Amazon Data Firehose is a fully managed service for delivering real-time streaming data to various destination **(see below).**
-- **Serverless**
-- **Auto-scaling**
-- Pay for data going through Firehose (no provisioning)
-- **Sources (Producers)**: In firehose allows easily to configure a source
+#### Kinesis Data FireHose
+Amazon Kinesis Data Firehose is an _extract, transform, and load (ETL) service_ that reliably captures, transforms, and **_delivers streaming data to data lakes, data stores, and analytics services._**
 - **Destination (Consumer)**: Data Firehose can send to:
 	- (**S3, Redshift**, OpenSearch)
 	- Splunk, MongoDB, DataDog, NewRelic, etc.
 	- HTTP endpoint.
+- **Serverless**
+- **Auto-scaling**
+- Pay for data going through Firehose (no provisioning)
 - **Data Transformation:** before data is sent to a destination it can be tranformed with AWS Lambda
 - **Convert record format**: Data firehose can convert **JSON** data into different file formats before being delivered to S3
 #### Kinesis video streams
-allows you to run queries agains that is flowing through your real time stream so you can create and analysis on emerging data.
+Allows you to run queries against that is flowing through your real time stream so you can create and analysis on emerging data.
 
+- **Use Case**: Used in applications such as video surveillance, live video streaming, video analytics, and IoT devices.
+![[Pasted image 20241019155345.png]]
+
+#### Comparison
+- **Kinesis Data Streams (KDS)**: Provides maximum flexibility and control for handling large volumes of real-time streaming data. However, it requires custom applications for data processing. Ideal for scenarios where you need to develop your own real-time analytics or data processing applications.
+    
+- **Kinesis Data Firehose**: Fully managed and simplifies delivering streaming data to predefined destinations (like S3, Redshift, Elasticsearch). It is great for backup and storage integration without the need to manage scaling or custom processing.
+    
+- **Kinesis Data Analytics (KDA)**: Designed for analyzing streaming data in real-time using SQL or Apache Flink. It extracts real-time insights from the data stream without building complex custom applications, ideal for live dashboards, anomaly detection, and streaming ETL.
+    
+- **Kinesis Video Streams**: Specializes in handling real-time video data (such as security feeds or IoT video streams). It is used mainly for video surveillance, smart home applications, and machine learning on video (e.g., object detection, facial recognition).
 ## AWS Data Exchange
 AWS Data Exchange is a service that makes it easy for AWS customers to securely exchange file-based **datasets** in the AWS Cloud.
 
@@ -1442,6 +1459,9 @@ AWS Glue is serverless data integration that makes it easy for **analytics** use
 The Instance Scheduler on AWS solution automates the starting and stopping of various AWS services including **Amazon EC2** and **Amazon RDS** instances.
 
 You are responsible for the cost of the AWS services used while running Instance Scheduler on AWS. As of the latest revision, the cost for running this solution a small deployment in two accounts and two Regions is approximately **$13.15 per month.**
+
+## AWS App Mesh
+is a service mesh that helps manage and monitor the communication between microservices in an application. It provides a way to control how different parts of your microservices architecture communicate with each other
 # Develop
 ## ElasticBeanStalk 
 With Elastic Beanstalk you can quickly deploy and manage applications in the AWS Cloud without having to learn about the infrastructure that runs those applications. It provides CloudFormation templates for you.
@@ -1748,7 +1768,9 @@ Fully manages the autoscaling configuration for Amazon Aurora
 | **Billing**            | ACUs per second, more granular, + storage.                 | Instance hours + storage.                                                   |
 | **Start/Stop**         | Responsive start/stop, cost-saving for intermittent loads. | Manual start/stop.                                                          |
 | **Maintenance**        | Minimal downtime, more seamless.                           | Scheduled maintenance windows.                                              |
-
+### Endpoint
+- **Reader**: It provides a single endpoint (DNS address) through which applications can access the read replicas, which are optimized for handling read operations
+- **Writer**: is used for handling both read and write operations and points to the primary instance responsible for managing data writes.
 ## DynamoDB
 Amazon DynamoDB is a ***serverless***, NoSQL (key/value), fully managed database with single-digit millisecond performance at any scale.  
 - **Highly available** with replication **across 3 AZ**.
@@ -1851,7 +1873,10 @@ Is an open-source distributed memory object caching system. It's a caching layer
 | **Redis Sorted Sets** are used in realtime Gaming Leaderboards |                                                      |
 | Good for auto-completion                                       |                                                      |
 | Multi-AZ support with automatic failover (disaster recovery)   |                                                      |
-
+##### Memcache caching strategies
+- **Lazy Loading**: The application checks the cache for data first; if a cache miss occurs, it retrieves the data from the database, stores it in the cache, and returns it, populating the cache on demand.
+- **Write-Through Caching**: Data is written to the cache and the database simultaneously. This ensures that the cache always contains the latest version of the data, reducing the risk of stale data.
+- **Adding TTL (Time-to-Live)**: Each cached item is assigned a TTL value, which determines how long it remains in the cache before being automatically invalidated. This **helps prevent stale data and ensures that fresh data is fetched from the database regularly**.
 ## MemoryDB
 Amazon MemoryDB is a durable, in-memory database service that delivers ultra-fast performance. It is purpose-built for modern applications with microservices architectures.
 
@@ -2038,11 +2063,28 @@ AWS Identity and Access Management (IAM) is a web service that helps you securel
 	- Just In Time: Permitting the smallest length of duration a identity can use permissions
 - **Password policy**: you can set expires date for user password in rder to rotate them
 - **Access Key**: you can have a maximum of 2 access key per account
-- **Multi-factor-autentichation**: Virtual MFA device, Universal 2nd Factor (U2F) Security Key, Hardware MFA devices (MFA devices options in AWS, Hardware Key Fob MFA Device for AWS GovCloud (US)).
+
+#### Groups
+- **Groups**:collections of users and have policies attached to them
+- Only IAM Policy can be assigned to group (no-role)
+- Groups cannot be nested
+- User can belong to multiple groups
+
+- User doesn't have to belong to a group
+
+#### MFA
+AWS Multi-Factor Authentication (MFA) enhances account security by requiring users to provide an additional verification factor beyond just their username and password.
+
+- Different types:
+	- Virtual MFA device
+	- Universal 2nd Factor (U2F) Security Key
+	- Hardware MFA devices (MFA devices options in AWS, Hardware Key Fob MFA Device for AWS GovCloud (US)).
+
+### Feature
 - **Temporary Security Credentials**: Generated dynamically, every time you use a roles a you a temporary security cred are created automatically
 - **IAM Identity federetion**: the means of linking a person to eletronic identity and attribute. When you connect using facebook or google you're using identity fed
-- **IAM AssumeRoleWithWebIdentity**: Returns a set of temporary security credentials for users who have been authenticated in a mobile or web application with web identity provider
 - **Cross Account Role:** You can grant users from different AWS account access to resources in your account through a Cross-Account Role. This allows you to not to have to create them a user account within your systems
+
 ### Policies
 - Policies are JSON documents that outline permissions for users, groups or roles
 - Two types
@@ -2051,7 +2093,21 @@ AWS Identity and Access Management (IAM) is a web service that helps you securel
     - **Resource based policies**
         - Control access to an AWS resource
         - Grant the specified principal permission to perform actions on the resource and define under what conditions this applies
+
+There are more policies descripted here below (not all are related to IAM):
+
+| Policy Type                         | Description                                                                                   | Example Use Case                                                     |
+| ----------------------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| **Identity-based Policies**         | Policies attached to IAM users, groups, or roles, either as managed or inline policies.       | Grant full S3 access to a group of developers.                       |
+| **Resource-based Policies**         | Policies attached to AWS resources that define who can access that resource and what actions. | Grant cross-account access to an S3 bucket.                          |
+| **Permissions Boundaries**          | Limit the maximum permissions a user or role can have.                                        | Limit the privileges of IAM roles created by administrators.         |
+| **Service Control Policies (SCPs)** | Manage permissions across AWS accounts in AWS Organizations.                                  | Restrict access to specific services across accounts in an org.      |
+| **Access Control Lists (ACLs)**     | Control access to specific resources at a lower level of granularity (e.g., object-level).    | Control access to individual S3 objects or VPC traffic.              |
+| **Session Policies**                | Temporary policies applied during an AWS STS session.                                         | Grant temporary access to perform a specific action in a session.    |
+| **ABAC Policies**                   | Access control based on attributes (tags) of users and resources.                             | Allow access to resources with specific tags like `project:alpha`.   |
+| **Backup Policies**                 | Manage backup configurations across AWS accounts in AWS Organizations.                        | Enforce backup schedules for critical data across multiple accounts. |
 #### Anatomy of Policy
+![[Pasted image 20241019161910.png]]
 - **Version policy language** version. 2012-10-17 is the latest version.
 - **Statement container** for the policy element you are allowed to have multiples
 - **Sid (optional)** a way of labeling your statements.
@@ -2077,13 +2133,22 @@ AWS Identity and Access Management (IAM) is a web service that helps you securel
 - Set the maximum permissions an IAM entity can get
 - **Can be applied to users and roles (not groups)**
 - Used to ensure some users can’t escalate their privileges (make themselves admin)
+#### Trust Policies
+- Defines which principal entities (accounts, users, roles, federated users) can assume the role
+- An IAM role is both an identity and a resource that supports resource-based policies.
+- You must attach both a trust policy and an identity-based policy to an IAM role.
+- The **IAM service supports only one type of resource-based policy** called a **role trust policy**, which is **attached to an IAM role**.
+#### Assume Role vs Resource-based Policy
+- When you assume an IAM Role, you give up your original permissions and take the permissions assigned to the role
+- When using a resource based policy, the principal doesn’t have to give up their permissions
 ## Amazon Service Catalog
 
 AWS Service Catalog enables organizations to create and manage catalogs of products that are approved for use on AWS to achive consistent governance and meet compliance requirements.
-Alternative to granting direct access to AWS resources via the AWS console
+Alternative to granting direct access to AWS resources via the AWS console.
 ## AWS Resource Access Manager (AWS RAM)
 AWS Resource Access Manager (AWS RAM) helps you securely share your resources across AWS accounts, within your organization or organizational units (OUs), and with AWS Identity and Access Management (IAM) roles and users for supported resource types.
 
+**Use cases:** A company has multiple AWS accounts for different departments, such as Development, QA, and Production. Each department runs its workloads in separate accounts but needs access to shared network resources.
 ## AWS IAM Identity Center 
 **AWS Identity Center (formerly AWS Single Sign-On)** is a service that provides centralized management of user and group access to AWS resources. 
 
@@ -2112,17 +2177,16 @@ AWS OpsWorks is a configuration management service that helps you configure and 
 > [!NOTE]
 >  Organization API can only create member accounts. They cannot configure anything within those accounts (use [CloudFormation](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudFormation) for that).
 
-### Organizational Units (OU)[¶](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/aws%20organizations/#organizational-units-ou "Permanent link")
-- Folders for grouping AWS accounts of an organization
-- Can be nested
+### Organizational Units (OU)
+- Folders for grouping AWS accounts of an **organization**
+- Can be **nested**
 ### Service Control Policies (SCP)
-
 - **Whitelist or blacklist IAM actions at the OU or Account level**
 - **Does not apply to the Master Account**
 - Applies to all the Users and Roles of the member accounts, including the root user. So, if something is restricted for that account, even the root user of that account won’t be able to do it.
 - Must have an explicit allow (**does not allow anything by default**)
-- **Does not apply to service-linked roles**
-- **Explicit Deny** has the highest precedence
+- **Does not apply to service-linked roles (roles that are automatically created and managed by AWS services)**
+- **Explicit Deny has the highest precedence**
 
 ### Migrating Accounts between Organizations
 
