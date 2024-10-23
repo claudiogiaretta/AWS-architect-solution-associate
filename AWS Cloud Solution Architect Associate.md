@@ -293,7 +293,13 @@ Same as general purpose SSD volume but:
 - **Max IOPS**: 40-200
 - **Max Throughput**: 40-90 MiB/s
 ---
-
+### Encryption
+- **Encryption is enabled by default, by the creation of encrypetd volume. It can be turn off.**
+- All snapshots are encrypted
+In order to encrypt an un-encrypted EBS volume
+- Create an EBS snapshot of the volume
+- Copy the EBS snapshot and encrypt the new copy
+- Create a new EBS volume from the encrypted snapshot (the volume will be automatically encrypted)
 ### Snapshots
 - It is a point-in-time copies of your EBS volume
 - **Data Lifecycle Manager (DLM)** can be used to automate the creation, retention, and deletion of snapshots of EBS volumes
@@ -505,31 +511,22 @@ Amazon Elastic Compute Cloud (Amazon EC2) provides on-demand, scalable computing
 	- Cluster
 	- Partition
 	- Availability Zone
-- **EC2 Meta Data**: You can access to Ec2 Metadata from **MDS(Meta data service)** a special endpoint. There are 2 versions of MDS v1 and v2. Should be used v2.
 - **EC2 Naming convention:**
 	![[Pasted image 20241001121648.png]]
 - **Instance Family:** Are different combination of CPU,Memory,Storage and Networking capacity
-- **EC2 Instance Profile**: is a reference to an IAM role that will be passed and assumed by the EC2 instance when it starts up. Allows you to avoid passing long live AWS credentials.
 - **EC2 Lifecycle:** 
 	![[Pasted image 20241009172903.png]]
-- **EC2 Instance Console Screenshot**: will take a screenshot of the current state of the instance
-- **Hostname**: unique name in your network to identify a machine via DNS.
-	- two types:
-		- IP Name: legacy name based on private access
-		- Resource Name: EC2 instance ID is included in the hostname
+- **Hostname**: Resource name to identify resources
 - **EC2 Default user name:** The default user name for an operating system managed by AWS will vary based on distribution:
-	- When using SSM you will need to change your user to default
-	- ```sudo su -ec2-user```
--  **EC2 Bustable Instances:** allow workloads to handle bursts of higher CPU utilization fro very short duration
-- **EC2 system log:** Accessed by the EC2 Management Console, allows you to observe the system log for the EC2 Instance. Troubleshoot on boot to see if anything is wrong
+	- When using SSM you will need to change your user to default: ```sudo su -ec2-user```
+
 - **EC2 Connect:**
 	- SSh Client
 	- EC2 instance connect: short lived ssh keys controlled by IAM policies
-	- Session Manager: Connect to linux windoes via reverse connection
+	- Session Manager: Connect to linux windows via reverse connection
 	- Fleet Manager Remote Desktop: Connect to a Windows Machine using RDP
 	- EC2 Serial console: establishes a serial connection giving you direc access
-- **EC2 Amazon Linux:** AWS's managed Linux distribution is based off CentOS and Fedora which in turn is based off Red Hat Linux. Reccomended to use Amazon Linux AL2023 e non AL2
-	- Amazon Linux extra: is a feature of AL2 that provides a way for users to install additional software packages.
+
 ### Type of instances
 
 ### General Purpose
@@ -559,15 +556,15 @@ High, sequential read and write access to very large data sets on local storage
 - **On-Demand Instances**: Has **high cost but no upfront payment** is a **pay-as-you-go** model. This is the default option when create EC2. Recommended for **short-term and un-interrupted** workloads commitment
 - **Reserved Instance(1 & 3 years)**: up to 72% save, long workloads/ long workloads with flexible instances. 
 	- Types:
-		- **Standard**: These provide the most significant discount, but can only be modified. Standard Reserved Instances can't be exchanged.
-		- **Convertible**: These provide a lower discount than Standard Reserved Instances, but can be exchanged for another Convertible Reserved Instance with different instance attributes. Convertible Reserved Instances can also be modified.
+		- **Standard**: These provide the most significant discount. Standard Reserved Instances can't be exchanged.
+		- **Convertible**: These provide a lower discount than Standard Reserved Instances, but can be exchanged for another Convertible Reserved Instance with different instance attributes.
 	- Type of payments: **All upfront, Partial upfront, No upfront**
 	- **RI Attributes**: can affect cost (Instance type, Region, Tenancy, Platform)
 	- **Limits**: Per month -> 20 Regional RI per region, 20, Zonal RI per zone
 	- **RI Marketplace**: allows you to sell your unused Standard RI to recup your RI spend for RI you do not intend or cannot use.
 - **Savings Plans (1 & 3 years)** :commitment to an amount of usage, long workload, up to 72%. For more information see [Saving Plan](#saving%20plan) section.
 - **Spot Instances** : short workloads, cheap, can lose instances (less reliable), up to 90%
-- **Dedicated Hosts** and Dedicated Instance:
+- **Dedicated Hosts** and **Dedicated Instance**:
 
 | **Dedicated Host**                                                                   | **Dedicated Instance**                                                            |
 | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
@@ -586,7 +583,9 @@ High, sequential read and write access to very large data sets on local storage
 - Good for static configurations
 - **Bound to a region** (can be copied across regions)
 
-> When the new AMI is copied from region A into region B, it automatically creates a snapshot in region B because AMIs are based on the underlying snapshots.
+> [!NOTE]
+>  When the new AMI is copied from region A into region B, it automatically creates a snapshot in region B because AMIs are based on the underlying snapshots.
+
 ## ASG(Auto Scaling Group)
 Creation of instances based on amount of workload. **High Availability
 ![[Pasted image 20241007144844.png]]
@@ -594,28 +593,28 @@ Creation of instances based on amount of workload. **High Availability
 - **Health Check Replacement:** ASG replaces an instances if is considered unhealty. Two types of health checks ASG can perform
 	- **EC2 Health Check**: If the EC2 instance fails either of its EC2 Status Check
 	- **ELB Health Check**: ASG will perform a health check based on the ELB health check. ELB pings an HTTP endpoint at a specific path, port and status code
-- **Dynamic Scaling Policies**: how much ASG should change capacity. Policies are triggered based on **Cloud Watch Alarms**:
-	- **Adjustment types**: how capacity should change
-		- ChangeInCapacity
-		- ExactCapacity
-		- PercentChangeInCapacity
 ### Lifecycle Hooks
 - Used to perform extra steps before creating or terminating an instance. **Example:**
     - Install some extra software or do some checks (during pending state) before declaring the instance as "in service"
     - Before the instance is terminated (terminating state), extract the log files
 - **Without lifecycle hooks, pending and terminating states are avoided**
 ### Scaling Policies
-- **Simple Scaling**
-	- Scale to certain size on a CloudWatch alarm
-	- **example:** **CloudWatch alarm** is triggered for CPU > 70%, then add 2 units or/and (example CPU < 30%), then remove 1
-- **Step Scaling**
-	- Also scale when CloudWatch alarm are trigger but more granular control over how the ASG. 
-	- You can define multiple **steps** in the scaling policy, where each step specifies different scaling actions based on specific ranges of the metric.
-- **Target Tracking Scaling** 
-	- ASG maintains a CloudWatch metric and scale accordingly (automatically creates CW alarms)
-	-  **Example:** I want the average ASG CPU to stay at around 40%
+
+- **Dynamic Scaling**
+	- **Simple Scaling**
+		- Scale to certain size on a CloudWatch alarm
+		- **example:** **CloudWatch alarm** is triggered for CPU > 70%, then add 2 units or/and (example CPU < 30%), then remove 1
+	- **Step Scaling**
+		- Also scale when CloudWatch alarm are trigger but more granular control over how the ASG. 
+		- You can define multiple **steps** in the scaling policy, where each step specifies different scaling actions based on specific ranges of the metric.
+	- **Target Tracking Scaling** 
+		- ASG maintains a CloudWatch metric and scale accordingly (automatically creates CW alarms)
+		-  **Example:** I want the average ASG CPU to stay at around 40%
 - **Predictive Scaling** 
 	- Triggers scaling by analyzing historical load data to detect daily or weekly patterns in traffic flows
+- **Scheduled Scaling** 
+	- Scaling actions are based on a predefined schedule, such as increasing capacity during specific times (e.g., peak hours).
+
 
 ***Extra:*** 
 ELB integration: An ELB can be attached to you Auto Scaling Group 
@@ -624,13 +623,11 @@ ELB integration: An ELB can be attached to you Auto Scaling Group
 	 **N.B attached = can use Load Balancer Health check**
 ## ELB
 It is a suite of Load balancer from AWS. A **Load balancer** is a tool to distribute traffic through different servers.
-
 - Rules of traffic
 	- Structure:
-		- **Listeners**: incoming traffic is evaluetad against listeners. Check matches with the Port (ex port 443 or port 80)
-		- **Rules (only ALB):** Listeners will then invoke rules to decide what to do with the traffic. Generally, the next step is to forward traffic to a Target Group
-		- **Target Groups(not CLB):** Are logical grouping of possible targets such as specific EC2 instances, IP addresses
-		- **For Classic Load Balancer** traffic is sent to the Listeners. When the port matches, it forwards the traffic to any EC2 instances that are registered to che Classic Load Balancer. CLB does not allow you to apply rules to listeners.
+		- **Listeners**: incoming traffic is evaluated against listeners. Check matches with the Port (ex port 443 or port 80)
+	
+		- **Target Groups:** Are logical grouping of possible targets such as specific EC2 instances, IP addresses
 ### Application Load Balancer
 - ALB is designed to balance HTTP and HTTPS traffic.
 - It operate at **Layer 7 (OSI Model)**
@@ -638,6 +635,7 @@ It is a suite of Load balancer from AWS. A **Load balancer** is a tool to distri
 - Supports **WebSockets and HTTP request** for real time, bi-directional communications
 - **Security Groups can be attached to ALBs** to filters requests
 - **ACM** can be attached to listeners to server custom domains over **SSL/TLS** for HTTPS
+- **Listeners Rules:** rules to decide what to do with the traffic. Generally, the next step is to forward traffic to a Target Group
 - **Use Cases:**
 	- Microservices and Containerized Applications
 	- E-commerce and Retail Websites
@@ -647,18 +645,28 @@ It is a suite of Load balancer from AWS. A **Load balancer** is a tool to distri
 - NLB is designed to balance TCP/UDP.
 - It operate at **Layer 4** (OSI Model)
 - It can handle millions of requests per second while still maintaining extremely low latency.
+- **Lower latency** ~ 100 ms (vs 400 ms for ALB)
 - **Global Accelerator** can be placed in front of ALB to improve **global** availability
 - Preserves the client source IP
-- When a static IP address is needed for a load balancer
+- **1 static public IP per AZ** (vs a static hostname for CLB & ALB)
 - **Use cases:**
 	- High-Performance Computing and Big Data Applications
 	- Real-Time and Multiplayer Gaming Platforms
 	- Financial Trading Platforms
 	- IoT and Smart Device Ecosystems
 	- Telecommunications Networks
-
-### Classic Load Balancer
-- CLB is AWS's first load balancer (legacy)
+#### Gateway Load Balancer (GWLB)
+- Operates at **layer 3** (Network layer) - IP Protocol
+- Used to route requests to a fleet of 3rd party virtual appliances like Firewalls, Intrusion Detection and Prevention Systems (IDPS), etc.
+- Performs two functions:
+    - **Transparent Network Gateway** (single entry/exit for all traffic)
+    - Load Balancer (distributes traffic to virtual appliances)
+- Uses GENEVE protocol
+- Target groups for GWLB could be
+    - EC2 instances
+    - IP addresses
+### Classic Load Balancer (legacy)
+- CLB is AWS's first load balancer 
 - Can balance HTTP, HTTPS or TCP traffic (not at the same time)
 
 **Note**: Is not reccomended anymore
@@ -689,14 +697,24 @@ Usage example:
 Tool for Java that can improve startup performance for latency-sensitive applications by up to 10x at no extra cost, typically with no changes to your function code.
 
 ### Lambda function URL 
-Your Amazon EventBridge **event bus** created by an AWS CloudFormation template to receive **events** from supported SaaS providers.
+A function URL is a dedicated HTTP(S) endpoint for your Lambda function. You can create and configure a function URL through the Lambda console or the Lambda API
 ## Step functions
 With AWS Step Functions, you can create workflows, also called [State machines](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-statemachines.html), to build distributed applications, automate processes, orchestrate microservices, and create data and machine learning pipelines.
-![[Pasted image 20241015165154.png]]
+![[Pasted image 20241021151645.png]]
 
 - 2 types State Machines:
 	- **Standard**: general purpose -> reccomended for Long Workload
-	- **Express**: for sreaming data -> reccomended Short Workload, (streaming, data ingection, even driven ecc...)
+	- **Express**: for streaming data -> reccomended Short Workload, (streaming, data injection, even driven ecc...)
+
+| Standard workflows                                                                                                                                                          | Express workflows                                                          |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| 2,000 per second execution rate                                                                                                                                             | 100,000 per second execution rate                                          |
+| 4,000 per second state transition rate                                                                                                                                      | Nearly unlimited state transition rate                                     |
+| Priced by state transition                                                                                                                                                  | Priced by number and duration of executions                                |
+| Show execution history and visual debugging                                                                                                                                 | Show execution history and visual debugging based on **log level**         |
+| See execution history in Step Functions                                                                                                                                     | Send execution history to [CloudWatch](https://aws.amazon.com/cloudwatch/) |
+| Support integrations with all services.<br><br>Support optimized integrations with some services.                                                                           | Support integrations with all services.                                    |
+| Support _Request Response_ pattern for all services<br><br>Support _Run a Job_ and/or _Wait for Callback_ patterns in specific services (see following section for details) | Support _Request Response_ pattern for all services                        |
 - Some use cases:
 	- Manage a Batch job , if job fails send message with SNS
 	- Manage a Fargate Container
@@ -1221,7 +1239,7 @@ Amazon EMR is the industry-leading cloud big data solution for Big Data (petabyt
 - Very low RPO & RTO (minutes)
 - Expensive
 
-#### Multi-Site or Hot Site Approach
+#### Multi-site active/active
 
 - A backup system is running at full production capacity and the request can be routed to either the main or the backup system.
 - Multi-data center approach
@@ -2116,7 +2134,7 @@ There are more policies descripted here below (not all are related to IAM):
 - **Principal** account, user, role, or federated user to which you would like to allow or deny access
 - **Resource** the resource to which the action(s) applies
 - **Condition (optional)** circumstances under which the policy grants permission
-## Guidelines
+### Guidelines
 - Use root account only for account setup
 - 1 physical user = 1 IAM user
 - Enforce MFA for both root and IAM users
@@ -2189,7 +2207,6 @@ AWS OpsWorks is a configuration management service that helps you configure and 
 - **Explicit Deny has the highest precedence**
 
 ### Migrating Accounts between Organizations
-
 - To migrate member accounts from one organization to another
     1. Remove the member account from the old organization
     2. Send an invite to the member account from the new organization

@@ -147,6 +147,13 @@ You can create assesments to review the evidence collected and generate an asses
 	- EFS volumes aren't supported
 
 ## EC2
+### Component of EC2:
+- **EC2 Instance Profile**: is a reference to an IAM role that will be passed and assumed by the EC2 instance when it starts up. Allows you to avoid passing long live AWS credentials.
+- **EC2 Bustable Instances:** allow workloads to handle bursts of higher CPU utilization fro very short duration
+- **EC2 system log:** Accessed by the EC2 Management Console, allows you to observe the system log for the EC2 Instance. Troubleshoot on boot to see if anything is wrong
+- **EC2 Amazon Linux:** AWS's managed Linux distribution is based off CentOS and Fedora which in turn is based off Red Hat Linux. Reccomended to use Amazon Linux AL2023 e non AL2
+	- Amazon Linux extra: is a feature of AL2 that provides a way for users to install additional software packages.
+- **EC2 Meta Data**: You can access to Ec2 Metadata from **MDS(Meta data service)** a special endpoint. There are 2 versions of MDS v1 and v2. Should be used v2.
 ### AMI
 - Provides the information required to launch an instance. You can turn your EC2 instances into AMI's so **you can create copies of your servers**.
 	- Help you keep incremental changes to your OS, application code, and system packages.
