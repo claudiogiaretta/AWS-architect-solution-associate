@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "e6ff9552c729f795",
+        "id": "6d64181a6a601dc5",
         "type": "tabs",
         "children": [
           {
-            "id": "0a13faf052e20576",
+            "id": "1db8685678206553",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -163,8 +163,12 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "0a13faf052e20576",
+  "active": "1db8685678206553",
   "lastOpenFiles": [
+    "Extra.md",
+    "AWS Cloud Solution Architect Associate.md",
+    "Appunti_aws.md",
+    "Pasted image 20241014153547.png",
     "Pasted image 20241021153930.png",
     "Pasted image 20241021153652.png",
     "Pasted image 20241021151645.png",
@@ -174,11 +178,6 @@
     "Pasted image 20241019161810.png",
     "Pasted image 20241019161726.png",
     "Pasted image 20241019155345.png",
-    "Pasted image 20241019155301.png",
-    "Pasted image 20241015165154.png",
-    "AWS Cloud Solution Architect Associate.md",
-    "Extra.md",
-    "Appunti_aws.md",
     "Untitled.md",
     "images",
     "Nuova cartella",

@@ -50,6 +50,11 @@ Note:CloudFront uses **Edge Locations**. Lambda edge uses **Edge Locations** and
 ## EBS
 ![[Pasted image 20241001174016.png]]
 
+## EFS
+#### EFS Client
+- Is an open-source collection of Amazon EFS tools.
+	- enables the ability to use Amazon CloudWatch to monitor an EFS file system's mount status
+	- You need to install the **Amazon EFS client** on an Amazon EC2 instance prior to mounting an EFS file system
 ## Amazon MSK (low priority)
 Amazon Managed Streaming for Apache Kafka is a fully managed service that enables you to build and run application that use Apache Kafka to process streaming data. 
 Amzon utilizes Zookeper servers.
@@ -210,3 +215,12 @@ You can create assesments to review the evidence collected and generate an asses
 - **RDS Performance Insights:** helps you easily identify bottlenecks and performance issues. Is default by default and provides 1 week of performing data. For additional cost you can change the retention period to 2 years.
 - **Master User Account:** is the initial databse account that's created when you provision a new Db instance. Has full privileges. Pass and username set at creation time.
 - **Public Accessibility:** is an option that changes if the DNS Endpoint resolve to the private IP address from traffic from outside the VPC
+## AWS Data Exchange
+AWS Data Exchange is a service that makes it easy for AWS customers to securely exchange file-based **datasets** in the AWS Cloud.
+
+You can download dataset and upload your own dataset. Data grants is the tool that allow you to control access to your datasets.
+
+## AWS Instance Scheduler
+The Instance Scheduler on AWS solution automates the starting and stopping of various AWS services including **Amazon EC2** and **Amazon RDS** instances.
+
+You are responsible for the cost of the AWS services used while running Instance Scheduler on AWS. As of the latest revision, the cost for running this solution a small deployment in two accounts and two Regions is approximately **$13.15 per month.**

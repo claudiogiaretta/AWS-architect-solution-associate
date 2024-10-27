@@ -69,10 +69,19 @@ Informazioni utili:
     - Cross-account access
     - Object Access Control List (ACL) - applies to the objects while uploading
     - Bucket Access Control List (ACL) - access policy that applies to the bucket
+#### When to Use One Over the Other
 
-> An IAM principal can access an S3 object if the IAM permission allows it or the bucket policy allows it and there is no explicit deny.
-> 
-> By default, an S3 object is owned by the account that uploaded it even if the bucket is owned by another account. To get full access to the object, the object owner must explicitly grant the bucket owner access. As a bucket owner, you can create a bucket policy to require external users to grant `bucket-owner-full-control` when uploading objects so the bucket owner can have full access to the objects.
+| Scenario                                  | Recommended Policy | Reason                                                                                               |
+| ----------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------- |
+| Centralized management of user access     | User-based policy  | Allows for managing user permissions across multiple services in one place.                          |
+| Cross-account access to a specific bucket | Bucket policy      | Bucket policies allow access from external AWS accounts without modifying user permissions.          |
+| Public access to an S3 bucket             | Bucket policy      | Simplifies granting public access to the bucket.                                                     |
+| Access control based on IAM roles/groups  | User-based policy  | Provides more flexibility for permissions based on groups or roles.                                  |
+| Specific access for multiple buckets      | User-based policy  | Allows you to manage permissions for users needing access to several buckets.                        |
+| Limited access to a single bucket for all | Bucket policy      | Easy to manage permissions for all users accessing a single bucket, especially for shared resources. |
+
+> [!NOTE]
+>  By default, an S3 object is owned by the account that uploaded it even if the bucket is owned by another account. To get full access to the object, the object owner must explicitly grant the bucket owner access. As a bucket owner, you can create a bucket policy to require external users to grant `bucket-owner-full-control` when uploading objects so the bucket owner can have full access to the objects.
 
 ### S3 Static Websites
 - Host static websites (may contain **client-side scripts**) and have them accessible on the public internet over **HTTP only** (for HTTPS, use [CloudFront](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/CloudFront) with S3 bucket as the origin)
@@ -85,6 +94,7 @@ Informazioni utili:
 - To host an S3 static website on a custom domain using Route 53, the bucket name should be the same as your domain or subdomain Ex. for subdomain `portal.tutorialsdojo.com`, the name of the bucket must be `portal.tutorialsdojo.com`
 
 ### MFA Delete
+feature in Amazon S3 specifically designed to prevent accidental or unauthorized deletion of data
 - MFA required to
     - permanently delete an object version
     - suspend versioning on the bucket
@@ -97,7 +107,7 @@ Informazioni utili:
 - Store S3 access logs into another bucket
 - Logging bucket should not be the same as monitored bucket (logging loop)
 ### Replication
-- **Asynchronous replication**
+- **Asynchronous replication**(data are not replicated istantaneously)
 - Objects are replicated with the **same version ID**
 - Supports **cross-region, same region, bidirectional, batch replication**
 - **Versioning must be enabled for source and destination buckets**
@@ -108,7 +118,7 @@ Informazioni utili:
 
 ### Pre-signed URL
 
-- Pre-signed URLs for S3 have temporary access token as query string parameters which allow anyone with the URL to temporarily access the resource before the URL expires (default 1h)
+- Pre-signed URLs for S3 have temporary access token as query string parameters which allow anyone with the URL to **temporarily access the resource before the URL expires** (default 1h)
 - Pre-signed URLs inherit the permission of the user who generated it
 - Uses:
     - Allow only logged-in users to download a premium video
@@ -183,6 +193,7 @@ Informazioni utili:
     - delete incomplete multi-part uploads
 - Lifecycle Rules can be created for a prefix (ex `s3://mybucket/mp3/*`) or objects tags (ex Department: Finance)
 
+> [!NOTE]
 > - When you apply a retention period to an object version explicitly, you specify a `Retain Until Date` for the object version
 > - When you use bucket default settings, you don't specify a `Retain Until Date`. Instead, you specify a duration, for which every object version placed in the bucket should be protected.
 > - Different versions of a single object can have different retention modes and periods
@@ -242,11 +253,15 @@ Informazioni utili:
 - For compliance and data retention
 
 ## EBS
-Non global service, allows you to create "EBS volume" which are **network drive** you can attach to your instances while they run. **They can only be mounted to one instance at a time. EBS volume is not multi Availability Zone**.
-	1. **EBS Snapshot Archive:** Move a Snapshot to an ”archive tier” that is 75% cheaper
-	2. **Recycle Bin for EBS Snapshots**: Specify retention (from 1 day to 1 year)
+Non global service, allows you to create "EBS volume" which are **network drive** you can attach to your instances while they run. 
+- **They can only be mounted to one instance at a time. 
+- EBS volume is not multi Availability Zone**.
+- Volume **Network Drive** (provides low latency access to data)
+- Must provision capacity in advance (size in GB & throughput in IOPS)
 ### Volume Types
-#### General Purpose SSD Volumes (gp3)
+#### SSD
+Optimized for **Transaction-intensive Applications** with high frequency of **small & random IO operations**
+##### General Purpose SSD Volumes (gp3)
 - **Use Case**: Most general workloads, Boot volumes, Low-latency interactive applications ecc..
 - **Durability**: 99.8% - 99.9%
 - **Volume Size**: 1 GB – 16 TB
@@ -254,13 +269,13 @@ Non global service, allows you to create "EBS volume" which are **network drive*
 - **Price**: 0,08 USD per GB month
 - **Throughput:** 1000 MB
 
-#### General Purpose SSD Volumes (gp2)
+##### General Purpose SSD Volumes (gp2)
 It is an older version of gp3. 
 
 Same as general purpose SSD volume but:
 - **Throughput**: 250 MB/s
 - **Price**: 0,10 USD per GB per month
-#### Provisioned IOPS SSD Volumes (io2 Block Express)
+##### Provisioned IOPS SSD Volumes (io2 Block Express)
 - **Use Case**:
     - Sub-millisecond latency
     - Sustained IOPS performance
@@ -268,7 +283,9 @@ Same as general purpose SSD volume but:
 - **Volume Size**: 4 GB – 64 TB
 - **Max IOPS**: 256,000 (16 KB I/O)
 - **Max Throughput**: 4,000 MB/s
-#### Throughput Optimized HDD (st1)
+#### HDD
+- Optimized for **Throughput-intensive Applications** that require **large & sequential IO operations**
+##### Throughput Optimized HDD (st1)
 - **Use Case**:
     - Big data
     - Data warehouses
@@ -277,7 +294,7 @@ Same as general purpose SSD volume but:
 - **Volume Size**: 125 GB - 16 TB
 - **Max IOPS**: 500 (1 MiB I/O)
 - **Max Throughput**: 500 MB/s
-#### Cold HDD (sc1)
+##### Cold HDD (sc1)
 - **Use Case**:
     - Throughput-oriented storage for data that is infrequently accessed
     - Where lowest storage cost is important
@@ -285,18 +302,19 @@ Same as general purpose SSD volume but:
 - **Volume Size**: 125 GiB - 16 TiB
 - **Max IOPS**: 250 (1 MB I/O)
 - **Max Throughput**: 250 MB/s
-#### Magnetic (standard)
+##### Magnetic (standard)
 - **Use Case**:
     - Workloads where data is infrequently accessed
 - **Durability**: N/A
 - **Volume Size**: 1 GiB - 1 TiB
 - **Max IOPS**: 40-200
 - **Max Throughput**: 40-90 MiB/s
+- **More expensive than Cold HDD**
 ---
 ### Encryption
-- **Encryption is enabled by default, by the creation of encrypetd volume. It can be turn off.**
+- **Encryption is enabled by default, by the creation of encrypted volume. It can be turn off.**
 - All snapshots are encrypted
-In order to encrypt an un-encrypted EBS volume
+**In order to encrypt an un-encrypted EBS volume**
 - Create an EBS snapshot of the volume
 - Copy the EBS snapshot and encrypt the new copy
 - Create a new EBS volume from the encrypted snapshot (the volume will be automatically encrypted)
@@ -308,43 +326,51 @@ In order to encrypt an un-encrypted EBS volume
 
 ### RAID
 - **RAID 0**
-    - Improve performance of a storage volume by distributing reads & writes in a stripe across attached volumes
+    - **Improve performance** of a storage volume by distributing reads & writes in a stripe across attached volumes
     - If you add a storage volume, you get the straight addition of throughput and IOPS
     - For high performance applications
 - **RAID 1**
-    - Improve data availability by mirroring data in multiple volumes
+    - **Improve data availability** by mirroring data in multiple volumes
     - For critical applications
 ## EFS
 Managed NFS (network file system) that can be mounted on 100s of EC2.
 - **Serverless**
-- EFS works with **Linux** EC2 instances in multi-AZ 
+- EFS works with **Linux** EC2 instances in **multi-AZ** 
 - **Highly available, scalable, expensive** (3x gp2)
-- AWS managed Network File System (NFS)
 - Can be mounted to multiple EC2 instances **across AZs**
 - **Pay per use** (no capacity provisioning)
-- **Auto scaling** (up to PBs)
-- Compatible with **Linux** based AMIs (**POSIX** file system)
 - Uses **security group** to control access to EFS
+- **Auto scaling** (up to PBs)
 - Lifecycle management feature to move files to **EFS-IA** after N days
-- Creates multiple **mount targets**
 
 #### Mount target
-  is essentially a network endpoint in your **VPC** that provides access to your **EFS file system**. EC2 instances in the same VPC (or in a peered VPC) can use this mount target to connect to the file system via the **NFS (Network File System)** protocol.
+  Is essentially a network endpoint in your **VPC** that provides access to your **EFS file system**. EC2 instances in the same VPC (or in a peered VPC) can use this mount target to connect to the file system via the **NFS (Network File System)** protocol.
   - **One per Availability Zone**
+## Storage Classes 
+- **Standard** - for frequently accessed files
+- **Infrequent access (EFS-IA)** - cost to retrieve files, lower price to store
 
-#### EFS Client
-- Is an open-source collection of Amazon EFS tools.
-	- enables the ability to use Amazon CloudWatch to monitor an EFS file system's mount status
-	- You need to install the **Amazon EFS client** on an Amazon EC2 instance prior to mounting an EFS file system
-
+### EFS Performance Mode
+EFS offers two performance modes: **General Purpose** and **Max I/O**. Each mode balances performance and scalability differently based on workload needs.
+- **General Purpose** (default)
+    - latency-sensitive use cases (web server, CMS, etc.)
+- **Max I/O**
+    - higher latency & throughput (big data, media processing)
+### EFS Throughput Modes
+EFS also offers two throughput options that allow you to fine-tune the performance and cost balance for your workload:
+- **Bursting** (default)
+    - Throughput: 50MB/s per TB
+    - Burst of up to 100MB/s.
+- **Provisioned**
+    - Fixed throughput (provisioned)
 ## Fsx
-Allows you to deploy scale feature-rich, high performance file systems in the cloud. Fsx support a variety of file system protocol.
+Allows you to deploy scale feature-rich, high performance file systems in the cloud that can be accessed from your **on-premise infrastructure**. Fsx support a variety of file system protocol.
 
 - Types:
 	- **Amazon FSX for NetApp ONTAP**: Property enterprise storage platform known for **handling petabytes** of data
-	- **Amazon Fsx for OpenZFS**: Open-source storage platform originally developer by Sun Microsystem
-	- **Amazon FSX for Windows File Server (WFS)**: File storage on a Windows server supporting native window features for Windows developer
-	- **Amazon FSX for Lustre**: Open-source file system for parallel computing (several processors work simultaneously). Used for High-performance computing (HPC), machine learning, big data analytics.
+	- **Amazon Fsx for OpenZFS**: provides the features of the **OpenZFS file system**
+	- **Amazon FSX for Windows File Server (WFS)**: File storage on a Windows server.
+	- **Amazon FSX for Lustre**: Open-source file system for parallel computing (High-performance computing (HPC).
 
 - File Cache: high speed cache for datasets stored anywhere, accelerate bursting workloads
 ### FSx for Windows
@@ -357,44 +383,42 @@ Allows you to deploy scale feature-rich, high performance file systems in the cl
 - **Does not integrate with S3** (cannot store cold data)
 
 ## AWS BACKUP
-Allows you to centrally manage backup accross AWS Services
+Centrally manage and automate backups of AWS services **across regions and accounts**
 
 - Component:
-	- **Backup Plan**: A backup policy defines the backup schedule, backup window, backup lifecycle.
-	- **Backup Vault**: backup are stored in a backup vault following WORM model
+	- **Backup Plan**: A **backup policy** defines the backup schedule, backup window, backup lifecycle.
+	- **Backup Vault**: backup are stored in a backup vault following WORM model. **Even the root user cannot delete backups**
 	- **AWS backup Audit Manager** is built in reporting and auditing for AWS backup
 
 ## Snow Family
 AWS Snow Family are storage and compute devices used to phisically move data in or out the cloud **when moving data over the internet or private connection is too slow, difficult or costly.**
+- Used when it takes a long time to transfer data over the network
 - **Takes around 2 weeks to transfer the data**
 - **Snowball cannot import to Glacier directly** (transfer to S3, configure a lifecycle policy to transition the data into Glacier)
-- Pay per data transfer job
+- **Pay per data transfer job**
 
-|                        | **AWS Snowcone** | **AWS Snowball Edge Storage Optimized 80 TB** | **AWS Snowball Edge Storage Optimized 210 TB** | **AWS Snowball Edge Compute Optimized** |
-| ---------------------- | ---------------- | --------------------------------------------- | ---------------------------------------------- | --------------------------------------- |
-| **Usable HDD Storage** | 8 TB             | 80 TB HDD                                     | N/A                                            | N/A                                     |
-| **Usable SSD Storage** | 14 TB            | 1 TB                                          | 210 TB NVMe                                    | 28 TB                                   |
-| **Usable vCPUs**       | 2 vCPUs          | 40 vCPUs                                      | 104vCPUs                                       | 104 vCPUs                               |
-| **Usable Memory**      | 4 GB             | 80 GB                                         | 416 GB                                         | 416 GB                                  |
-| **Storage Clustering** | No               | No                                            | No                                             | Yes, 3-16 nodes                         |
-| **256-bit Encryption** | Yes              | Yes                                           | Yes                                            | Yes                                     |
-| **HIPAA Compliant**    | No               | Yes, eligible                                 | Yes, eligible                                  | Yes, eligible                           |
+
 Snowcone can send data in 2 ways:
 - **Phisically shipping** the device which runs on the device's compute
 - **AWS DataSync** which runs on the device's compute
 ## AWS transfer family
 Offers fully managed support for the transfer files over **SFTP, AS2,FTPS and FTP** directly into and out of **Amazon S3 and EFS**.
 
+|                        | **AWS Snowcone** | **AWS Snowball Edge Storage Optimized 80 TB** | **AWS Snowball Edge Storage Optimized 210 TB** | **AWS Snowball Edge Compute Optimized** |
+| ---------------------- | ---------------- | --------------------------------------------- | ---------------------------------------------- | --------------------------------------- |
+| **Usable HDD Storage** | 8 TB             | 80 TB HDD                                     | 210 TB HDD                                     | N/A                                     |
+| **Usable SSD Storage** | 14 TB            | 1 TB SSD                                      | 1 TB SSD                                       | 7.68 TB NVMe                            |
+| **Usable vCPUs**       | 2 vCPUs          | 40 vCPUs                                      | 52 vCPUs                                       | 52 vCPUs                                |
+| **Usable RAM**         | 4 GB             | 80 GB                                         | 208 GB                                         | 208 GB                                  |
+| **Storage Clustering** | No               | No                                            | No                                             | Yes, 5-10 nodes                         |
+| **256-bit Encryption** | Yes              | Yes                                           | Yes                                            | Yes                                     |
+| **HIPAA Compliant**    | No               | Yes, eligible                                 | Yes, eligible                                  | Yes, eligible                           |
+
 - Supported Protocols
     - **FTP** (File Transfer Protocol) - unencrypted network protocol
-    - **FTPS** (File Transfer Protocol over SSL) - FTP with SSL/TLS encryption
-    - **SFTP** (Secure File Transfer Protocol) -  uses SSH to provide secure but unencryped 
+    - **FTPS** (File Transfer Protocol over SSL) - FTP with **SSL/TLS** encryption
+    - **SFTP** (Secure File Transfer Protocol) -  uses **SSH** to provide secure but unencryped 
     - **AS2** (Applicability Statement): Enable secure and reliable messaging
-
-**Transfer Family Managed File Transfer Workflows:**
-Fully managed serverless File Transfer Workflow service to set up, run, automate, and monitor processing of files uploaded using AWS Transfer Family.
-
-Workflow allow you to: copy, tag, delete, decrypt file
 ## AWS Migration Hub
 Is a single place to discover your existing servers, plan migrations, and track the status of each application migration.
 
@@ -405,33 +429,26 @@ AWS Migration hub can monitor migration using:
 Tools to migrate:
 - **AWS Discovery Agent:** Agent installed on your VM
 - **Migration Evaluator Collector** : You submit a request to ask helps from AWS team
-Other tools:
-- **AWS Migration Hub Refactor:** Bridges networking accross AWS Accounts so that legacy and new services can communicate while they maintain the independence of separate accounts
-- **AWS Migration Hub Journey:** guided templates
 ## AWS Data Sync
- Move **large amounts of data** from your **on-premises NAS or file system** via **NFS** or **SMB** protocol to AWS over the **public internet using TLS**.
+**AWS DataSync** allows you to move **large amounts of data** from your **on-premises NAS or file system** to AWS via **NFS** or **SMB** protocol. Data transfer can occur over the **public internet using TLS encryption** for security, or it can be directed through **AWS Direct Connect** for private, higher-speed connections.
  - Need to install **AWS DataSync Agent** on premises
 
-For Use cases check: https://docs.aws.amazon.com/datasync/latest/userguide/what-is-datasync.html
-## Data Migration Service (DMS)
+**Use Case**: Automates moving data between on-premises storage and AWS, as well as between AWS storage services (e.g., Amazon S3, EFS, FSx).
+
+Other use cases: https://docs.aws.amazon.com/datasync/latest/userguide/what-is-datasync.html
+## Database Migration Service (DMS)
 **AWS Database Migration Service (AWS DMS)** is a managed migration and replication service that helps move your database and analytics workloads to AWS quickly, securely, and with minimal downtime and zero data loss.
+- The source database remains available during migration
 ![[Pasted image 20241015142319.png]]
 **AWS Schema Conversion** is used in many cases to automatically convert a source database schema to a target database schema
 For data warehouse you can use the desktop app **AWS schema conversion tool** 
 
 ### Migration Methods
 - **Homogenous data migration**
+	- When the source and target DB engines are the same (eg. Oracle to Oracle)
 	- Migrate data with native database tools. **Eg. pg_dump, pg_restore**
 	- You create a migration project in DMS and it will perform the migration using a serverless compute
 		- Uses a **pay as you go** model
-- **Instance Replication**
-	- Provision an instance with chosen instance type to perform the replications between databases
-- **Serverless Replication (DMS Serverless)**
-	- **Serverless** offering with pay as you go model, **with some limitations**:
-		- Does not have public Ips
-		- Must use VPC endpoints to access specific AWS services. Eg. S3, Kinesis, DynamoDB, OpenSearch
-		- Limited selection of possible sources and targets
-		- Doesn't support views with selection and transformation rules.
 
 ## Auto Scaling (different from ASG)
 **AWS auto scaling** is a service that can discover scaling resources whithin your aws account, and quickly add scaling plans to your scaling resources.
@@ -441,13 +458,16 @@ It can manage and make reccomandations for the following scaling resources: **AS
 - **Predictive Scaling**: analyze historical load, generate a forecast and scale based on that forecast
 - **Dynamic Scaling**: when a metric changes so does the capacity.
 ## Storage Gateway
-**AWS Storage Gateway**: is a hybrid storage service that allows your on-premises applications to seamlessly use Amazon S3 (Bridge between on-premise data and cloud data in s3). Use example: backups to the cloud, **using on-premises file shares backed by cloud storage**, and providing low-latency access to data in AWS for on-premises applications. 
+**AWS Storage Gateway**: is a hybrid storage service that allows your on-premises applications to seamlessly use Amazon S3 (Bridge between on-premise data and cloud data in s3). 
+- Use example: backups to the cloud
+- providing low-latency access to data in AWS for on-premises applications. 
 
-**N.B: Only one that support local caching**
+**Local Caching**: AWS Storage Gateway is unique in its support for local caching
 ### Types of Storage
 
 #### S3 File Gateway
- Amazon S3 File Gateway supports a file interface into s3 and combines a service and a virtual software appliance. you can store and retrieve objects in Amazon S3 using file protocols such as **Network File System (NFS)** and **Server Message Block (SMB)**.
+ Amazon S3 File Gateway supports a file interface into s3 and combines a service and a virtual software appliance. you can store and retrieve objects in Amazon S3 using file protocols such as **Network File System (NFS)** and **Server Message Block (SMB)** (same protocol of DataSync).
+ 
 - **Data is cached at the file gateway** for low latency access
 - Integrated with **Active Directory (AD)** for user authentication
 ![[Pasted image 20241007125534.png]]
@@ -455,16 +475,16 @@ It can manage and make reccomandations for the following scaling resources: **AS
 Allows you to mount s3 as local drive using the **iSCSI** protocol
 - Use cases: **Hybrid Cloud, Backup and disaster recovery Migration of application data**
 - 2 types: 
-	- **Store Volumes:** store primary data locally and asynchronously to AWS:
-		- Provide your on-premises applications with **low-latency access** to their entire datasets
-		- Durable off-site backups.
-		- **Stored Volumes can be between 1GB - 16TB in size**
-	- **Cache volumes:** 
-		- Retain a copy of frequently accessed data subsets locally
-		- Substantial cost savings
-		- **low-latency access** to your frequently accessed datae
-		- **Minimizes the need to scale your on-premises storage infrastructure**
-		- **Create storage volumes up to 32TB in size and attach them as iSCSI** devices from your on-premises servers.
+- **Stored Volumes:**
+    - Provide your on-premises applications with **low-latency access** to their entire datasets.
+    - Enable durable off-site backups.
+    - **Stored Volumes can be up to 16 TB in size.**
+- **Cached Volumes:**
+    - Retain a copy of frequently accessed subsets of data locally.
+    - Offer substantial cost savings.
+    - Provide **low-latency access** to frequently accessed data.
+    - **Minimize the need to scale your on-premises storage infrastructure.**
+    - **Cached Volumes can be up to 32 TB in size.**
 
 Think of it as a remote drive
 
@@ -484,7 +504,12 @@ Allows your files to be stored in Amazon FSx Windows FIle Storage (WFS). Allow y
 - **Good for buffer / cache / scratch data / temporary content**
 - AMI created from an instance does not have its instance store volume preserved
 
-> You can specify the instance store volumes only when you launch an instance. You can’t attach instance store volumes to an instance after you’ve launched it.
+**Use case:** Running complex simulations in fields like genomics, financial modeling, or fluid dynamics where performance is critical.
+
+> [!NOTE]
+> - You can specify the instance store volumes only when you launch an instance. You can’t attach instance store volumes to an instance after you’ve launched it.
+> - Can use RAID, the same way EBS does
+
 ## Amazon AppFlow
 Is managed integration service for data transfer between data sources. Easily exchange data with over 80+ cloud services. By specifing a source destination. **(Easy way to connect services)**
 
@@ -497,36 +522,25 @@ Is managed integration service for data transfer between data sources. Easily ex
 - Create dataflows between application whithin minutes
 - **Aggregate data from multiple sources**
 - Data can be **encrypted at rest** and in transit
-- Use partition and aggregation settings to optimize query performance 
-- Develop custom connectors via the Amazon AppFlow Custom Connector SDKs
 - You can create private flow via AWS Private Link
-- You can catalog data transfered to s3 via AWS Glue Data Catalog
-
 # Computing
 ## EC2
 Amazon Elastic Compute Cloud (Amazon EC2) provides on-demand, scalable computing capacity in the Amazon Web Services (AWS) Cloud. Using Amazon EC2 reduces hardware costs so you can develop and deploy applications faster.
-
+- **Infrastructure as a Service (IaaS)**
 - **EC2 User data**: Used to automate **dynamic** boot tasks (that cannot be done using AMIs). **Runs with root privileges**
--  **EC2 Placement Group:** the logical placement of your instances to optimize communication, performance, or durability. Free
-	- Cluster
-	- Partition
-	- Availability Zone
 - **EC2 Naming convention:**
 	![[Pasted image 20241001121648.png]]
-- **Instance Family:** Are different combination of CPU,Memory,Storage and Networking capacity
 - **EC2 Lifecycle:** 
 	![[Pasted image 20241009172903.png]]
 - **Hostname**: Resource name to identify resources
 - **EC2 Default user name:** The default user name for an operating system managed by AWS will vary based on distribution:
 	- When using SSM you will need to change your user to default: ```sudo su -ec2-user```
-
-- **EC2 Connect:**
+- **EC2 type of connection:**
 	- SSh Client
-	- EC2 instance connect: short lived ssh keys controlled by IAM policies
-	- Session Manager: Connect to linux windows via reverse connection
-	- Fleet Manager Remote Desktop: Connect to a Windows Machine using RDP
+	- **EC2 instance connect**: short lived ssh keys controlled by IAM policies
+	- **Session Manager**: Connect to linux windows via reverse connection
+	- **Fleet Manager Remote Desktop**: Connect to a Windows Machine using RDP
 	- EC2 Serial console: establishes a serial connection giving you direc access
-
 ### Type of instances
 
 ### General Purpose
@@ -551,17 +565,19 @@ High, sequential read and write access to very large data sets on local storage
 - **Use-cases:** NoSQL, in-memory or transactional databases, data warehousing
 
 ***N.B these are not all but only the most important***
-### Intsance Classes
- Type of purchasing option:
-- **On-Demand Instances**: Has **high cost but no upfront payment** is a **pay-as-you-go** model. This is the default option when create EC2. Recommended for **short-term and un-interrupted** workloads commitment
+### Purchasing Options
+- **On-Demand Instances**:
+	- This is the default option when create EC2
+	- **High cost but no upfront payment** 
+	- **pay-as-you-go** model.
+	- Recommended for **short-term and un-interrupted** workloads commitment
 - **Reserved Instance(1 & 3 years)**: up to 72% save, long workloads/ long workloads with flexible instances. 
 	- Types:
 		- **Standard**: These provide the most significant discount. Standard Reserved Instances can't be exchanged.
 		- **Convertible**: These provide a lower discount than Standard Reserved Instances, but can be exchanged for another Convertible Reserved Instance with different instance attributes.
 	- Type of payments: **All upfront, Partial upfront, No upfront**
-	- **RI Attributes**: can affect cost (Instance type, Region, Tenancy, Platform)
 	- **Limits**: Per month -> 20 Regional RI per region, 20, Zonal RI per zone
-	- **RI Marketplace**: allows you to sell your unused Standard RI to recup your RI spend for RI you do not intend or cannot use.
+	- **RI Marketplace**: allows you to sell your unused **Standard RI (not Convertible)** to recup your RI spend for RI you do not intend or cannot use.
 - **Savings Plans (1 & 3 years)** :commitment to an amount of usage, long workload, up to 72%. For more information see [Saving Plan](#saving%20plan) section.
 - **Spot Instances** : short workloads, cheap, can lose instances (less reliable), up to 90%
 - **Dedicated Hosts** and **Dedicated Instance**:
@@ -586,13 +602,21 @@ High, sequential read and write access to very large data sets on local storage
 > [!NOTE]
 >  When the new AMI is copied from region A into region B, it automatically creates a snapshot in region B because AMIs are based on the underlying snapshots.
 
+### EC2 Placement Group
+The logical placement of your instances to optimize communication, performance, or durability. **Free**.
+
+**3 types:**
+- **Cluster Placement Group (optimize for network)**
+- **Spread Placement Group (maximize availability)**
+- **Partition Placement Group (balance of performance and availability)**
+
 ## ASG(Auto Scaling Group)
 Creation of instances based on amount of workload. **High Availability
 ![[Pasted image 20241007144844.png]]
 
 - **Health Check Replacement:** ASG replaces an instances if is considered unhealty. Two types of health checks ASG can perform
-	- **EC2 Health Check**: If the EC2 instance fails either of its EC2 Status Check
-	- **ELB Health Check**: ASG will perform a health check based on the ELB health check. ELB pings an HTTP endpoint at a specific path, port and status code
+	- **EC2 Health Check**
+	- **ELB Health Check**
 ### Lifecycle Hooks
 - Used to perform extra steps before creating or terminating an instance. **Example:**
     - Install some extra software or do some checks (during pending state) before declaring the instance as "in service"
@@ -605,7 +629,7 @@ Creation of instances based on amount of workload. **High Availability
 		- Scale to certain size on a CloudWatch alarm
 		- **example:** **CloudWatch alarm** is triggered for CPU > 70%, then add 2 units or/and (example CPU < 30%), then remove 1
 	- **Step Scaling**
-		- Also scale when CloudWatch alarm are trigger but more granular control over how the ASG. 
+		- Also scale when CloudWatch alarm are trigger but more granular control over how the ASG scale. 
 		- You can define multiple **steps** in the scaling policy, where each step specifies different scaling actions based on specific ranges of the metric.
 	- **Target Tracking Scaling** 
 		- ASG maintains a CloudWatch metric and scale accordingly (automatically creates CW alarms)
@@ -615,12 +639,12 @@ Creation of instances based on amount of workload. **High Availability
 - **Scheduled Scaling** 
 	- Scaling actions are based on a predefined schedule, such as increasing capacity during specific times (e.g., peak hours).
 
+> [!NOTE]
+> ELB integration: An ELB can be attached to you Auto Scaling Group 
+> - Classic Load Balancers are associeted directly to the ASG
+> - ALB, NLB or GWLB are associeted indirectly via their Target Group
+>  **N.B attached = can use Load Balancer Health check**
 
-***Extra:*** 
-ELB integration: An ELB can be attached to you Auto Scaling Group 
-	- Classic Load Balancers are associeted directly to the ASG
-	- ALB, NLB or GWLB are associeted indirectly via their Target Group
-	 **N.B attached = can use Load Balancer Health check**
 ## ELB
 It is a suite of Load balancer from AWS. A **Load balancer** is a tool to distribute traffic through different servers.
 - Rules of traffic
@@ -834,6 +858,7 @@ The **Gateway Load Balancer Endpoint** in AWS is a type of **VPC endpoint** that
 - **Routing Mechanism**: Integrates with GWLB
 - **Traffic Direction**: Usually Unidirectional
 ### AWS Direct Connect
+**AWS Direct Connect** is a cloud service that provides a **dedicated, private network connection** between your on-premises infrastructure. **Physical connection**. 
 ![[Pasted image 20241014175942.png]]
 - 2 types:
 	- **Lower Bandwith** 50Mbps -500Mbps
@@ -855,7 +880,7 @@ The **Gateway Load Balancer Endpoint** in AWS is a type of **VPC endpoint** that
 #### Pricing
 - **Capacity**
 - **Port hours:**
-	Z- Dedicated: Billed per hour
+	- Dedicated: Billed per hour
 	- Hosted Billed subject to the AWS direct connect Delivery partner
 - **DTO (Data Transfer Out)**
 	- Charged based on outbound traffic sent through Direct Connect to destinations outside of AWS
@@ -940,12 +965,12 @@ Is a metric applied in your VPC to help you plan for and monitor the size of you
 ## Route 53
 Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web service. You can use Route 53 to perform three main functions in any combination: **domain registration, DNS routing, and health checking.**
 
-- **Hosted Zones**: Container for records sets, scoped to route traffic for a specific domain or subdomains
-	- **Public**: How you want to route traffic through the Internet
-	- **Private**: How you want to route traffic through an Amazon VPC
+- **Hosted Zones**: Container for records sets, define how to route traffic for a specific domain or subdomains
+	- **Public**: How you want to route traffic through the Internet. 
+	- **Private**: How you want to route traffic through an Amazon VPC. 
 - **Records set**: collection of records which determine where to send traffic
 	- Always changed using batch via the API
-	- **Record Alias:** specific DNS record of AWS which extends DNS functionality. It will route traffic to specific AWS resources.
+	- **Record Alias:** AWS Functionality. Will route traffic to specific AWS resources. - **Alias Record is of type A or AAAA** (IPv4 / IPv6)
 	- **Alias Target** can point to:
 		- CloudFront
 		- Elastic Beanstalk environment
@@ -955,7 +980,7 @@ Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web
 		- VPC endpoint
 		- API Gateway Endpoint custom regional API
 - **Traffic Flow**: Visual tool, lets you create sophisticated routing configurations for your resources using routing types (50$ per policy -> very expensive)
-### Routing Policies:
+### Routing Policies
 - **Simple Routing Policies**: Most basic Routing policies
 	- You have 1 record and provide multiple IP addresses
 	- When multiple values are specified for a record, Route53 will return values back to the user in a random order
@@ -966,22 +991,24 @@ Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web
 	- Health check
 - **Latency Based Routing Policies:** allows you to direct traffic based on the lowest network latency possible for your end-user based on region
 	- Can be used for **Active-Active failover** strategy (two resources active at the same time)
-- **Failover Routing Policy Policies:** allow you to create **active passive/setup** in situations where you want a primary site in one location and a secondary data recovery. **Active-passive** means that one is actively used and the other in stanby until the first fail.
+- **Failover Routing Policy Policies:** allow you to create **active passive/setup** in situations where you want a primary site in one location and a secondary data recovery. 
 	- Automatically monitors health checks from your primary site
 - **Geolocation Routing Policies**: allow you to direct traffic based on the geographic location of where **the request originated from**
 - **Geoproximity routing polices**: allow you to direct traffic based on the geographic location of **your users and your AWS resources**.  It routes traffic to the closest resource that is available
 - **Multi-Value Answer Policies:** let you configure Route 53 to return multiple values such as IP addresses for your web servers, in response to DNS queries.
 
 ### Health Checks (not free): 
-- HTTP Health Checks are only for public resources
+- HTTP Health Checks are o**nly for public resources**
 - Checks health every **30s** by default. Can be reduced to every **10s**
 - A health check can **initiate a failover** if the status is returned unhealthy
 - A CloudWatch Alarm can be created to alert you of status unhealthy
-- A health check can monitor other health checks to create a chain of reactions.
 - Can create up to **50 health checks** for AWS endpoints within or linked to the same AWS account.
+- 3 types:
+	- Monitor an endpoint (application or other AWS resource)
+	- Monitor other health checks (**Calculated Health Checks**)
+	- Monitor CloudWatch Alarms (to perform health check on private resources)
 ### Other Feature and tools
 - **Route 53 Resolver:** is a DNS server that allows you to resolve DNS queries between your on-premise network and your VPC
-	![[Pasted image 20241008092916.png]]
 - **DNSSEC**: Are a suite of extensions specifications by the Internet Engineering Task Force (IETF) for securing data exchanged in the Domain Name System (DNS) in Internet Protocol (IP) networks.
 - **Zonal Shift**: is a capability in **Route 53 Application Recovery Controller** (Route 53 ARC). Shift a load balancer resource away from an impaired Availability Zone with a single action. Only supported by ALB an NLB
 - **Route 53 Profiles**: lets you apply and manage DNS related Route 53 configurations accross many VPCs and in differente AWS accounts
@@ -990,6 +1017,7 @@ Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web
 
 Improve global application **availability** and performance using the AWS global network (Can find the optimal path from the end user to your web servers) 
 - Leverage the AWS internal network to optimize the route to your application 
+-  **Does not cache anything at the edge location**
 -  **2 Static Anycast IP** are created for your application and traffic is sent through **Edge Locations
 - 2 types Routing: 
 	- **Standard**: automatically route to the nearest healthy endpoint
@@ -998,6 +1026,9 @@ Improve global application **availability** and performance using the AWS global
 	- **Listeners**: Listens for traffic on a specific port and sends traffic to a endpoint group
 	- **Endpoint Groups**: collection of endpoint
 	- **Endpoints**: represent a resource to send traffic to
+### Disaster recovery
+- **Traffic dials** to control the percentage of traffic that is directed to an endpoint group (an AWS region where your application is deployed)
+- **Endpoint weights** to determine the proportion of traffic that is directed to endpoints in an endpoint group
 #### Unicast vs Anycast IP
 - **Unicast IP**: one server holds one IP address
 - **Anycast IP**: all servers hold the same IP address and the client is routed to the nearest host with that IP
@@ -1010,7 +1041,7 @@ Improve global application **availability** and performance using the AWS global
 - Supports HTTP/RTMP protocol (**does not support UDP protocol**)
 - **Caches content at edge locations**, reducing load at the origin
 - **Geo Restriction feature**
-- Improves performance for both cacheable content (such as images and videos) and dynamic content (such as API acceleration and dynamic site delivery)
+- Improves performance for both cacheable content (such as images and videos) and dynamic content (such as API acceleration and dynamic site delivery)****
 - To block a specific IP at the CloudFront level, deploy a [WAF](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Web%20Application%20Firewall%20(WAF)) on CloudFront
 - Supports **Server Name Indication (SNI)** to allow SSL traffic to multiple domains
 ### Origin
@@ -1026,12 +1057,12 @@ Improve global application **availability** and performance using the AWS global
     - On-premise backend
 
 > [!NOTE]
->  To restrict access to ELB directly when it is being used as the origin in a CloudFront distribution, create a VPC Security Group for the ELB and use AWS Lambda to automatically update the CloudFront internal service IP addresses when they change.
+>  To restrict access to ELB directly when it is being used as the origin in a CloudFront distribution, **create a VPC Security Group for the ELB and use AWS Lambda to automatically update the CloudFront internal service IP addresses when they change.**
 
 ### Signed URL / Cookies
 - Used to **make a CloudFront distribution private** (distribute to a subset of users)
-- Signed URL ⇒ access to individual files
-- Signed Cookies ⇒ access to multiple files
+- Signed URL ⇒ access to **individual files**
+- Signed Cookies ⇒ access to **multiple files**
 - Whenever we create a signed URL / cookie, we attach a policy specifying:
     - URL / Cookie Expiration (TTL)
     - **IP ranges** allowed to access the data
@@ -1043,7 +1074,7 @@ Improve global application **availability** and performance using the AWS global
 - Price Class 100: only the least expensive regions
 ### Origin Groups
 
-An origin group includes two origins (a primary origin and a second origin to failover to) and a failover criteria that you specify. You create an origin group to support origin failover in CloudFront.
+An origin group includes two origins **(a primary origin and a second origin to failover to)** and a failover criteria that you specify. **You create an origin group to support origin failover in CloudFront.**
 - Provides **region-level** High Availability
 - Use when getting 504 (gateway timeout) Error
 ### Field-level Encryption
@@ -1056,23 +1087,11 @@ Lambda@Edge is a feature of Amazon CloudFront that lets you run code closer to
 - Search Engine Optimization (SEO)
 - Real-time Image Transformation
 
-### CloudFront Functions
-Lightweight edge functions for high-scale, latency-sensitive CDN customizations. CloudFront Functions are cheaper, faster, but more limited than Lambda edge functions.
-
-- **Programming languages**: JavaScript (ECMAScript 5.1 compliant)
-- **Event sources**:
-    - Viewer request/response
-- **Scale**: 10,000,000 requests per second or more
-- **Function duration**: Submillisecond
-- **Maximum memory**: 2 MB
-- **Maximum size function code + libs**: 10 KB
-- **Network, File System, and Request Body access**: No
-- **Access to geolocation and device data**: Yes
-- **Can build/test entirely within CloudFront**: Yes
-- **Function logging and metrics**: Yes
-- **Pricing**: Free tier available; charged per request
+### CloudFront Functions types
+- **CloudFront Functions:** Designed for lightweight, short-duration tasks, primarily focused on manipulating and inspecting HTTP requests and responses. Common use cases include URL rewrites, header modifications, simple redirects, and bot filtering.
+- **Lambda@Edge:** Intended for more complex logic, supporting a broader set of use cases like content transformation, A/B testing, user authentication, and data personalization. Lambda@Edge allows for more advanced compute capabilities than CloudFront Functions.
 ## AWS Shield
-AWS Shield Standard and AWS Shield Advanced provide protections against Distributed Denial of Service (DDoS) attacks for AWS resources at the network and transport layers (layer 3 and 4)
+AWS Shield Standard and AWS Shield Advanced provide protections against Distributed Denial of Service (DDoS) attacks for AWS resources at the network and transport layers **(layer 3 and 4)**
 #### AWS Shield Standard: 
 - Free service that is activated for every AWS customer 
 - Provides protection from attacks such as **SYN/UDP Floods, Reflection attacks and other layer 3/layer 4 attacks** 
@@ -1088,67 +1107,78 @@ AWS Shield Standard and AWS Shield Advanced provide protections against Distribu
 - Protect against higher fees during usage spikes due to DDoS
 ## WAF
 Protects your web applications from common web exploits **Layer 7**. ex. **SQL Injection** and **Cross-Site Scripting (XSS)**
-**ALLOW and DENY** rules based on the contents of HTTP request. 
-Can only be deployed on
-- **Application Load Balancer**
-- **API Gateway**
-- **CloudFront**
-WAF contains **Web ACL (Access Control List)** containing rules to **filter requests** based on:
-- **IP addresses**
-- HTTP headers
-- HTTP body
-- URI strings
-- Size constraints (ex. max 5kb)
-- **Geo-match** (block countries)
-- **Rate-based rules** (to count occurrences of events per IP) for **DDoS protection**
+- **ALLOW and DENY** rules based on the contents of HTTP request. 
+- Can only be deployed on:
+	- **Application Load Balancer**
+	- **API Gateway**
+	- **CloudFront**
+- WAF contains **Web ACL (Access Control List)** containing rules to **filter requests** based on:
+	- **IP addresses**
+	- HTTP headers
+	- HTTP body
+	- URI strings
+	- Size constraints (ex. max 5kb)
+	- **Geo-match** (block countries)
+	- **Rate-based rules** (to count occurrences of events per IP) for **DDoS protection**
 ## Cloud HSM
 **HSM:**
 Hardware Security Module it is a piece of hardware designed to store encryption keys. HSM hold keys in memory and never write them to disk.
-It follows FIPS (Federal Information Processing Standards): US and Canadian governament standard for cryptographic modules.
+- It follows **FIPS (Federal Information Processing Standards)**: US and Canadian governament standard for cryptographic modules.
+- **Supports both symmetric and asymmetric encryption**
+-  Good option to use with **SSE-C** encryption
+- CloudHSM clusters are spread across **Multi AZ (high availability)**
+- **2 types:**
+	- **Multi-tenant** (FIPS 140-2 Level 2 Compliant): 
+	- **Single-Tenant** (FIPS 140-2 Level 3 Compliant):
 
-**2 types:**
-- **Multi-tenant** (FIPS 140-2 Level 2 Compliant): 
-- **Single-Tenant** (FIPS 140-2 Level 3 Compliant):
-
-**Cloud HSM:** 
-Is **single tenant** HSM as a service that automates hardware provisioning. Enables you to generate and use your encryption keys on a FIPS 140-2 Level 3 validated hardware.
-
-It is easy to migrate aws key between cloudHSM.
+> [!NOTE]
+> It is easy to migrate aws key between cloudHSM.
 
 ## Amazon GuardDuty
 Intrusion Detection System and Intrusion Protection System.(IDS)
 
-Intelligent **Threat discovery** to protect your AWS Account. Uses Machine Learning algorithms, **anomaly detection**, 3rd party data. **Uses EventBridge and lambda funtion to make action**. Check for **(CloudTrail logs, VPC flow logs, DNS logs)**
+- Intelligent **Threat discovery** to protect your AWS Account. 
+- Uses Machine Learning algorithms, **anomaly detection**, 3rd party data.
+- **Uses EventBridge and lambda funtion to make action**.
+- Monitors:
+    - **CloudTrail Logs** (unusual API calls, unauthorized deployments)
+    - **VPC Flow Logs** (unusual internal traffic, unusual IP address)
+    - **DNS Logs** (compromised EC2 instances sending encoded data within DNS queries)
+    - **EKS Audit Logs** (suspicious activities and potential EKS cluster compromises)
 ## AWS Firewall Manager
  AWS Firewall Manager allows  you to centrally configure and manage firewall rules accross accounts and applications. 
  - Must be a member of AWS organizzation
  - Must be AWS Firewall Manager administrator
  - Must have AWS Config enabled for your accounts and region
+Does not support NACL as of now
 ## AWS Inspector
 Amazon Inspector is an **automated** security assessment service that helps improve the security and compliance of applications deployed **on your Amazon EC2 instances**. Amazon Inspector automatically assesses applications for exposure.
 ## Amazon Macie
-Amazon Macie is a fully managed data security and data privacy service that uses machine learning and pattern matching to discover and protect your sensitive data in AWS. Work alongside CloudTrail
+Amazon Macie is a fully managed data security and data privacy service that uses machine learning and pattern matching to discover and protect your sensitive data in AWS. **Work alongside CloudTrail**
 ## AWS Security Hub
 Central security tool to manage security across several AWS accounts and **automate** security checks. Allow you to generate a security score to determine your security posture. Allows you to enable standards(collection of security control)
 
 ## KMS
 KMS makes it easy for you to create, control and rotate encryption keys in AWS.
 - **Regional service (keys are bound to a region)**
-- Is **multi-tenant**: There are multiple customers that are using the same piece of hardware. In this way is it possible to reduce the cost of the service. Each part is isolated per user.
-- It is used for the encryption of almost every service in aws.
+- Is **multi-tenant**: There are multiple customers that are using the same piece of hardware. In this way is it possible to reduce the cost of the service. **Each part is isolated between users.**
 -  **Encrypt up to 4KB of data per call (if data > 4 KB, use envelope encryption)**
+- Need to set **IAM Policy & Key Policy** to allow a user or role to access a KMS key
+- Audit key usage with CloudTrail
 #### Customer Master Key (CMK)
 
-|                          |                                                                                         |                                                                       |                                                                                     |
-| ------------------------ | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-|                          | **Customer managed keys**                                                               | **AWS managed keys**                                                  | **AWS owned keys**                                                                  |
-| **Key policy**           | Exclusively controlled by the customer                                                  | Controlled by service; viewable by customer                           | Exclusively controlled and only viewable by the AWS service that encrypts your data |
-| **Logging**              | CloudTrail customer trail or event data store                                           | CloudTrail customer trail or event data store                         | ***Not viewable by the customer***                                                  |
-| **Lifecycle management** | Customer manages rotation, deletion and Regional location                               | AWS KMS manages rotation (annual), deletion, and Regional location    | AWS service manages rotation, deletion, and Regional location                       |
-| **Pricing**              | Monthly fee for existence of keys (pro-rated<br><br>hourly). Also charged for key usage | No monthly fee; but the caller is charged for API usage on these keys | No charges to customer                                                              |
+|                          | **Customer managed keys**                                                                                                                                         | **AWS managed keys**                                                                                                                                              | **AWS owned keys**                                                                  |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| **Key policy**           | Exclusively controlled by the customer                                                                                                                            | Controlled by service; viewable by customer                                                                                                                       | Exclusively controlled and only viewable by the AWS service that encrypts your data |
+| **Logging**              | CloudTrail customer trail or event data store                                                                                                                     | CloudTrail customer trail or event data store                                                                                                                     | ***Not viewable by the customer***                                                  |
+| **Lifecycle management** | Customer manages rotation, deletion and Regional location                                                                                                         | AWS KMS manages rotation (annual), deletion, and Regional location                                                                                                | AWS service manages rotation, deletion, and Regional location                       |
+| **Pricing**              | Monthly fee for existence of keys (pro-rated<br><br>hourly). Also charged for key usage                                                                           | No monthly fee; but the caller is charged for API usage on these keys                                                                                             | No charges to customer                                                              |
+| **Deletition**           | Deletion has a waiting period (**pending deletion state**) between **7 - 30 days** (default 30 days). The key can be recovered during the pending deletion state. | Deletion has a waiting period (**pending deletion state**) between **7 - 30 days** (default 30 days). The key can be recovered during the pending deletion state. |                                                                                     |
 - **CloudHSM Keys (custom keystore):** 
 	- Keys generated from your own CloudHSM hardware device
 	- Cryptographic operations are performed within the CloudHSM cluster
+
+
 #### Key Policies
 Cannot access KMS keys without a key policy
 - **Default Key Policy**
@@ -1158,13 +1188,20 @@ Cannot access KMS keys without a key policy
     - Define users, roles that can access the KMS key
     - Define who can administer the key
     - Useful for cross-account access of your KMS key
+
+> [!NOTE]
+> It is used for the encryption of almost every service in aws.
+
 ## AWS Certificate Manager (ACM)
  Let’s you easily provision, manage, and deploy SSL/TLS Certificates. 
  - Is it possible to perform 3 actions:
 	 - **Create Public** certificate
 	 - **Create Private** certificate
 	 - **Import third party certificate** certificate
- - ACM can be attached to the following AWS resources: **Elastic Load Balancer,CloudFront, API Gateway, Elastic Beanstalk.**
+ - ACM can be attached to the following AWS resources: 
+	 - **Elastic Load Balancer**
+	 - **CloudFront, API Gateway**
+	 - **Elastic Beanstalk.**
 ![[Pasted image 20241014153547.png]]
  
  - **Terminating SSL at the Load Balancer.** All traffic in-transit beyond the ALB is unencrypted. You can add as many as EC2 instances that you want
@@ -1179,20 +1216,19 @@ Is a Customer identity and access management system. It provides authentication,
 
 **Components:**
 - **Cognito User Pools**: User directory with authentication to grant access to your app
-- **Cognito Identity Pools**: Provide temporary credential for users. To connect with third party app like Google.
+- **Cognito Identity Pools**: Provide temporary credential for users. To connect with **third party app** like Google.
 - **Cognito Sync**: Sync user data accross all devices
 ## Amazon Detective
-Amazon Detective analyzes, investigates, and quickly identifies the root cause of security issues or suspicious activities (using ML and graphs). More powerful than **GuardDuty, Macie, and Security Hub.**
+Amazon Detective analyzes, investigates, and quickly identifies the root cause of security issues or suspicious activities (using ML and graphs). 
 ## Directory Services
-A directory service  that maps the names of network resources to their network addresses.
-A directory service is shared information infrastructure for locating, managing, administering and organizing resources.
-
+ Used to extend the AD network by involving services like EC2 to be a part of the AD to share login credentials.
+ 
 **Well known services:**
 - Domain Name Service (DNS), Microsoft Active Directory, Apache Directory Server, Oracle Internet Directory, Open LDAP, CLoud Identity, JumpCloud
 
 **AWS Directory service**s: provides multiple ways to use Microsoft Active Directory. 
 - **AWS Managed Microsoft AD**: A full feature managed version of MS active directory
-- **Simple AD**: Not available for all the regions.  powered by Sambda.
+- **Simple AD**:  AD-compatible managed directory on AWS (**cannot be joined with on-premise AD**). Not available for all the regions.
 - **AD Connector**: a proxy service to connect your existing on-premise AD Directory
 ## Secret Manager
 Store and rotate automatically database credentials. Enforce encryption at rest by using KMS. It as a cost. For credential access monitor you can use Cloud Trail.
@@ -1213,8 +1249,8 @@ Amazon EMR is the industry-leading cloud big data solution for Big Data (petabyt
 - Integrated with **Spot Instances**
 - Can be used to process large amounts of log files
 ## Disaster Recovery
+Disaster recovery refers to the strategies and processes implemented to protect and restore a company’s IT infrastructure, data, and operations after a disruptive event.
 
-- Any event that has a negative impact on a company’s business continuity or finances is a disaster
 - **Recovery Point Objective (RPO)**: how often you backup your data (determines how much data are you willing to lose in case of a disaster)
 - **Recovery Time Objective (RTO)**: how long it takes to recover from the disaster (down time)
 
@@ -1228,7 +1264,7 @@ Amazon EMR is the industry-leading cloud big data solution for Big Data (petabyt
 
 #### Pilot Light
 - **Critical parts of the app are always running** in the cloud (eg. continuous replication of data to another region)
-- Low RPO (minutes)
+- Low RPO ( several minutes)
 - Critical systems are already up => Low RTO
 - **Ideal when RPO should be in minutes and the solution should be inexpensive**
 - DB is critical so it is replicated continuously but EC2 instance is spin up only when a disaster strikes
@@ -1250,7 +1286,7 @@ Amazon EMR is the industry-leading cloud big data solution for Big Data (petabyt
 - **Infrastructure as Code (IaC)** allows us to write our infrastructure as a config file which can be easily replicated & versioned using Git
 - **Declarative** way of outlining your AWS Infrastructure (no need to specify ordering and orchestration)
 - Resources within a stack is tagged with an identifier (easy to track cost of each stack)
-- Ability to destroy and re-create infrastructure on the fly
+- **Ability to destroy and re-create infrastructure on the fly**
 - Deleting a stack deletes every single artifact that was created by CloudFormation (clean way of deleting resources)
 
 ### CloudFormation Templates
@@ -1269,8 +1305,10 @@ An AWS CloudFormation template is a YAML file that defines the AWS resources you
     - References
     - Functions
 
-> - You can associate the `CreationPolicy` attribute with a resource to prevent its status from reaching create complete until CloudFormation receives a specified number of `cfn-signal` or the timeout period is exceeded.
-> - Use CloudFormation with **securely configured templates** to ensure that applications are deployed in secure configurations
+> [!NOTE]
+>  - You can associate the `CreationPolicy` attribute with a resource to prevent its status from reaching create complete until CloudFormation receives a specified number of `cfn-signal` or the timeout period is exceeded.
+>  - Use CloudFormation with **securely configured templates** to ensure that applications are deployed in secure configurations
+> 
 
 ### Stack Sets
 
@@ -1298,28 +1336,20 @@ Can create 2 types of API
 - **GraphQL APIs:** single API from multiple data sources
 - **Merged APIs:** a collection of GraphQL APIs that act as one API.
 	- Useful when you have multiple teams that manage their own API
-## OpenSearch Service
-Is a managed full-text search service that makes it easy to deploy operate and scale OpenSearch and ElasticSearch, a popular open-source search and analytics engine.
-
 ## Elastic Transcoder
-Elastic Transcoder is video-transcoding server, used to convert media files stored in S3 into media files in the formats required by consumer playback devices. **(Very expensive)**
+AWS Elastic Transcoder is a fully managed service that simplifies the conversion of media files into formats suitable for playback on various devices.
 
-- AWS Elastic Transcoder cannot be used via AWS CFN
-	- If you need to automate you need to use the AWS SDK or AWS CLI
-- Create a pipeline
-	- Create a job
-		- Choose a preset (determines what to cover the file to)
-		- Choose source and destination bucket
+- **Automatic Scaling**: Efficiently handles varying transcoding workloads.
+- **Easy Integration**: Works seamlessly with AWS services like Amazon S3 and CloudFront.
+- **Cost-Effective**: Utilizes a pay-as-you-go pricing model with no upfront costs.
 ## SNS
-### Concept:
-**Publish Subscribe pattern:** Common message pattern, the sender send their message to an event bus that categorized message in groups and than the receiver subscribes to these groups. Whenever new messages appear within their subscription the messages are immediatly delivered to them. 
-![[Pasted image 20241008111643.png]]
 ### SNS
- Amazon Simple Notification Service (Amazon SNS) is a managed service that provides message delivery from publishers to subscribers (also known as _producers_ and _consumers_). In this way is possible to send one message to many receivers. Used to decouple microvservices.
-	- Source: Publisher
-	- Destination: Subscriber
+ Amazon Simple Notification Service (Amazon SNS) is a managed service that provides message delivery from publishers to subscribers (also known as _producers_ and _consumers_). In this way is possible to send one message to many receivers. **Used to decouple microvservices.**
 
-**N.B Respond to event and immiediatly send notification**
+- Encryption enabled by default done by using Https API
+- At-rest encryption using KMS keys (optional)
+
+**N.B Respond to event and immediatly send notification**
 #### Topics:
 Allows you to group multiple subscriptions together.
 - 2 types: **Standard** and **FIFO**
@@ -1332,34 +1362,38 @@ Allows you to group multiple subscriptions together.
 | **Use-Case**         | Where the volume of messages is high and exact ordering/delivery isn't critical: <ul><li>alerts</li><li>notifications</li></ul> | Where the order and exact delivery are crucial: <ul><li>banking transactions</li><li>ordered data processing</li></ul> |
 | **Message Grouping** | N/A                                                                                                                             | Supports message grouping, allowing multiple ordered streams within the same topic                                     |
 
-- **Messages:** Is it possible to programmatically publish messages to SNS Topic. **Maximum limit** of message dimension: 256KB. **Message bigger than 256KB can be publish using Amazon SNS Extended Client library (Max: 2GB).** 
+- **Messages:** Is it possible to programmatically publish messages to SNS Topic. 
+	- **Maximum limit** of message dimension: 256KB. 
+	- **Message bigger than 256KB can be publish using Amazon SNS Extended Client library (Max: 2GB).** 
 - **Subscription:** A subscription can only subscribe to one protocol and one topic: HTTP/S, Email, Amazon SQS, AWS Lambda, SMS, Platform application endpoint
-- **Filter policy:** allows you to filter a subset a messages only to be delivery. JSON policy used to filter messages
+- **Filter policy:** allows you to filter a subset a messages only to be delivery. 
+	- JSON policy used to filter messages. 
+	- Each subscriber will have its own filter policy
 - **Message Data Protection**: Message data protection safeguards the data that's published to your Amazon SNS Topic. 
 - **Delivery Policy**: defined how SNS **retries** the delivery of messages when **server-side errors** occur. Each delivery protocol has its own delivery policy.
 ## SQS
 ![[Pasted image 20241014155049.png]]
-**Messaging System**: Used to provide asynchronous communication and decouple processes via messages/events from a sender and receiver (producer and consumer)
-**Queueing System**: messaging system that generally will delete messages once they are consumed. Simple communication. Not Real-time. Have to pull. Not reactive.
+**Message:** small data package (not necessarly intended sms or email).
 ### SQS
-**Simple Queueing Service (SQS)**: Fully managed queuing service that enables you to decouple and scale microservices, distributed systems, and serverless applications
+Amazon Simple Queue Service (SQS) is a fully managed AWS service that enables reliable, asynchronous message passing between application components to help decouple and scale systems.
 
 **Use Case**: You need to queue up transaction emails to be sent e.g. Signup, Reset Password.
 SQS Queue.
 
 - The consumer polls the queue for messages. Once a consumer processes a message, it deletes it from the queue using **DeleteMessage** API.
--  **Max message size: 256KB**. Bigger message needs Amazon SQS Extended Client library (Max: 2GB).
+-  **Max message size: 256KB**. Bigger message needs **Amazon SQS Extended Client library** (Max: 2GB).
 - **Default message retention: 4 days (max: 14 days)**
 - **Consumers could be EC2 instances or Lambda functions**
 - Message are grouped by ID
 - Is possible to attach an ASG to the consumer instances
 #### Types of Queue
-- **Standard:** allows you to send nearly unlimited number of transactions per second, but message are out of order. It has low latency
+- **Standard:** allows you to send nearly unlimited number of transactions per second, but message are out of order. It has low latency. 
+	- **Throughput:** Unlimited number of message
 - **FIFO:** guarantees the order of messages when being consumed. 
-	- 300 transaction
+	- **Throughput:** 300 transaction per second. 3000 with batching
 	- no duplicates
 	- order by id
-	- 10 message read a time. doesn't accept duplicates.
+	- 10 message read a time.
 #### Encryption
 - In-flight encryption using HTTPS API
 - At-rest server-side encryption:
@@ -1369,34 +1403,32 @@ SQS Queue.
 
 #### SQS Dead letter Queue
 A **Dead Letter Queue (DLQ)** in Amazon **SQS (Simple Queue Service)** is a specialized type of queue used to store messages that have failed to be processed successfully after a certain number of attempts. It is essentially a mechanism for handling and isolating problematic messages that cannot be processed by the consumer for some reason.
+
+- After the `MaximumReceives` threshold is exceeded, the message goes into the DLQ
+- **Redrive to Source** - once the bug in the consumer has been resolved, messages in the DLQ can be sent back to the queue (original queue or a custom queue) for processing
+- Prevents resource wastage
+- Recommended to set a high retention period for DLQ (14 days)
+
 ![[Pasted image 20241019174040.png]]
 #### Configurations
 
-
-- **Access Policy:** Allows you to grant other principals permission to the SQS Queue.
-- **Message Metadata:** allows you to attach metadata to messages
+- **Access Policy(resource based policy):** Allows you to grant other principals permission to the SQS Queue.
 - **Message Visibility Timeout:** is a period of time message will be invisible after they are read/consumed by an application to avoid being read and processed by other applications. **Default is 30 second**
 - **Delay Queues:** let you postpone the delivery of new messages to consumers for a number of second when your app needs more time. Message remain invisible to consumers for the duration of the delay period.
-- **Message Timers:** let you specify an initial invisibility period for an individual message when sending to the queue
-- **Temporary Queues:** Let you specify an initial invisibility period for an individual message when sending to the queue. Don't support timers on individual message
-- **ABAC**: Is an authorization process that defines permissions based on tags that are attached to users aqnd AWS resources. Use tag and aliases.
 - **Short vs Long Polling:** Polling is the method by which we retrive messages from the queues
 
 |                 | **Short Polling (default)**                                                    | **Long Polling**                                                        |
 | --------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
 | **Description** | Returns messages immediately, even if the message queue being polled is empty. | Waits until message arrives in queue or till long poll timeout expires. |
 | **Use-Case**    | When you need a message **right away**                                         | When you need to **save money** by reducing how often you poll          |
-#### Dead Letter Queue (DLQ)
-
-- An SQS queue used to store failing to be processed messages in another queue
-- After the `MaximumReceives` threshold is exceeded, the message goes into the DLQ
-- **Redrive to Source** - once the bug in the consumer has been resolved, messages in the DLQ can be sent back to the queue (original queue or a custom queue) for processing
-- Prevents resource wastage
-- Recommended to set a high retention period for DLQ (14 days)
+- **Message Timers:** let you specify an initial invisibility period for an individual message when sending to the queue
+- **Temporary Queues:** Let you specify an initial invisibility period for an individual message when sending to the queue. Don't support timers on individual message
+- **ABAC**: Is an authorization process that defines permissions based on tags that are attached to users aqnd AWS resources. Use tag and aliases.
+- **Message Metadata:** allows you to attach metadata to messages
 ### SQS vs SNS
 https://www.youtube.com/watch?v=mXk0MNjlO7A&ab_channel=BeABetterDev
 https://www.youtube.com/watch?v=RoKAEzdcr7k&ab_channel=BeABetterDev
-## Amazon MQ 
+## Amazon MQ
 Amazon MQ is a managed message broker service for [Apache ActiveMQ](https://activemq.apache.org/) and [RabbitMQ](https://www.rabbitmq.com/). A **_message broker_** enables software applications and components to communicate using various programming languages, operating systems, and formal messaging protocols through either topic or queue event destinations.
 
 - Supporta vari tipi di protocolli: **AMQP,MQTT,STOMP**
@@ -1407,7 +1439,22 @@ AWS fully managed solution, not serverless, for collecting processing, and analy
 Amazon Kinesis Data Streams is a serverless streaming data service that makes it easy to capture, process, and store data streams at any scale.
 ![[Pasted image 20241016175823.png]]
 
-**Has 2 capacity mode:**
+> [!NOTE]
+> **Shard**: unit of capacity within a Kinesis data stream that defines how much data the stream can ingest and process
+> 
+
+- **Data Retention:** 1 day (default) to 365 days.
+- **EFO(Enhance Fan Out)**: allows up to 20 consumers to retrive records from a stream throughput of up to 2 MB of data per second per shard
+- **Partition Keys**
+	- used to group data by shard within a stream
+	- partition keys are Unicode strings, with a maximum length limit of 256 characters for each key
+	- When an application puts data into a stream, it must specify a partition key.
+- **Sequence Number**: Each data record has a sequence number that is unique per partition-key within its shard
+- **Producers** use SDK, Kinesis Producer Library (KPL) or **Kinesis Agent** to publish records
+	- **Kinesis Producer Library(KPL)** is a managed library by AWS to let you publish data to a **Kineses data stream**. Is a Java library
+- **Consumers** use SDK or KCL: 
+	- **Kineses Client Library** is a java library that makes it easy for developers to easily consume data for kineses. via the Multi-Daemon other programming languages can be used
+### Capacity mode
 
 |                | **On Demand**                                                                                                                                                                                                                                  | **Provisioned**                                                                                                                                                                      |
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -1415,19 +1462,19 @@ Amazon Kinesis Data Streams is a serverless streaming data service that makes it
 | **Management** | Automatically scales                                                                                                                                                                                                                           | Customer manages shards                                                                                                                                                              |
 | **Billing**    | Volume of data ingested and retrieved                                                                                                                                                                                                          | Number of shards, data transfer                                                                                                                                                      |
 | **Capacity**   | <ul>Writes: <li>200 MiB per second</li><br><li>200,000 records per second</li></ul><br><ul>Reads: <li>400 MiB per second per consumer</li><br><li>2 consumers by default</li><br><li>Enhanced Fan-Out (EFO) to add 20 more consumers</li></ul> | <ul>Write: <li>1 MB per second per shard</li><br><li>1,000 records per second per shard</li></ul><br><ul>Read: <li>2 MiB per second per shard</li><br><li>Max shards is 200</li><ul> |
-- **Data Retention:** 1 day (default) to 365 days.
-- **Partition Keys**
-	- used to group data by shard within a stream
-	- partition keys are Unicode strings, with a maximum length limit of 256 characters for each key
-	- MD5 hash function is used to map partition keys to 128-bit integer values and to map associated data records to shards using the hash key ranges of the shards
-	- When an application puts data into a stream, it must specify a partition key.
-- **Sequence Number**
-	- Each data record has a sequence number that is unique per partition-key within its shard
-- **EFO(Enhance Fan Out)**: allows up to 20 consumers to retrive records from a stream throughput of up to 2 MB of data per second per shard
-- **Producers** use SDK, Kinesis Producer Library (KPL) or **Kinesis Agent** to publish records
-	- **Kinesis Producer Library(KPL)** is a managed library by AWS to let you publish data to a **Kineses data stream**. Is a Java library
-- **Consumers** use SDK or KCL: 
-	- **Kineses Client Library** is a java library that makes it easy for developers to easily consume data for kineses. via the Multi-Daemon other programming languages can be used
+
+#### Kinesis Data FireHose
+Amazon Kinesis Data Firehose is an _extract, transform, and load (ETL) service_ that reliably captures, transforms, and **_delivers streaming data to data lakes, data stores, and analytics services._**
+- **Destination (Consumer)**: 
+	- (**S3, Redshift**, OpenSearch)
+	- Splunk, MongoDB, DataDog, NewRelic, etc.
+	- HTTP endpoint.
+- **Serverless**
+- **Can ingest data in real time directly from source**
+- **Auto-scaling**
+- Pay for data going through Firehose (no provisioning)
+- **Data Transformation:** before data is sent to a destination it can be transformed with AWS Lambda
+- **Convert record format**: Data firehose can convert **JSON** data into different file formats before being delivered to S3
 #### Kinesis Data Analytics (KDA)
 **Serverless.** Amazon Kinesis cost-effectively processes and analyzes streaming data at any scale as a fully managed service. Simple version of Kineses data stream.
 
@@ -1435,17 +1482,6 @@ Amazon Kinesis Data Streams is a serverless streaming data service that makes it
 - **Cannot ingest data directly from source** (ingests data from KDS or KDF)
 - **Auto-scaling**
 - **Serverless**
-#### Kinesis Data FireHose
-Amazon Kinesis Data Firehose is an _extract, transform, and load (ETL) service_ that reliably captures, transforms, and **_delivers streaming data to data lakes, data stores, and analytics services._**
-- **Destination (Consumer)**: Data Firehose can send to:
-	- (**S3, Redshift**, OpenSearch)
-	- Splunk, MongoDB, DataDog, NewRelic, etc.
-	- HTTP endpoint.
-- **Serverless**
-- **Auto-scaling**
-- Pay for data going through Firehose (no provisioning)
-- **Data Transformation:** before data is sent to a destination it can be tranformed with AWS Lambda
-- **Convert record format**: Data firehose can convert **JSON** data into different file formats before being delivered to S3
 #### Kinesis video streams
 Allows you to run queries against that is flowing through your real time stream so you can create and analysis on emerging data.
 
@@ -1454,32 +1490,27 @@ Allows you to run queries against that is flowing through your real time stream 
 
 #### Comparison
 - **Kinesis Data Streams (KDS)**: Provides maximum flexibility and control for handling large volumes of real-time streaming data. However, it requires custom applications for data processing. Ideal for scenarios where you need to develop your own real-time analytics or data processing applications.
-    
+
 - **Kinesis Data Firehose**: Fully managed and simplifies delivering streaming data to predefined destinations (like S3, Redshift, Elasticsearch). It is great for backup and storage integration without the need to manage scaling or custom processing.
     
 - **Kinesis Data Analytics (KDA)**: Designed for analyzing streaming data in real-time using SQL or Apache Flink. It extracts real-time insights from the data stream without building complex custom applications, ideal for live dashboards, anomaly detection, and streaming ETL.
     
 - **Kinesis Video Streams**: Specializes in handling real-time video data (such as security feeds or IoT video streams). It is used mainly for video surveillance, smart home applications, and machine learning on video (e.g., object detection, facial recognition).
-## AWS Data Exchange
-AWS Data Exchange is a service that makes it easy for AWS customers to securely exchange file-based **datasets** in the AWS Cloud.
-
-You can download dataset and upload your own dataset. Data grants is the tool that allow you to control access to your datasets.
 ## AWS Glue
 **ETL** = Extract, transform, and load
 
-AWS Glue is serverless data integration that makes it easy for **analytics** users to discover, prepare, move and integrate data from multiple sources. Visually create, run, monitor, extract and load ETL pipelines to load data into your data lakes. A pipeline is composed of more jobs
+AWS Glue is **serverless** data integration that makes it easy for **analytics** users to discover, prepare, move and integrate data from multiple sources. Visually create, run, monitor, extract and load ETL pipelines to load data into your data lakes. A pipeline is composed of more jobs
 
+- **AWS Glue ETL jobs are charged based on the number of data processing units (DPUs)**
 - Search and catalog using, Athena, EMR and Redshift
 - **AWS Glue Studio**, feature that allows you to visually build ETL jobs and pipelines
-- **AWS Glue ETL jobs are charged based on the number of data processing units (DPUs)**
-- **AWS Glue Data Catalog:** is a fully manage Apache Hive Metastore-compatible catalog service that makes it easy for customer to store, anntoate and share metadata about their data
-## AWS Instance Scheduler
-The Instance Scheduler on AWS solution automates the starting and stopping of various AWS services including **Amazon EC2** and **Amazon RDS** instances.
-
-You are responsible for the cost of the AWS services used while running Instance Scheduler on AWS. As of the latest revision, the cost for running this solution a small deployment in two accounts and two Regions is approximately **$13.15 per month.**
+- **AWS Glue Data Catalog:** is a fully manage Apache Hive Metastore-compatible catalog service that makes it easy for customer to store, annotate and share metadata about their data
 
 ## AWS App Mesh
-is a service mesh that helps manage and monitor the communication between microservices in an application. It provides a way to control how different parts of your microservices architecture communicate with each other
+Is a service mesh that helps manage and monitor the communication **between microservices** in an application. It provides a way to control how different parts of your microservices architecture communicate with each other
+
+## OpenSearch Service
+Is a managed full-text search service that makes it easy to deploy operate and scale OpenSearch and ElasticSearch, a popular open-source search and analytics engine.
 # Develop
 ## ElasticBeanStalk 
 With Elastic Beanstalk you can quickly deploy and manage applications in the AWS Cloud without having to learn about the infrastructure that runs those applications. It provides CloudFormation templates for you.
@@ -1822,12 +1853,13 @@ there are different types of read consistency:
 | Reads are fast, but there is **no guarantee of consistent**                                        | You have a **guarantee of consistency**, but the trade-off is **higher latency (slower reads)**.                     |
 | All copies of data eventually **become generally consistent within a second**                      | All copies of data **will be consistent within a second**                                                            |
 ### Primary Keys 
+**Types:**
 - **Simple Primary Key:** a primary key with ony a **partition key** to choose which partition
 - **Composite Primary Key:** a primary key with both a **partition key** and a **sort key** to choose partition
-- **Query:** 
-	![[Pasted image 20241003124503.png]]
-- **Scan:** scan through all items return one or more items. (much less efficient then query - not said by amazon)
 
+**Partition key**: is a unique attribute used to identify and distribute items across partitions within a table. This key helps DynamoDB manage data efficiently and optimize performance.
+- **Single Attribute**: The partition key is a single attribute, such as `UserID` or `OrderID`, that uniquely identifies each item.
+- **Importance of High Cardinality**: Choosing a partition key with a wide range of unique values (high cardinality) ensures an even data distribution, improving table scalability and read/write performance.
 ## DocumentDB
 NOSQL, document database that is based on MongoDB: 
 - Cluster types:
@@ -2370,5 +2402,10 @@ get intelligent answers about what is happening in their supply chain
 ## Amazon Connect:
 Amazon Connect is an AI-powered application that provides one seamless experience for your contact center customers and users. It's comprised of a full suite of features across communication channels.
 
-# Concept
+# Concepts
 - **Throughput**: is a measure of how many units of information a system can process in a given amount of time.
+- **Active-passive** means that one is actively used and the other in stanby until the first fail.
+- **Publish Subscribe pattern:** Common message pattern, the sender send their message to an event bus that categorized message in groups and than the receiver subscribes to these groups. Whenever new messages appear within their subscription the messages are immediatly delivered to them. 
+![[Pasted image 20241008111643.png]]
+- **Messaging System**: Used to provide asynchronous communication and decouple processes via messages/events from a sender and receiver (producer and consumer)
+- **Queueing System**: messaging system that generally will delete messages once they are consumed. Simple communication. Not Real-time. Have to pull. Not reactive.
