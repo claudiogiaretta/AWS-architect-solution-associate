@@ -246,6 +246,10 @@ feature in Amazon S3 specifically designed to prevent accidental or unauthorized
     - **Compliance mode**
         - A protected object version cannot be overwritten or deleted by any user, including the root user
         - The object's retention mode can’t be changed, and the retention period can’t be shortened
+#### Object retention
+Object Lock provides two ways to manage object retention:
+- **Retention period** – A retention period specifies a fixed period of time during which an object remains locked.
+- **Legal hold** – A legal hold provides the same protection as a retention period, but it has no expiration date.
 
 #### Glacier Vault Lock
 
@@ -1578,8 +1582,8 @@ Support a set of famous framework (Angular, React, Flutter ecc...)
 -  Rate Limiting (throttle requests) - returns **429 Too Many Requests**
 -  Cache API responses
 -  **Can be integrated with any HTTP endpoint in the backend or any AWS API**
-
-
+### Canary release
+Implementing a canary release deployment strategy for the API Gateway is a great way to ensure your APIs remain stable and reliable. This strategy involves releasing a new version of your API to a small subset of users, allowing you to test the latest version in a controlled environment.
 ### IAM Policy
 
 - Create an IAM policy and attach to User or Role to allow it to call an API
@@ -1661,6 +1665,7 @@ Autoscaling is a function that automatically scales your resources out and in to
 **Graphana**: is an open source analytics web application. It is used with timeseries database like Prometheus.
 
 **Amazon managed service for Graphana**: Fully managed and secure data visualization service that you can use to instanly query, correlate, and visualize operational metrics , logs, and traces from multiple sources.
+
 ## Lake Formation 
 **Data Lakes**: A data lake is a centralized data **repository** for unstructured and semi structured data. Contain vast amount of data. Data lakes generally use object(blob) or file as its storage type. Often used for analytics
 
@@ -1668,7 +1673,14 @@ Autoscaling is a function that automatically scales your resources out and in to
 
 
 ![[Pasted image 20241003093952.png]]
-
+## Blue-Green Deployment (Not a service)
+- Blue-green deployment is a technique to test features in the new environment without impacting the currently running version of your application
+    - **Blue** - current version
+    - **Green** - new version
+- When you’re satisfied that the green version is working properly, you can gradually reroute the traffic from the old blue environment to the new green environment.
+- Can mitigate common risks associated with deploying software, such as **downtime** and **rollback** capability.
+## Canary Release (Not a service)
+A **canary release** is a software deployment strategy where a new version is gradually rolled out to a small subset of users before being released to the entire user base. This approach allows teams to monitor performance, stability, and user impact in real-world conditions
 ## AWS CodeDeploy
  CodeDeploy is a deployment service that automates application deployments to Amazon EC2 instances, works with On-Premises Servers • Hybrid service
 ![[Pasted image 20241014110813.png]]
@@ -1783,10 +1795,10 @@ Automatically scales **storage capacity** in response to growing database worklo
         - Database Connections
         - Freeable Memory
 - **Enhanced Monitoring**
-    - Gathers metrics from an agent running on the RDS instance. Provides also CPU and memory utilization but more in depth (instance level).
-        - OS processes
-        - RDS child processes
-    - Used to monitor different **processes or threads on a DB instance** (ex. percentage of the CPU bandwidth and total memory consumed by each database process in your RDS instance
+- Used to monitor different **processes or threads on a DB instance** (ex. percentage of the CPU bandwidth and total memory consumed by each database process in your RDS instance
+	- OS processes
+	- RDS child processes
+    
 
 ## AWS Aurora
 **Serverless**, Automated database instantiation and auto-scaling based on actual usage.
@@ -1796,18 +1808,30 @@ Automatically scales **storage capacity** in response to growing database worklo
 - **Asynchronous Replication** (milliseconds)
 - Up to 15 read replicas
 - **Backtrack**: restore data at any point of time without taking backups
-
-- **Aurora Global Database:** It is a database spanning multiple regions for global low latency  and high availabilty. Primary cluster is in a separate region. Useful to manage fast failover recovery.
 - **RDS Data API:** allows you to use HTTP to securely query an Aurora database. Unlimited max request per seconds. Must be enabled 
+### Aurora Global Database
+ It is a database spanning multiple regions for global low latency  and high availabilty. Primary cluster is in a separate region.
+- Useful to manage fast failover recovery. Entire database is replicated across regions to recover from region failure.
+- Designed for **globally distributed applications** with **low latency local reads** in each region
+- 1 **Primary Region (read / write)**
+- **Up to 5 secondary (read-only) regions (replication lag < 1 second)**
+- Up to 16 Read Replicas per secondary region
+- Helps for **decreasing latency for clients in other geographical locations**
+- **RTO of less than 1 minute** (to promote another region as primary). 
+
 ### Durability and Fault Tolerance
 - **Aurora Backup and Failover are handled automatically** 
 - Snapshots of data can be shared with other AWS accounts
 - Storage is self-healing, in that data blocks and disks are continuously scanned for errors and repaired automatically.
+- **Automated failover**
+	- In case **no replica** is available, Aurora will attempt to **create a new DB Instance** in the **same AZ** as the original instance. This replacement of the original instance is done on a **best-effort basis** and may not succeed.
+	- Aurora flips the **CNAME** record for your DB Instance to point at the healthy replica
 ### Availability
 - **Aurora deploys in a minimum of 3 availability zones each contain 2 copies of your data** at all times.
 - Maintain 6 copies
 - Lose up to 2 copies of your data without affecting write availability.
 - Lose up to 3 copies of your data without affecting read availability.
+  
 ### Storage
 - A cluster **starts with 10GB** of storage and scale in 10GB increments **up to 64TB or 128 TB** depending on DB engine version. Storage is autoscaling.
 - Computing resources can scale up to 32 vCPUs and 244GB of memory.
@@ -1818,25 +1842,19 @@ Automatically scales **storage capacity** in response to growing database worklo
 - Network Security is managed using Security Groups (same as RDS)
 
 ### Endpoint
-- **Writer Endpoint** (Cluster Endpoint)
-    - Always points to the master (can be used for read/write)
-    - Each Aurora DB cluster has one cluster endpoint
-- **Reader Endpoint**
-    - Provides load-balancing for read replicas only (used to read only)
-    - If the cluster has no read replica, it points to master (can be used to read/write)
-    - Each Aurora DB cluster has one reader endpoint
-- **Custom Endpoint**:
-    - Used to point to a subset of replicas
-    - Provides load-balanced based on criteria other than the read-only or read-write capability of the DB instances like instance class (ex, direct internal users to low-capacity instances and direct production traffic to high-capacity instances)
-### Type
+Allow clients to connect to the database cluster, specifying different purposes for each endpoint type.
+- **Writer Endpoint (cluster)**: Provides a single connection point to the Aurora cluster. **Directs requests to the primary** (writer) instance for read/write operations. Ideal for applications that require a primary endpoint for mixed operations.
+- **Reader Endpoint**: Distributes read-only traffic across all available Aurora replicas. Useful for scaling read-heavy applications without impacting the primary instance's performance.
+- **Custom Endpoint**: Allows you to define and group specific instances (e.g., high-performance replicas) and assign an endpoint to them. Useful for advanced load balancing or specific application requirements.
+### Types
 #### Aurora Provisioned
 You choose the DB instance class for the writer and reader instances based on your expected workload. Aurora provisioned has several options
 #### Aurora Serverless V2
 Fully manages the autoscaling configuration for Amazon Aurora
-	- Capacity is adjusted automatically based on application demand
-	- charge only for resources used
-	- use case: **Highly variable workloads**
-	- Does not scale to zero, must mantain at least 0.5 ACU(unit mesurement of Aurora to determine cost vs capacity)
+- Capacity is adjusted automatically based on application demand
+- charge only for resources used
+- use case: **Highly variable workloads**
+- Does not scale to zero, must maintain at least 0.5 ACU(unit measurement of Aurora to determine cost vs capacity)
 #### Aurora Serverless V2(On-demand) vs Provisioned
 |                        | Aurora Serverless V2                                       | Aurora Provisioned                                                          |
 | ---------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------- |
@@ -1858,6 +1876,7 @@ Amazon DynamoDB is a ***serverless***, NoSQL (key/value), fully managed database
 - **Maximum size of an item: 400 KB**
 - Max 100 table
 - DyanmoDB creates partitions for you as your data grow. Creates a partition every 10 GB or when you exceed.
+- Supports **Transactions** (either write to multiple tables or write to none)
 ### Table classes
 DynamoDB offers two table classes designed to help you optimize for cost.
 -  **DynamoDB Standard table**: is the default, and is recommended for the vast majority of workloads.
@@ -1872,7 +1891,7 @@ DynamoDB offers two table classes designed to help you optimize for cost.
 - **On-demand Mode**
     - Capacity auto-scaling based on the workload
     - **Pay for what you use (more expensive)**
-    - Great for unpredictable workloads
+    - Great for **unpredictable workloads**
 ### Read Consistency 
 When data needs to be updated in all of its copy and keep data consistent
 there are different types of read consistency:
@@ -1884,12 +1903,25 @@ there are different types of read consistency:
 | All copies of data eventually **become generally consistent within a second**                      | All copies of data **will be consistent within a second**                                                            |
 ### Primary Keys 
 **Types:**
-- **Simple Primary Key:** a primary key with ony a **partition key** to choose which partition
-- **Composite Primary Key:** a primary key with both a **partition key** and a **sort key** to choose partition
+- **Simple Primary Key**: Consists of only a **partition key**, which DynamoDB uses to determine the partition where the item is stored.    
+- **Composite Primary Key**: Consists of both a **partition key** and a **sort key**. 
 
 **Partition key**: is a unique attribute used to identify and distribute items across partitions within a table. This key helps DynamoDB manage data efficiently and optimize performance.
 - **Single Attribute**: The partition key is a single attribute, such as `UserID` or `OrderID`, that uniquely identifies each item.
 - **Importance of High Cardinality**: Choosing a partition key with a wide range of unique values (high cardinality) ensures an even data distribution, improving table scalability and read/write performance.
+### Dynamo DB accelerator
+- Caches the queries and scans of DynamoDB items
+- Solves read congestion (`ProvisionedThroughputExceededException`)
+- **Microseconds latency for cached data**
+- Doesn’t require application code changes
+- 5 minutes TTL for cache (default)
+### DynamoDB Streams
+- Ordered stream of notifications of item-level modifications (create/update/delete) in a table
+- Destination can be
+    - Kinesis Data Streams
+    - AWS Lambda
+    - Kinesis Client Library applications
+- Data Retention for up to 24 hours
 ## DocumentDB
 NOSQL, document database that is based on MongoDB: 
 - Cluster types:
@@ -1905,23 +1937,27 @@ NOSQL, document database that is based on MongoDB:
 - Performance Insights feature to determine bottlenecks for reads and writes.
 - In-transit and at-rest encryption. You must connect using TLS connect.
 ## Amazon Keyspace
-Amazon Keyspaces is a fully managed Apache Cassandra database. Cassandra is an open-source NoSQL key/value database similar to DynamoDB. It is a  columnar store database but has some additional functionality.
+Amazon Keyspaces is a fully managed **Apache Cassandra database.** Cassandra is an open-source NoSQL key/value database similar to DynamoDB. 
+- **It is a columnar store database.**
 - **Serverless**
 - Use cases: 
-	- **Build applications that require low latency**
-	- **Build applications using open-source technologies**
-	- **Move your Cassandra workloads to the cloud**
-
+	- Best suited for workloads that need **Cassandra compatibility**
 ## Neptune
-Amazon Neptune is a fast, reliable, fully managed graph database service that makes it easy to build and run applications that work with highly connected datasets.
+Amazon Neptune is a fast, reliable, fully managed graph database service that makes it easy to build and run applications that work with **highly connected datasets.**
 - Highly available across **3 AZ** with up to **15 read replicas**
+- **Point-in-time recovery** due to continuous backup to S3
 - **Netpune Database**: **2 types**
 	- **Provisioned**: you choose an instance type
 	- **Serverless**: set a min and max Neptune Capacity units
-- **Neptune Analyses**:  provide capabilites to run large-scale graph analytics algorithms efficiently
-## ElastiCache
-Amazon ElastiCache is a web service that makes it easy to set up, manage, and scale a distributed in-memory data store or cache environment in the cloud
 
+> [!NOTE]
+>  **Neptune Analyses**:  provide capabilites to run large-scale graph analytics algorithms efficiently
+
+## ElastiCache
+Amazon ElastiCache is a web service that makes it easy to set up, manage, and scale a distributed **in-memory data store** or cache environment in the cloud
+
+- AWS managed caching service
+- **In-memory key-value store** with **sub-millisecond latency**
  - **Can only be accessible by resources in the same VPC** (to ensure low latency)
 - It can be **cross region** if enabled
 - **Using ElastiCache requires heavy application code changes**
@@ -1932,6 +1968,10 @@ Amazon ElastiCache is a web service that makes it easy to set up, manage, and sc
 | Use case   | Unpredictable workloads                                        | Predictable Workloads                                                          |
 | Management | Automatically scales                                           | Customer managers cluster and nodes                                            |
 | Billing    | <ul><li>Data Stored</li><li>ElasticCache Processing Units</li> | <ul><li>Based on number of nodes</li><li>Based of node type(size of node)</li> |
+- Usage:
+    - **DB Cache** (lazy loading): cache read operations on a database (reduced latency)
+    - **Session Store**: store user's session data like cart info (allows the application to remain stateless)
+    - **Global Data Store**: store intermediate computation results
 ### Types
 #### Redis
 Open source in-memory database store. Redis acts as caching layer, or a very fast database. is key/value store.
@@ -1964,41 +2004,21 @@ Amazon MemoryDB is a durable, in-memory database service that delivers ultra-fas
 - **Slower writes** but better performance in general.
 - very expensive
 ## Amazon Redshift
- **Serverless,** Is an enterprise-class relational database based on postgresql. Is thinked for data warehouse and for **OLAP(analytics and data warehousing)**. 
+ **Serverless,** Is an enterprise-class relational database based on postgresql. 
  
+ - Used for data warehouse and for **OLAP(analytics and data warehousing)**.
  - Storage is done by **column** and not by row. 
  - **Pay as you go based**
- -  **Based on postgresql**
+ - **Based on postgresql**
  -  **No multi-AZ support** (all the nodes will be in the same AZ)
-
-**Datawerehouse**: Built to store large quantities of historical data and enable fast, complex queries across all the data.
-
-**OLAP** applications look at multiple records at the same time. You save memory because you fetch  just the columns of data you need
- instead of whole rows.
+ - Faster querying than [Athena](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Athena) due to indexes
+- Uses massively Parallel Processing(MPP)
 
 - **Different type of configurations:**
 	- **Single Node**: Nodes comes in sizes of 160GB. You can launch a single node to get started with Redshift.
 	- **Multi Node**: You can launch a cluster of nodes with Multi-node mode
 	- **Leader Node**: manages client connections and receiving queries
 	- **Compute Node**: stores data and performs queries up to 128 computes nodes
-- **Different type of nodes:**
-	- **Dense Compute(dc)**: best for high performance, but they have less storage
-	- **Dense Storage(dc)**: cluster in which you have a lot of data
-- **Compression**
-	- **Redshift** uses multiple compression techniques.
-	- Similar data is stored sequentially on disk
-	- Does not require indexes or materialized views, compared to traditional systems
-	- When loading data to an empty table, data is sampled and the most appropriate compression scheme is selected automatically
-- **Processing**
-	- Uses massively Parallel Processing(MPP)
-	- Automatically distributes data and query loads accross all nodes
-	- Lets you easily add new nodes to your data warehouse while still maintaining fast query performance.
-- **Backup**
-	- enabled by default, 1 day retention, up to 35
-	- always attempt to keep 3 copies of your data
-- **Billing**
-	- Total number hours
-	- not charged for leader node hours only compute nodes incur changes
 - **Security**
 	- Dat in transit: **SSL**
 	- Data at rest: **AES 256**
@@ -2006,8 +2026,17 @@ Amazon MemoryDB is a durable, in-memory database service that delivers ultra-fas
 - **Availability**
 	- Redshift is Single AZ. In order to reach high availability you need to run multiple redshift cluster in different AZ. Anapshot can be restored o a different AZ 
 
-![[Pasted image 20241002165058.png]]
+### Snapshots
 
+- Stored internally in **S3**
+- **Incremental** (only changes are saved)
+- Can be restored into a new Redshift cluster
+- Automated
+    - based on a schedule or storage size (every 5 GB)
+    - set retention
+- Manual
+    - retains until you delete them
+- Feature to **automatically copy snapshots into another region**
 ## Athena
 **Serverless**, is a query service to analyze data stored in Amazon S3. It uses standard SQL language to query the files and their content.
 Athena can do 2 things:
@@ -2439,3 +2468,5 @@ Amazon Connect is an AI-powered application that provides one seamless experienc
 ![[Pasted image 20241008111643.png]]
 - **Messaging System**: Used to provide asynchronous communication and decouple processes via messages/events from a sender and receiver (producer and consumer)
 - **Queueing System**: messaging system that generally will delete messages once they are consumed. Simple communication. Not Real-time. Have to pull. Not reactive.
+- **Datawerehouse**: Built to store large quantities of historical data and enable fast, complex queries across all the data.
+- **OLAP** applications look at multiple records at the same time. You save memory because you fetch  just the columns of data you need instead of whole rows.
