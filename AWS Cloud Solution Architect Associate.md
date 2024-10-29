@@ -440,8 +440,6 @@ Other use cases: https://docs.aws.amazon.com/datasync/latest/userguide/what-is-d
 **AWS Database Migration Service (AWS DMS)** is a managed migration and replication service that helps move your database and analytics workloads to AWS quickly, securely, and with minimal downtime and zero data loss.
 - The source database remains available during migration
 ![[Pasted image 20241015142319.png]]
-**AWS Schema Conversion** is used in many cases to automatically convert a source database schema to a target database schema
-For data warehouse you can use the desktop app **AWS schema conversion tool** 
 
 ### Migration Methods
 - **Homogenous data migration**
@@ -449,6 +447,10 @@ For data warehouse you can use the desktop app **AWS schema conversion tool**
 	- Migrate data with native database tools. **Eg. pg_dump, pg_restore**
 	- You create a migration project in DMS and it will perform the migration using a serverless compute
 		- Uses a **pay as you go** model
+
+> [!NOTE]
+> **AWS Schema Conversion tool** is used alongside to **DMS** in many cases to automatically convert a source database schema to a target database schema
+> For data warehouse you can use the desktop app **AWS schema conversion tool** 
 
 ## Auto Scaling (different from ASG)
 **AWS auto scaling** is a service that can discover scaling resources whithin your aws account, and quickly add scaling plans to your scaling resources.
@@ -490,9 +492,13 @@ Think of it as a remote drive
 
 ![[Pasted image 20241007125555.png]]
 #### Tape Gateway
-Stores files onto **Virtual Library Tapes** for backing up you files on very cost effective long term
+Stores files onto **Virtual Library Tapes** for backing up you files on very cost effective long term. 
+**Durable**, cost effective solution to archive your data in thw AWS CLoud. 
 
-**Durable**, cost effective solution to archive your data in thw AWS CLoud. Use **VTL** interface, that helps you leverage existing tape-based backups. Store data on virtual tape that you create on you tape gateway. Tape storage has proven redability **for 30 years**
+- Use **VTL** interface, that helps you leverage existing tape-based backups.
+- Tape storage has proven redability **for 30 years**. 
+- Long retrival Time
+
 #### Amazon FsX File Gateway
 Allows your files to be stored in Amazon FSx Windows FIle Storage (WFS). Allow your Windows developers to easily store data in the cloud using the tools they already know
 
@@ -501,6 +507,7 @@ Allows your files to be stored in Amazon FSx Windows FIle Storage (WFS). Allow y
 - **Hardware storage directly attached to EC2 instance** (cannot be detached and attached to another instance)
 - **Highest IOPS** of any available storage (millions of IOPS)
 - **Ephemeral storage** (loses data when the instance is stopped, **hibernated** or terminated)
+- You can't attach instance store volumes to an instance after you've launched it
 - **Good for buffer / cache / scratch data / temporary content**
 - AMI created from an instance does not have its instance store volume preserved
 
@@ -1067,6 +1074,15 @@ Improve global application **availability** and performance using the AWS global
     - URL / Cookie Expiration (TTL)
     - **IP ranges** allowed to access the data
     - Trusted signers (which AWS accounts can create signed URLs)
+
+#### Use case comparison
+
+Use **signed URLs** for the following cases:
+- You want to use an RTMP distribution. Signed cookies aren't supported for RTMP distributions.
+- You want to restrict access to individual files, for example, an installation download for your application.
+- Your users are using a client (for example, a custom HTTP client) that doesn't support cookies.
+Use **signed cookies** for the following cases:
+- You want to provide access to multiple restricted files, for example, all of the files for a video in HLS format or all of the files in the subscribers' area of a website.
 ### Pricing
 
 - Price Class All: all regions (best performance)
@@ -1380,7 +1396,8 @@ Amazon Simple Queue Service (SQS) is a fully managed AWS service that enables re
 **Use Case**: You need to queue up transaction emails to be sent e.g. Signup, Reset Password.
 SQS Queue.
 
-- The consumer polls the queue for messages. Once a consumer processes a message, it deletes it from the queue using **DeleteMessage** API.
+- The consumer polls the queue for messages. 
+- Once a consumer processes a message, it is important to deletes it, in order to avoid duplicates
 -  **Max message size: 256KB**. Bigger message needs **Amazon SQS Extended Client library** (Max: 2GB).
 - **Default message retention: 4 days (max: 14 days)**
 - **Consumers could be EC2 instances or Lambda functions**
@@ -1680,29 +1697,34 @@ Amazon Relational Database Service (Amazon RDS) is a web service that makes it e
 - DB instance **can contain one or multiple user** created database
 - Each database has user defined database identifier which forms part of the DNS hostname
 - **DB instance Class:** just like ec2 instance class determine available compute memory or a db instance
-- DB instance **use Elastic Block Storage (EBS) volumes** for database and **log storage**
+- DB instance **use Elastic Block Storage (EBS) volumes** for **log storage**
 - **Maximum storage of 64TB**
 - We don't have access to the underlying instance
 - **RDS Proxy:** is a fully managed, highly available database proxy for **Amazon RDS** that makes applications **more scalable, more resilient to database failures, and more secure**.
 ### RDS Storage Auto Scaling 
-Automatically scales storage capacity in response to growing database workloads, with zero downtime. (only storage capacity)
+Automatically scales **storage capacity** in response to growing database workloads, with zero downtime. (only storage capacity)
 ### Encryption
-- **Can be enabled only during creation**
-- **Encryption in transit:** enabled by default
-- **Encryption at rest:** can be enabled 
-- Encrypt are automatically enabled on Automated backups, snapshot and read replicas
-
-
+- **Data-at-Rest Encryption**: RDS uses AWS Key Management Service (KMS) to encrypt data at the storage level. Read replicas and snapshot are automatic enabled.
+- **Data-in-Transit Encryption**: Data moving between the RDS instance and applications can be secured using SSL/TLS to prevent unauthorized interception.
+- **Key Management**: AWS KMS handles encryption keys, allowing users to either use default keys managed by AWS or specify their own Customer Master Key (CMK).
+- **Compliance and Security**: RDS encryption assists with meeting compliance requirements such as HIPAA, PCI DSS, and FedRAMP, ensuring a secure environment for sensitive data.
+- **Limitations**: **Encryption must be enabled at creation**, as enabling it on an existing instance requires creating a new encrypted instance and migrating data.
+- **To encrypt an un-encrypted RDS database:**
+    - Create a snapshot of the un-encrypted database
+    - Copy the snapshot and enable encryption for the snapshot
+    - Restore the database from the encrypted snapshot
+    - Migrate applications to the new database, and delete the old database
 ### RDS Backup
 - Types
 	- **Automated backup:** choose retention period between 0 and 35 days
 		- **enabled by default**
-		- stored in s3
+		- **store in snapshot of the primary DB in s3**
 		- Log backed up every 5 minutes
 		- no charge for additional data in automated backups
 	- **Manual Snapshot**
 		- Taken manually
 		- Additional storage charge 
+
 - **Restoring a backup:** creates a new RDS instance and restores data in that instance 
 	- Restoring a manual snapshot
 	- Restoring Point in time (PITR): similar but provide restore time
@@ -1710,40 +1732,40 @@ Automatically scales storage capacity in response to growing database workloads,
 #### Scelte architetturali
 #### Read Replicas
 - **Disaster recovery solution** if the primary DB instance fails
+- **Asynchronous replication**
 - Improve **read contention** which means improve performance latency. 
-	- **Read contention:** when multiple proccesses or instances competing for access to the same index or data block at the same time.
+	- **Read contention:** when multiple processes or instances competing for access to the same index or data block at the same time.
 - You must have **automatic backups enabled**.
-- **Type of replication:** asyncronous replication
 - Maximum of **5 replicas** of a database
-- Replica techniques:
-	- **Standard**
-	- **Multi-az**
-	- **Cross-region**
+-  Network fee for replication
+    - Same region: free
+    - Cross region: paid
 
 #### Multi AZ deploment
+- **Synchronous replication**
+- Only database engine on primary instance is active
+- Automatic failover to standby when a problem is detected
+- **Connection string does not require to be updated** (both the databases can be accessed by one DNS name, which allows for automatic DNS failover to standby database)
+- **Cannot be used for scaling as the standby database cannot take read/write operation**
 
-##### Multi AZ vs Read Replicas
-
-| Multi-AZ Deployments                                      | Read Replicas                                                       |
-| --------------------------------------------------------- | ------------------------------------------------------------------- |
-| Synchronous replication – highly durable                  | Asynchronous replication – highly scalable                          |
-| Only database engine on primary instance is active        | All read replicas are accessible and can be used for read scaling   |
-| Automated backups are taken from standby                  | No backups configured by default                                    |
-| Always span two Availability Zones within a single Region | Can be within an Availability Zone, Cross-AZ, or Cross-Region       |
-| Database engine version upgrades happen on primary        | Database engine version upgrade is independent from source instance |
-| Automatic failover to standby when a problem is detected  | Can be manually promoted to a standalone database instance          |
 ##### Multi-Az Cluster vs Multi-Az instance
-- **Multi-AZ Cluster**: A setup with multiple nodes (primary and read replicas) distributed across different Availability Zones, offering better performance, faster failover, and higher scalability, especially for read-heavy workloads.
-- **Multi-AZ Instance**: A configuration with one primary and one standby instance in separate Availability Zones, focused on providing high availability and automatic failover without additional read scaling.
 
-| Feature          | Multi-AZ Cluster                                           | Multi-AZ Instance                           |
-| ---------------- | ---------------------------------------------------------- | ------------------------------------------- |
-| **Architecture** | Multiple nodes, distributed across AZs                     | One primary, one standby                    |
-| **Availability** | Higher fault tolerance, high availability, faster failover | High availability, slightly slower failover |
-| **Performance**  | Better for read-heavy workloads                            | Suitable for write-heavy workloads          |
-| **Scalability**  | Horizontal scaling (via read replicas)                     | Limited scaling (one active instance)       |
-| **Use Case**     | High-read workloads, high availability                     | Basic high availability                     |
-| **Cost**         | Higher                                                     | Lower                                       |
+| Feature          | Multi-AZ Cluster                                           | Multi-AZ Instance                                                                                 |
+| ---------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **Architecture** | Multiple nodes, distributed across AZs                     | One primary, one standby                                                                          |
+| **Availability** | Higher fault tolerance, high availability, faster failover | High availability, slightly slower failover                                                       |
+| **Performance**  | Better for read-heavy workloads                            | Suitable for write-heavy workloads                                                                |
+| **Scalability**  | Horizontal scaling (via read replicas)                     | Limited scaling (one active instance)                                                             |
+| **Use Case**     | High-read workloads, high availability                     | Good for applications that need **high availability** but do not require **extra read capacity**. |
+| **Cost**         | Higher                                                     | Lower                                                                                             |
+
+### Access Management
+- Username and Password can be used to login into the database
+- EC2 instances & [Lambda](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Lambda) functions should access the DB using **IAM DB Authentication** (**AWSAuthenticationPlugin** with **IAM**) - token based access
+	- Only works with **MySQL** and **PostgreSQL**
+	- Each token has a lifetime of **15 minutes**
+	- Network traffic is encrypted in-flight using SSL
+	- **Central access management using IAM** (instead of doing it for each DB individually)
 
 ### Subnet Group
 
@@ -1755,29 +1777,27 @@ Automatically scales storage capacity in response to growing database workloads,
 ![[Pasted image 20241003103052.png]]
 
 ### Amazon RDS monitoring
--  **CloudWatch metrics for Amazon RDS**: You can use the Amazon CloudWatch service to monitor the performance and health of a DB instance.
-- **RDS DB instance status and recommendations**: View details about the current status of your instance by using the Amazon RDS console, AWS CLI, or RDS API.
-- **RDS Performance Insights and operating-system monitoring**: Performance Insights assesses the load on your database, and determine when and where to take action
-- **AWS services**: Amazon RDS is integrated with Amazon EventBridge, Amazon CloudWatch Logs, and Amazon DevOps Guru.
+- **CloudWatch Metrics for RDS**
+    - Gathers metrics from the **hypervisor** of the DB instance
+        - CPU Utilization
+        - Database Connections
+        - Freeable Memory
+- **Enhanced Monitoring**
+    - Gathers metrics from an agent running on the RDS instance. Provides also CPU and memory utilization but more in depth (instance level).
+        - OS processes
+        - RDS child processes
+    - Used to monitor different **processes or threads on a DB instance** (ex. percentage of the CPU bandwidth and total memory consumed by each database process in your RDS instance
 
-### Access Management
-- Username and Password can be used to login into the database
-- EC2 instances & [Lambda](https://tahseer-notes.netlify.app/notes/aws%20solutions%20architect%20associate/Lambda) functions should access the DB using **IAM DB Authentication** (**AWSAuthenticationPlugin** with **IAM**) - token based access
-	- Each token has a lifetime of 15 minutes
-	- You have to create a policy and attach to user
-	- You have to create db user 
-	- You need to generate auth token to be used for password authentication
-	- Only works with **MySQL** and **PostgreSQL**
-
-
-## Aurora
+## AWS Aurora
 **Serverless**, Automated database instantiation and auto-scaling based on actual usage.
 - **Aurora costs more than RDS (20% more)**.
-- Supports only MySQL & PostgreSQL
+- Supports only **MySQL & PostgreSQL**
+- Supports Multi AZ
 - **Asynchronous Replication** (milliseconds)
 - Up to 15 read replicas
+- **Backtrack**: restore data at any point of time without taking backups
 
-- **Aurora Global Database:** It is a database spanning multiple regions for global low latency  and high availabilty. Primary cluster is in a separate region
+- **Aurora Global Database:** It is a database spanning multiple regions for global low latency  and high availabilty. Primary cluster is in a separate region. Useful to manage fast failover recovery.
 - **RDS Data API:** allows you to use HTTP to securely query an Aurora database. Unlimited max request per seconds. Must be enabled 
 ### Durability and Fault Tolerance
 - **Aurora Backup and Failover are handled automatically** 
@@ -1796,6 +1816,18 @@ Automatically scales storage capacity in response to growing database workloads,
 - Encryption in flight using SSL (same as RDS)
 - You can’t SSH into Aurora instances (same as RDS)
 - Network Security is managed using Security Groups (same as RDS)
+
+### Endpoint
+- **Writer Endpoint** (Cluster Endpoint)
+    - Always points to the master (can be used for read/write)
+    - Each Aurora DB cluster has one cluster endpoint
+- **Reader Endpoint**
+    - Provides load-balancing for read replicas only (used to read only)
+    - If the cluster has no read replica, it points to master (can be used to read/write)
+    - Each Aurora DB cluster has one reader endpoint
+- **Custom Endpoint**:
+    - Used to point to a subset of replicas
+    - Provides load-balanced based on criteria other than the read-only or read-write capability of the DB instances like instance class (ex, direct internal users to low-capacity instances and direct production traffic to high-capacity instances)
 ### Type
 #### Aurora Provisioned
 You choose the DB instance class for the writer and reader instances based on your expected workload. Aurora provisioned has several options
@@ -1817,9 +1849,7 @@ Fully manages the autoscaling configuration for Amazon Aurora
 | **Billing**            | ACUs per second, more granular, + storage.                 | Instance hours + storage.                                                   |
 | **Start/Stop**         | Responsive start/stop, cost-saving for intermittent loads. | Manual start/stop.                                                          |
 | **Maintenance**        | Minimal downtime, more seamless.                           | Scheduled maintenance windows.                                              |
-### Endpoint
-- **Reader**: It provides a single endpoint (DNS address) through which applications can access the read replicas, which are optimized for handling read operations
-- **Writer**: is used for handling both read and write operations and points to the primary instance responsible for managing data writes.
+
 ## DynamoDB
 Amazon DynamoDB is a ***serverless***, NoSQL (key/value), fully managed database with single-digit millisecond performance at any scale.  
 - **Highly available** with replication **across 3 AZ**.
