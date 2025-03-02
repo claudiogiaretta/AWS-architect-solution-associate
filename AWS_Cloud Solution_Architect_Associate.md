@@ -407,7 +407,7 @@ AWS Snow Family are storage and compute devices used to phisically move data in 
 - **Snowball cannot import to Glacier directly** (transfer to S3, configure a lifecycle policy to transition the data into Glacier)
 - **Pay per data transfer job**
 
-![[Pasted image 20241002093152.png]]
+![](images/fd511d5a07097d5a7025e4c113d833fe.png)
 
 - **Snowcone**: Portable secure device for edge computing
     - types:
@@ -484,7 +484,7 @@ Other use cases: https://docs.aws.amazon.com/datasync/latest/userguide/what-is-d
 - **Continuous Data Replication** using **CDC (change data capture)**
 - Requires **EC2 instance running the DMS software** to perform the replication tasks. If the amount of data is large, use a large instance. If multi-AZ is enabled, need an instance in each AZ.
 - **The source database remains available during migration**
-![[Pasted image 20241015142319.png]]
+![](images/3851710f97a0558993d969206aab0b75.png)
 
 ### Migration Methods
 - **Homogenous data migration**
@@ -515,7 +515,7 @@ Other use cases: https://docs.aws.amazon.com/datasync/latest/userguide/what-is-d
  
 - **Data is cached at the file gateway** for low latency access
 - Integrated with **Active Directory (AD)** for user authentication
-![[Pasted image 20241007125534.png]]
+![](images/3bc3813a245f6c4382cd1a841aa7ac09.png)
 #### Volume Gateway
 Allows you to mount s3 as local drive using the **iSCSI** protocol
 - Use cases: **Hybrid Cloud, Backup and disaster recovery Migration of application data**
@@ -533,7 +533,7 @@ Allows you to mount s3 as local drive using the **iSCSI** protocol
 
 Think of it as a remote drive
 
-![[Pasted image 20241007125555.png]]
+![](images/5c2e8f51cc93debb3d2d557977a3df81.png)
 #### Tape Gateway
 Stores files onto **Virtual Library Tapes** for backing up you files on very cost effective long term. 
 **Durable**, cost effective solution to archive your data in the AWS Cloud. 
@@ -565,7 +565,7 @@ r Windows developers to easily store data in the cloud using the tools they alre
 ## Amazon AppFlow
 Is managed integration service for data transfer between data sources. Easily exchange data with over 80+ cloud services. By specifing a source destination. **(Easy way to connect services)**
 
-![[Pasted image 20241007142942.png]]
+![](images/3b5712fd6be1733efdae67cacd7860f6.png)
 - **Run on Demand** - User manually run the flow as needed
 - **Run on event** - AppFlow runs the flow in response to an event from an SaaS application
 - **Run on Schedule** - AppFlow runs the flow on a recurring schedule
@@ -579,7 +579,7 @@ Is managed integration service for data transfer between data sources. Easily ex
 # Database
 ## RDS
 Amazon Relational Database Service (Amazon RDS) is a web service that makes it easier to set up, operate, and scale a relational database in the AWS Cloud. It provides cost-efficient, resizable capacity for an industry-standard **relational database** and manages common database administration tasks.
-![[Pasted image 20241009092943.png]]
+![](images/f44226447c0dfba3cc29358b094ce6a9.png)
 
 **DB instances:** is an isolated database environment running in the cloud
 - DB instance **can contain one or multiple user** created database
@@ -661,7 +661,7 @@ Automatically scales **storage capacity** in response to growing database worklo
 - RDS will choose a subnet from your subnet group to deploy your RDS Instance
 - Subnets in a DB subnet group are either public or private
 - For a DB instance to be publicly accessible, all of the subnets in its DB subnet group must be public
-![[Pasted image 20241003103052.png]]
+![](images/fc2ef14ad96a2419e0edf132ea755e58.png)
 
 ### Amazon RDS monitoring
 - **CloudWatch Metrics for RDS**
@@ -856,10 +856,10 @@ Amazon ElastiCache is a web service that makes it easy to set up, manage, and sc
 #### Redis
 Open source in-memory database store. Redis acts as caching layer, or a very fast database. is key/value store.
 Can perform many different kind of operations on your data. It is very good for leaderboards, and keep track of unread notification data. It is very fast, but arguably not as fast as memcached
-![[Pasted image 20241016101547.png]]
+![](images/d40cd400b1a8d54d2de480f4c7390016.png)
 #### MemCached
 Is an open-source distributed memory object caching system. It's a caching layer for web-applications. Key/value store.
-![[Pasted image 20241016101616.png]]
+![](images/1e2c93f28871d65d7f1be7fde5ef16ea.png)
 #### Redis vs Memcached
 
 | Redis                                                          | Memcached                                            |
@@ -959,9 +959,9 @@ Amazon Elastic Compute Cloud (Amazon EC2) provides on-demand, scalable computing
 - **Infrastructure as a Service (IaaS)**
 - **EC2 User data**: Used to automate **dynamic** boot tasks (that cannot be done using AMIs). **Runs with root privileges**
 - **EC2 Naming convention:**
-	![[Pasted image 20241001121648.png]]
+	![](images/49e042971697e7e47262566d03c563e4.png)
 - **EC2 Lifecycle:** 
-	![[Pasted image 20241009172903.png]]
+	![](images/61c6dbec962b6459842b715517b7fe20.png)
 - **Hostname**: Resource name to identify resources
 - **EC2 Default user name:** The default user name for an operating system managed by AWS will vary based on distribution:
 	- When using SSM you will need to change your user to default: ```sudo su -ec2-user```
@@ -1062,7 +1062,7 @@ The logical placement of your instances to optimize communication, performance, 
 
 ## ASG(Auto Scaling Group)
 Creation of instances based on amount of workload. **High Availability
-![[Pasted image 20241007144844.png]]
+![](images/a3acd9e752296d521c8c65cf55eb6874.png)
 
 - **Health Check Replacement:** ASG replaces an instances if is considered unhealty. Two types of health checks ASG can perform
 	- **EC2 Health Check (default)**
@@ -1170,7 +1170,7 @@ It is a suite of Load balancer from AWS. A **Load balancer** is a tool to distri
 - **Pay per execution time and number.** No charge when your code is not running.
 
 Usage example:
-![[Pasted image 20241002122149.png]]
+![](images/020308e2a73eb97bcc6fce9d2205ae06.png)
 ### Limit:
 #### Time settings:
 - Default: 3 seconds
@@ -1192,7 +1192,7 @@ Tool for Java that can improve startup performance for latency-sensitive applica
 A function URL is a dedicated HTTP(S) endpoint for your Lambda function. You can create and configure a function URL through the Lambda console or the Lambda API
 ## Step functions
 With AWS Step Functions, you can create workflows, also called [State machines](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-statemachines.html), to build distributed applications, automate processes, orchestrate microservices, and create data and machine learning pipelines.
-![[Pasted image 20241021151645.png]]
+![](images/3b56eb481ced149b1fab3122acb3cb93.png)
 
 - 2 types State Machines:
 	- **Standard**: general purpose -> reccomended for Long Workload
@@ -1264,7 +1264,7 @@ With Amazon Virtual Private Cloud (Amazon VPC), you can launch AWS resources in 
 
 Rules are evaluated starting with the lowest numbered rule. As soon as a rule matches traffic, it's applied immediately regardless of any higher-numbered rule that may contradict it.
 **Example** This allow all incoming traffic even if other rules denied it:
-![[Pasted image 20241109193916.png]]
+![](images/e764031f35bb14844fb5adf444ae6826.png)
 - **Route tables:** where network traffic are directed.
 	- different types:
 		- **Main route tables:** created with VPC cannot be deleted
@@ -1310,7 +1310,7 @@ Connect two VPC, privately using AWS’ network
 - VPC Peering connection **is not transitive** (2 way)
 - Must have **non-overlapping CIDR**
 - Data transfer cross AZ or cross Region incurs charges
-![[Pasted image 20241103155544.png]]
+![](images/dcbf89838f91afbaa41f00aab6aae73c.png)
 ### VPC Endpoints: 
 Endpoints is the URL that allow you to connect to AWS Services **using a private network** instead of the public network. 
 - This gives you enhanced security and lower latency to access AWS services.
@@ -1318,7 +1318,7 @@ Endpoints is the URL that allow you to connect to AWS Services **using a private
 - Eliminates the need for Internet Gateway, NAT Device, VPN connection, AWS Direct
 - **Route table is updated automatically**
 - **Bound to a region** (do not support inter-region communication)
-![[Pasted image 20241007170821.png]]
+![](images/e4083f4dd29a64dbd53e83acf3e577ff.png)
 #### Type of VPC Endpoint
 - **Endpoint policy:**  controls access to the service to which you are connecting. 
 	- **Example**: allow access to trusted buckets. (You can do it also with bucket policy but in that case you should enable each one of them)
@@ -1351,7 +1351,7 @@ The **Gateway Load Balancer Endpoint** in AWS is a type of **VPC endpoint** that
 - **Traffic Direction**: Usually Unidirectional
 ### AWS Direct Connect
 **AWS Direct Connect** is a cloud service that provides a **dedicated, private network connection** between your on-premises infrastructure. **Physical connection**. 
-![[Pasted image 20241014175942.png]]
+![](images/3fcd5cdb5b153f34229d3799ab887af7.png)
 - 2 types:
 	- **Lower Bandwith** 50Mbps -500Mbps
 	- **Higher Bandwith** 1Gbps, 10Gbps, 100Gbps
@@ -1382,7 +1382,7 @@ AWS PrivateLink establishes private connectivity between virtual private clouds 
 - Used to expose **services** in one VPC to multiple other VPCs, possibly in **different accounts**
 Require **NLB (common) or GWLB in the service VPC** and **ENI in the consumer VPC**
 
-![[Pasted image 20241001095444.png]]
+![](images/1c52e7f15aff14b9a30e5ab61a110a1a.png)
 **N.B:** Need an **Interface endpoint** and **Service endpoint** in order to work
 ### AWS Site-to-site VPN:
 Connection between on-premises VPN and VPC.
@@ -1390,7 +1390,7 @@ Connection between on-premises VPN and VPC.
 - **IPv6 traffic is not supported** for VPN connections on a virtual private gateway.
 - Recommend that you use non-overlapping CIDR blocks for your networks
 - If you need to ping EC2 instances from on-premises, make sure you add the **ICMP protocol** on the inbound rules of your security groups
-![[Pasted image 20241001102606.png]]
+![](images/ee14674c825d863f2e407bcd8d483e4c.png)
 
 **Components:**
 - **VPN Connection** - secure connection between VPC and on-premises equipment
@@ -1404,11 +1404,11 @@ Connection between on-premises VPN and VPC.
 ### AWS Client VPN
 Connect from **your computer** using OpenVPN to your VPC in AWS and on-premises system.
 **Use case**: You travel around the world and need connection to services.
-![[Pasted image 20241007172433.png]]
+![](images/2d2ee4e5c27551ed0caad48a2e523f46.png)
 ### Internet Gateway 
 Used to **connect public resources to the internet** (use NAT gateway for private resources since they need network address translation)
 - Work both with IPV4 and IPV6, and perform network translation for instances **that have been assigned public IPV4 addresses.**
-![[Pasted image 20241103154707.png]]
+![](images/94079ae30c56b2de2d286fe86fc2203f.png)
 
 #### Egress-Only Internet Gateways 
 - VPC component that allows **outbound** communication **over IPv6** from instances in your VPC to the Internet, **and prevents the Internet from initiating an IPv6 connection with your instances.**
@@ -1421,7 +1421,7 @@ A method of mapping an IP address space into another by modifying network addres
 
 **NAT Gateway**: Allow your instances in your Private Subnets to access the internet while remaining private
 
-![[Pasted image 20241001104657.png]]
+![](images/9642a7b24c3ca9f5c1b5a2a9e5ed50f0.png)
 - 1 Nat gateway per subnet
 - AWS managed NAT with **bandwidth autoscaling** (up to 45Gbps)
 - **Uses an Elastic IP** and Internet Gateway behind the scenes
@@ -1442,7 +1442,7 @@ A method of mapping an IP address space into another by modifying network addres
 - Support IP multicast
 - You can peer connection with other Transit Gateways
 
-	![[Pasted image 20241010120643.png]]
+	![](images/d69449769f1c6e5b3dacd1b38ac12b46.png)
 
 ## Bastion Hosts
 In AWS, a **bastion host** is typically an EC2 instance deployed in a **public subnet** within a **Virtual Private Cloud (VPC)**. This host serves as a secure entry point, allowing administrators to access resources located in **private subnets** that are otherwise isolated from the internet.
@@ -1544,7 +1544,7 @@ Improve global application **availability** and performance using the AWS global
 - **Unicast IP**: one server holds one IP address
 - **Anycast IP**: all servers hold the same IP address and the client is routed to the nearest host with that IP
 ## Cloud Front
-![[Pasted image 20241009101827.png]]
+![](images/de35a306bc40ea4187cfe286d83f89f4.png)
 - Cloud Front is a **CDN**
 	- **CDN(Content Delivery Network):** A distributed network of servers that delivers web pages and content to users **based on their geographical location**, the origin of the webpage and a content delivery server.
 - **Global service**
@@ -1605,7 +1605,7 @@ You can perform various tasks such as:
 - **Modifying HTTP headers**
 - generating dynamic responses
 - implementing security measures, and customizing content based on user preferences, device type, location, or other criteria.
-![[Pasted image 20241015164459.png]]
+![](images/8b8e5a1a2f23fefb3509db20c873f313.png)
 
 ### CloudFront Functions types
 - **CloudFront Functions:** Designed for lightweight, short-duration tasks, primarily focused on manipulating and inspecting HTTP requests and responses. Common use cases include URL rewrites, header modifications, simple redirects, and bot filtering.
@@ -1722,7 +1722,7 @@ KMS makes it easy for you to create, control and rotate encryption keys in AWS.
 	 - **Elastic Load Balancer**
 	 - **CloudFront, API Gateway**
 	 - **Elastic Beanstalk.**
-![[Pasted image 20241014153547.png]]
+![](images/5b42d40044df50057bee324262611c12.png)
  
  - **Terminating SSL at the Load Balancer.** All traffic in-transit beyond the ALB is unencrypted. You can add as many as EC2 instances that you want
  - **Terminating SSL End-to-End**: Traffic is encrypted in-transit all the way to the application
@@ -1774,9 +1774,9 @@ Disaster recovery refers to the strategies and processes implemented to protect 
 - **Recovery Point Objective (RPO)**: how often you backup your data (determines how much data are you willing to lose in case of a disaster)
 - **Recovery Time Objective (RTO)**: how long it takes to recover from the disaster (down time)
 
-![[Pasted image 20241016095521.png]]
+![](images/2658179a123069409e15acc848a173f4.png)
 ### Strategies
-![[Pasted image 20241016095358.png]]
+![](images/d253311ae130dd479459f23f7eaa5816.png)
 #### Backup & Restore
 - **High RPO (hours)**
 - Need to spin up instances and restore volumes from snapshots in case of disaster => **High RTO**
@@ -1891,7 +1891,7 @@ Allows you to group multiple subscriptions together.
 - **Message Data Protection**: Message data protection safeguards the data that's published to your Amazon SNS Topic. 
 - **Delivery Policy**: defined how SNS **retries** the delivery of messages when **server-side errors** occur. Each delivery protocol has its own delivery policy.
 ## SQS
-![[Pasted image 20241014155049.png]]
+![](images/a25153991b1714351f295dcdfab426fe.png)
 **Message:** small data package (not necessarly intended sms or email).
 ### SQS
 Amazon Simple Queue Service (SQS) is a fully managed AWS service that enables reliable, asynchronous message passing between application components to help decouple and scale systems.
@@ -1936,7 +1936,7 @@ A **Dead Letter Queue (DLQ)** in Amazon **SQS (Simple Queue Service)** is a spec
 - Prevents resource wastage
 - Recommended to set a high retention period for DLQ (14 days)
 
-![[Pasted image 20241019174040.png]]
+![](images/9afe77137906395d3e99d1aed127ec54.png)
 #### Configurations
 
 - **Access Policy(resource based policy):** Allows you to grant other principals permission to the SQS Queue.
@@ -1964,7 +1964,7 @@ AWS fully managed solution, not serverless, for collecting processing, and analy
 ### Types
 #### Kineses Data Streams
 Amazon Kinesis Data Streams is a serverless streaming data service that makes it easy to capture, process, and store data streams at any scale.
-![[Pasted image 20241016175823.png]]
+![](images/1fd064aa91ede87fe3a4b29f89b6c8ba.png)
 
 > [!NOTE]
 > **Shard**: unit of capacity within a Kinesis data stream that defines how much data the stream can ingest and process
@@ -2013,7 +2013,7 @@ Amazon Kinesis Data Firehose is an _extract, transform, and load (ETL) service_
 Allows you to run queries against that is flowing through your real time stream so you can create and analysis on emerging data.
 
 - **Use Case**: Used in applications such as video surveillance, live video streaming, video analytics, and IoT devices.
-![[Pasted image 20241019155345.png]]
+![](images/38832573ce1d0bf896245388a1460598.png)
 
 #### Comparison
 - **Kinesis Data Streams (KDS)**: Provides maximum flexibility and control for handling large volumes of real-time streaming data. However, it requires custom applications for data processing. Ideal for scenarios where you need to develop your own real-time analytics or data processing applications.
@@ -2075,7 +2075,7 @@ Support a set of famous framework (Angular, React, Flutter ecc...)
 ## Amazon API Gateway
 
 **Amazon API Gateway** is an AWS service for creating, publishing, maintaining, monitoring, and securing REST, HTTP, and WebSocket APIs at any scale. API developers can create APIs that access AWS or other web services, as well as data stored in the **AWS Cloud**.
-![[Pasted image 20241008142105.png]]
+![](images/99d1a7faa2c209fbd7edc2aa80555d56.png)
 - Serverless
 - Invoke Lambda functions using REST APIs (API gateway will proxy the request to lambda)
 - **3 types:**
@@ -2133,7 +2133,7 @@ Private Docker Registry on AWS, similar to **docker hub**. Makes it easier for d
  - ECS takes care of launching & stopping containers (ECS tasks)
  - **EC2 instances have ECS agent running on them as a docker container**
 - **ECS Task Lifecycle:**
-	![[Pasted image 20241003143946.png]]
+	![](images/b94211a408deb2b9903eff62c6c5aa5e.png)
 
 #### With Load Balancer
 - For every container, the container port is mapped to a random free port on the host (instance). So the application running inside that container will be reached by the ALB on that random port.
@@ -2178,7 +2178,7 @@ AWS Fargate is a technology that you can use with Amazon ECS to run **container
 ## EKS
 Amazon **Elastic Kubernetis Service** is a managed service that  simplifies the process of building, securing, operating, and maintaining Kubernetes clusters on AWS
 **Use Cases:** If your company is already using Kubernetes on-premises or in another cloud, and wants to migrate to AWS using Kubernetes
-![[Pasted image 20241015171619.png]]
+![](images/85c5b693d32d4e73ef13512d1c815933.png)
 
  - **EKS Connector**: if you want to connect your own kubernetis cluster
  - **EKS CTL**: is CLI tool for easily setting up kubernetis clusters on AWS.
@@ -2205,7 +2205,7 @@ Autoscaling is a function that automatically scales your resources out and in to
 **AWS Lake Formation:** It is a data lake to centrally govern secure and globally share data for analytics and machine learning.
 
 
-![[Pasted image 20241003093952.png]]
+![](images/439a53566e3ea59afa1d15f7f7efb9e8.png)
 ## Blue-Green Deployment (Not a service)
 - Blue-green deployment is a technique to test features in the new environment without impacting the currently running version of your application
     - **Blue** - current version
@@ -2216,17 +2216,17 @@ Autoscaling is a function that automatically scales your resources out and in to
 A **canary release** is a software deployment strategy where a new version is gradually rolled out to a small subset of users before being released to the entire user base. This approach allows teams to monitor performance, stability, and user impact in real-world conditions
 ## AWS CodeDeploy
  CodeDeploy is a deployment service that automates application deployments to Amazon EC2 instances, works with On-Premises Servers • Hybrid service
-![[Pasted image 20241014110813.png]]
+![](images/811ec899bf6612a2984704038b49c63c.png)
 
 ## AWS CodeBuild
  AWS CodeBuild is a fully managed build service in the cloud. CodeBuild compiles your source code, runs unit tests, and produces artifacts that are ready to deploy. **Pay-as-you-go**
- ![[Pasted image 20241014111131.png]]
+ ![](images/820cf5dabb38d00a9651dd52f1c59c18.png)
 ## AWS CodePipeline
  Orchestrate the different steps to have the code automatically pushed to production, Code => Build => Test => Provision => Deploy, Basis for CICD (Continuous Integration & Continuous Delivery)
- ![[Pasted image 20241014111207.png]]
+ ![](images/f7dbcb51e51fc5d1de1d665c2164eb8d.png)
 ## AWS CodeArtifact
 It is a secure, highly scalable, managed artifact repository service that helps organizations to store and share software packages for application development. **Dependencies management**
- ![[Pasted image 20241014111235.png]]
+ ![](images/7278dbd411dad88ff45d9466ec250087.png)
 ## AWS Cloud9
  AWS Cloud9 is an integrated development environment, or _IDE_.
 ## AWS CodeStar (Non più supportato)
@@ -2252,7 +2252,7 @@ Amazon CloudWatch monitors your Amazon Web Services (AWS) resources and the appl
 
 - **High Availability**
 - **Serverless**
-![[Pasted image 20241014155339.png]]
+![](images/d703ac3a6d7e07822a877c0a94772a05.png)
 ### Amazon CloudWatch Alarms
 (like budget but less powerful) Alarms are used to trigger notifications for any metric.
 
@@ -2293,10 +2293,10 @@ You can use Cloudwatch logs alongside with : **CloudTrail, IAM, Kinesis Data Str
 
 
 **EventBridge** is a serverless event bus service that is used for application integration by streaming real-time data to your applications. EventBridge was formerly called Amazon **CloudWatch Events.**
-![[Pasted image 20241014143558.png]]
+![](images/4bc825ad29b8d6f54bc4e2c25f36763d.png)
 #### Event Bus
 An event bus receives events from a source and rotates events to a target based on rules. 
-![[Pasted image 20241017110927.png]]
+![](images/471bd08bea27352a7bb32fa7ec906550.png)
 - Event buses types:
     - **Default event bus**: events from AWS services are sent to this
     - **Partner event bus**: receive events from external SaaS applications
@@ -2396,7 +2396,7 @@ There are more policies descripted here below (not all are related to IAM):
 - You must attach both a trust policy and an identity-based policy to an IAM role.
 - The **IAM service supports only one type of resource-based policy** called a **role trust policy**, which is **attached to an IAM role**.
 #### Anatomy of Policy
-![[Pasted image 20241019161910.png]]
+![](images/abc4e118dc7fc3c1ea48180638dccdea.png)
 - **Version policy language** version. 2012-10-17 is the latest version.
 - **Statement container** for the policy element you are allowed to have multiples
 - **Sid (optional)** a way of labeling your statements.
@@ -2645,7 +2645,7 @@ Amazon Connect is an AI-powered application that provides one seamless experienc
 - **Throughput**: is a measure of how many units of information a system can process in a given amount of time.
 - **Active-passive** means that one is actively used and the other in stanby until the first fail.
 - **Publish Subscribe pattern:** Common message pattern, the sender send their message to an event bus that categorized message in groups and than the receiver subscribes to these groups. Whenever new messages appear within their subscription the messages are immediatly delivered to them. 
-![[Pasted image 20241008111643.png]]
+![](images/1cbbbe4f23e8c4b0f4d303ccf7c8ecbb.png)
 - **Messaging System**: Used to provide asynchronous communication and decouple processes via messages/events from a sender and receiver (producer and consumer)
 - **Queueing System**: messaging system that generally will delete messages once they are consumed. Simple communication. Not Real-time. Have to pull. Not reactive.
 - **Datawerehouse**: Built to store large quantities of historical data and enable fast, complex queries across all the data.
